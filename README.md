@@ -1,26 +1,58 @@
 # PaperFives
 
+Copyright &copy; Fives 2023
+
 ---
 
 # 1. Introduction
 
+## 1.1 Purpose
+
 BUAA 2023 Software Engineering Project.
 
----
-
-# 2. Tech
+## 1.2 Tech
 
 Django + uWSGI + NginX
 
 ---
 
-# 3. Git Guide
+# 2. Git Guide
 
-To make commit more consistent, you **MUST** follow the commit convention. There should better be fewer change in one commit.
+## 2.1 Branch Description
 
-Generally, commit should be lower-case, and not final period punctuation. 
+### 2.1.1 Branch List
 
-## 3.1 feat
+There are four types of branch.
+
+> `master`: Current stable version of the project.
+>
+> `release`: Next version in development.
+>
+> `dev`: Workspace for the next version.
+>
+> `{name}`: Each developer has his/her own branch.
+
+### 2.1.2 Push Order
+
+1. Developers should be on his/her own branch for daily development. You should remember to **pull** from `dev` regularly.
+
+2. Once a change is done, **push** from `{name}` to `dev` branch.
+
+3. When `dev` branch passed test, the **leader** of the team should **push** it to `release` branch.
+
+4. Finally, when `release` branch is ready to go, the **leader** should then **push** it to `master` branch.
+
+> All push and pull should follow the convention mentioned in the following section.
+
+## 2.2 Commit Convention
+
+To make commit more consistent, you **MUST** follow the commit convention. There should better be fewer changes in one commit.
+
+> 'Fewer' doesn't mean fewer lines of code, but fewer functions.
+
+Generally, commit should be lower-case, and no final period punctuation. 
+
+### 2.2.1 `feat`
 
 To introduce a new feature.
 
@@ -28,7 +60,7 @@ To introduce a new feature.
 feat: add User model
 ```
 
-## 3.2 update
+### 2.2.2 `update`
 
 Not to introduce a new feature, but only made updates to an old one.
 
@@ -43,25 +75,25 @@ update: add website favicon
 update: remove register.py
 ```
 
-## 3.3 fix
+### 2.2.3 `fix`
 
-Indicate a bug is fixed.
+It indicates a bug is fixed.
 
 ```
 fix: invalid login password ignored
 ```
 
-## 3.4 refactor
+### 2.2.4 `refactor`
 
-Indicate that changes are made, but no affect to the function.
+It indicates that changes are made, but no affect to the function.
 
 ```
 refactor: divide views.py to multiple files
 ```
 
-## 3.5 trivial
+### 2.2.5 `trivial`
 
-Indicate this is a trivial change. Such commit should not include any change to the code.
+It indicates this is a trivial change. Such commit should not include any change to the code.
 
 ```
 trivial: correct spelling error
