@@ -111,7 +111,8 @@ Environment is based on `Python 3.8` using `conda`. Primary packages can be foun
 conda create -n paper python=3.8
 ```
 
-> Environment should be created on Linux. Otherwise, fatal conflicts will occur between `mysqlclient` and `uwsgi`. 
+> Environment should be created on Linux. Otherwise, fatal conflicts will occur between `mysqlclient` and `uwsgi`. For detailed information, please refer to this post:
+> - [Configure Remote Interpreter in PyCharm](http://www.tonys-studio.top/2023/05/14/Configure-Remote-Interpreter-in-PyCharm/)
 
 To create requirements, run the following command in root directory.
 
