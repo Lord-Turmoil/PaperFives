@@ -1,6 +1,6 @@
 # PaperFives
 
-Copyright &copy; Fives 2023
+Copyright &copy; Fives 2023
 
 ---
 
@@ -97,4 +97,46 @@ It indicates this is a trivial change. Such commit should not include any change
 
 ```
 trivial: correct spelling error
+```
+
+---
+
+# 3. Environment
+
+## 3.1 Basic Environment
+
+Environment is based on `Python 3.8` using `conda`. Primary packages can be found in `requirements.txt`.
+
+```bash
+conda create -n paper python=3.8
+```
+
+> Environment should be created on Linux. Otherwise, fatal conflicts will occur between `mysqlclient` and `uwsgi`. 
+
+To create requirements, run the following command in root directory.
+
+```bash
+ python -m pip list --format=freeze > requirements.txt
+```
+
+To install requirements, run the following command.
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+## 3.2 Troubleshoot
+
+Some packages may not be easy to install, here are some hints.
+
+### 3.2.1 `django-cors-headers`
+
+```bash
+conda install -c conda-forge django-cors-headers
+```
+
+### 3.2.2 `uwsgi`
+
+```bash
+conda install -c conda-forge uwsgi
 ```
