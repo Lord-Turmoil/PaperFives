@@ -105,26 +105,10 @@ trivial: correct spelling error
 
 ## 3.1 Basic Environment
 
-Environment is based on `Python 3.8` using `conda`. Primary packages can be found in `requirements.txt`.
-
-```bash
-conda create -n paper python=3.8
-```
+Environment is based on `Python 3.8` using `conda`.
 
 > Environment should be created on Linux. Otherwise, fatal conflicts will occur between `mysqlclient` and `uwsgi`. For detailed information, please refer to this post:
 > - [Configure Remote Interpreter in PyCharm](http://www.tonys-studio.top/2023/05/14/Configure-Remote-Interpreter-in-PyCharm/)
-
-To create requirements, run the following command in root directory.
-
-```bash
- python -m pip list --format=freeze > requirements.txt
-```
-
-To install requirements, run the following command.
-
-```bash
-python -m pip install -r requirements.txt
-```
 
 ## 3.2 Troubleshoot
 
