@@ -140,3 +140,4 @@ cython_debug/
 .idea/
 secrets.yaml
 secrets_debug.yaml
+**/migrations
