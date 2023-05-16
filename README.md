@@ -125,3 +125,23 @@ conda install -c conda-forge django-cors-headers
 ```bash
 conda install -c conda-forge uwsgi
 ```
+
+---
+
+# 4. Project Structure
+
+## 4.1 Applications
+
+There are three main applications corresponding to the three sub-systems. They are `users`, `papers` and `messages`. In addition, for test purpose, there is a `zeta` application.
+
+## 4.2 Shared Packages
+
+This package contains some shared components of the whole project.
+
+### 4.2.1 Utility Package
+
+All utility scripts are placed under `/shared/utils/`. Each util Python Script deals with a specific function.
+
+### 4.2.2 DTO package
+
+DTO, a.k.a. Data Transfer Object, is used to carry data between frontend and backend. Things will be much easier if they can be mapped to actual Python object, instead of raw JSON data.
