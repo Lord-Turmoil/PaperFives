@@ -1,0 +1,14 @@
+asgiref==3.5.2
+backports.zoneinfo==0.2.1
+cffi==1.15.1
+cryptography==39.0.1
+Django==4.1
+django-cors-headers==4.0.0
+mysqlclient==2.0.3
+pip==23.0.1
+pycparser==2.21
+PyMySQL==1.0.2
+setuptools==66.0.0
+sqlparse==0.4.3
+uWSGI==2.0.21
+wheel==0.38.4
