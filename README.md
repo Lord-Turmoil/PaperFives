@@ -132,7 +132,9 @@ conda install -c conda-forge uwsgi
 
 ## 4.1 Applications
 
-There are three main applications corresponding to the three sub-systems. They are `users`, `papers` and `messages`. In addition, for test purpose, there is a `zeta` application.
+There are three main applications corresponding to the three sub-systems. They are `users`, `papers` and `msgs`. In addition, for test purpose, there is a `zeta` application.
+
+> We use `msgs` because there is a package `messages` in Django.
 
 ## 4.2 Shared Packages
 
