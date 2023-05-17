@@ -1,3 +1,9 @@
+# References:
+# - https://docs.djangoproject.com/en/4.2/topics/db/examples/many_to_one/
+# - https://docs.djangoproject.com/en/4.2/topics/db/examples/one_to_one/
+# - https://docs.djangoproject.com/en/4.2/topics/db/examples/many_to_many/
+#
+
 from django.db import models
 
 
@@ -12,6 +18,10 @@ class UserAttribute(models.Model):
     institute = models.CharField(max_length=127)
     avatar = models.CharField(max_length=127)  # avatar path
 
+    @classmethod
+    def create(cls, _sex=Sex.UNKNOWN, _institute="", _avatar=""):
+        return cls(sex=_sex, institute=_institute, avatar=_avatar)
+
     class Meta:
         verbose_name = "user_attr"
 
@@ -19,6 +29,10 @@ class UserAttribute(models.Model):
 class UserStatistics(models.Model):
     publish_cnt = models.IntegerField(default=0)
     message_cnt = models.IntegerField(default=0)
+
+    @classmethod
+    def create(cls, _publish=0, _message=0):
+        return cls(publish_cnt=_publish, message_cnt=_message)
 
     class Meta:
         verbose_name = "user_stat"
@@ -36,6 +50,14 @@ class User(models.Model):
     attr = models.OneToOneField(UserAttribute, on_delete=models.CASCADE)
     stat = models.OneToOneField(UserStatistics, on_delete=models.CASCADE)
 
+    @classmethod
+    def create(cls, _email, _username, _attr=None, _stat=None):
+        if _attr is None:
+            _attr = UserAttribute.create()
+        if _stat is None:
+            _stat = UserStatistics.create()
+        return cls(email=_email, username=_username, _attr=_attr, stat=_stat)
+
     class Meta:
         ordering = ['uid']
         verbose_name = 'user'
@@ -51,6 +73,10 @@ class Role(models.Model):
     name = models.PositiveSmallIntegerField(choices=RoleName.choices, default=RoleName.VISITOR)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    @classmethod
+    def create(cls, _name, _user):
+        return cls(name=_name, user=_user)
+
     class Meta:
         ordering = ['rid']
         verbose_name = 'role'
@@ -60,6 +86,13 @@ class FavoriteUser(models.Model):
     # Two fields with the same foreign key seems to cause conflict?
     src_uid = models.BigIntegerField()
     dst_uid = models.BigIntegerField()
+
+    @classmethod
+    def create(cls, src, dst):
+        """
+        Please validate src and dst before you call this!
+        """
+        return cls(src_uid=src, dst_uid=dst)
 
     class Meta:
         verbose_name = 'fav_user'
