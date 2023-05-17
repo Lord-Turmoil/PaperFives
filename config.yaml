@@ -1,0 +1,6 @@
+DEFAULT_AVATAR_PATH: /static/avatar/default.png
+INVALID_NAME_LIST:
+  - default
+  - admin
+  - null
+  - none
