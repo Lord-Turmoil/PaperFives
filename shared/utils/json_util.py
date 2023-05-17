@@ -9,7 +9,7 @@
 # converter in C#. It can be used to convert object to JSON string,
 # or a JSON string to a Python object.
 #   These functions has passed basic tests, and is guaranteed to
-# support datetime type, which is used in Django models. :)
+# support datetime and date type, which is used in Django models. :)
 #
 
 import datetime
@@ -21,6 +21,8 @@ class AdvancedEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime.datetime):
             return obj.strftime("%Y-%m-%d %H:%M:%S")
+        elif isinstance(obj, datetime.date):
+            return obj.strftime("%Y-%m-%d")
         return obj.__dict__
 
 
