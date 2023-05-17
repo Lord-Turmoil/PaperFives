@@ -11,7 +11,9 @@ class Message(models.Model):
         LINK = 1, "Link"
         IMAGE = 2, "Image"
 
-    mid = models.BigAutoField(primary_key=True)
+    # this is the payload id of the corresponding type
+    # different payload may have the same mid
+    mid = models.BigIntegerField(primary_key=True)
 
     # sender and receiver
     src_uid = models.BigIntegerField()
@@ -35,37 +37,37 @@ class Message(models.Model):
 
 
 class TextPayload(models.Model):
-    msg = models.OneToOneField(Message, on_delete=models.CASCADE)
+    mid = models.BigAutoField(primary_key=True)
     text = models.TextField()
 
     @classmethod
-    def create(cls, _msg, _text):
-        return cls(msg=_msg, text=_text)
+    def create(cls, _text):
+        return cls(text=_text)
 
     class Meta:
         verbose_name = "text_payload"
 
 
 class LinkPayload(models.Model):
-    msg = models.OneToOneField(Message, on_delete=models.CASCADE)
+    mid = models.BigAutoField(primary_key=True)
     text = models.CharField(max_length=127)
     link = models.CharField(max_length=127)
 
     @classmethod
-    def create(cls, _msg, _text, _link):
-        return cls(msg=_msg, text=_text, link=_link)
+    def create(cls, _text, _link):
+        return cls(text=_text, link=_link)
 
     class Meta:
         verbose_name = "link_payload"
 
 
 class ImagePayload(models.Model):
-    msg = models.OneToOneField(Message, on_delete=models.CASCADE)
+    mid = models.BigAutoField(primary_key=True)
     path = models.CharField(max_length=127)
 
     @classmethod
-    def create(cls, _msg, _path):
-        return cls(msg=_msg, path=_path)
+    def create(cls, _path):
+        return cls(path=_path)
 
     class Meta:
         verbose_name = "image_payload"

@@ -3,8 +3,10 @@
 # - https://docs.djangoproject.com/en/4.2/topics/db/examples/one_to_one/
 # - https://docs.djangoproject.com/en/4.2/topics/db/examples/many_to_many/
 #
-
+import django.conf
 from django.db import models
+
+from shared.utils.str_util import is_no_content
 
 
 # Create your models here.
@@ -20,6 +22,8 @@ class UserAttribute(models.Model):
 
     @classmethod
     def create(cls, _sex=Sex.UNKNOWN, _institute="", _avatar=""):
+        if is_no_content(_avatar):
+            _avatar = django.conf.settings.CONFIG['DEFAULT_AVATAR_PATH']
         return cls(sex=_sex, institute=_institute, avatar=_avatar)
 
     class Meta:
@@ -58,6 +62,18 @@ class User(models.Model):
             _stat = UserStatistics.create()
         return cls(email=_email, username=_username, _attr=_attr, stat=_stat)
 
+    @classmethod
+    def get_external_uid(cls, _uid):
+        if _uid < User.UID_OFFSET:
+            return _uid + User.UID_OFFSET
+        return _uid
+
+    @classmethod
+    def get_internal_uid(cls, _uid):
+        if _uid < User.UID_OFFSET:
+            return _uid
+        return _uid - User.UID_OFFSET
+
     class Meta:
         ordering = ['uid']
         verbose_name = 'user'
@@ -78,13 +94,12 @@ class Role(models.Model):
         return cls(name=_name, user=_user)
 
     class Meta:
-        ordering = ['rid']
         verbose_name = 'role'
 
 
 class FavoriteUser(models.Model):
     # Two fields with the same foreign key seems to cause conflict?
-    src_uid = models.BigIntegerField()
+    src_uid = models.BigIntegerField(primary_key=True)
     dst_uid = models.BigIntegerField()
 
     @classmethod

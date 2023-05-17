@@ -41,9 +41,6 @@ class PaperStatistics(models.Model):
 
 
 class Paper(models.Model):
-    """
-
-    """
     PID_OFFSET = 1000000000
 
     pid = models.BigAutoField(primary_key=True)
@@ -60,24 +57,24 @@ class Paper(models.Model):
         return cls(path=_path, attr=_attr, stat=_stat)
 
     class Meta:
-        ordering = 'pid'
+        ordering = ['pid']
         verbose_name = 'paper'
 
 
 class Author(models.Model):
-    uid = models.IntegerField(default=None, null=True)  # null if user not registered
+    email = models.EmailField()  # will be linked to User via email
     name = models.CharField(max_length=63)
     order = models.PositiveSmallIntegerField()  # order in author list
 
     paper = models.ForeignKey(Paper, on_delete=models.CASCADE)
 
     @classmethod
-    def create(cls, _name, _order, _paper, _uid=None):
+    def create(cls, _email, _name, _order, _paper):
         """
         Please verify parameters before you call this function!
-        :param _order: display order in author list
+        _order is the display order in the author list
         """
-        return cls(uid=_uid, name=_name, order=_order, paper=_paper)
+        return cls(email=_email, name=_name, order=_order, paper=_paper)
 
     class Meta:
         verbose_name = 'author'
@@ -98,7 +95,7 @@ class Reference(models.Model):
 
 
 class FavoritePaper(models.Model):
-    uid = models.BigIntegerField()
+    uid = models.BigIntegerField(primary_key=True)
     pid = models.BigIntegerField()
 
     @classmethod
