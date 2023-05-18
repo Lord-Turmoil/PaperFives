@@ -51,8 +51,8 @@ class User(models.Model):
     username = models.CharField(max_length=63)
 
     # attribute & statistics
-    attr = models.OneToOneField(UserAttribute, on_delete=models.CASCADE)
-    stat = models.OneToOneField(UserStatistics, on_delete=models.CASCADE)
+    attr = models.OneToOneField(UserAttribute, related_name='user', on_delete=models.CASCADE)
+    stat = models.OneToOneField(UserStatistics, related_name='user', on_delete=models.CASCADE)
 
     @classmethod
     def create(cls, _email, _username, _attr=None, _stat=None):
@@ -87,7 +87,7 @@ class Role(models.Model):
         ADMIN = 3, "Admin"
 
     name = models.PositiveSmallIntegerField(choices=RoleName.choices, default=RoleName.VISITOR)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='roles', on_delete=models.CASCADE)
 
     @classmethod
     def create(cls, _name, _user):

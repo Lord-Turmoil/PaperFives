@@ -56,6 +56,18 @@ class Paper(models.Model):
             _stat = PaperStatistics.create()
         return cls(path=_path, attr=_attr, stat=_stat)
 
+    @classmethod
+    def get_external_pid(cls, _pid):
+        if _pid < Paper.PID_OFFSET:
+            return _pid + Paper.PID_OFFSET
+        return _pid
+
+    @classmethod
+    def get_internal_uid(cls, _pid):
+        if _pid < Paper.PID_OFFSET:
+            return _pid
+        return _pid - Paper.PID_OFFSET
+
     class Meta:
         ordering = ['pid']
         verbose_name = 'paper'
@@ -66,7 +78,7 @@ class Author(models.Model):
     name = models.CharField(max_length=63)
     order = models.PositiveSmallIntegerField()  # order in author list
 
-    paper = models.ForeignKey(Paper, on_delete=models.CASCADE)
+    paper = models.ForeignKey(Paper, related_name="authors", on_delete=models.CASCADE)
 
     @classmethod
     def create(cls, _email, _name, _order, _paper):
@@ -84,7 +96,7 @@ class Reference(models.Model):
     ref = models.CharField(max_length=255)  # reference text
     link = models.CharField(max_length=255)  # reference link if possible
 
-    paper = models.ForeignKey(Paper, on_delete=models.CASCADE)
+    paper = models.ForeignKey(Paper, related_name="references", on_delete=models.CASCADE)
 
     @classmethod
     def create(cls, _paper, _ref, _link=""):
