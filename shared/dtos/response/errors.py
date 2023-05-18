@@ -5,21 +5,25 @@
 # @File    : error.py
 #
 from PaperFives.settings import ERROR_CODE
-from shared.dtos.base import BaseDto
+from shared.dtos.response.base import BaseResponseDto
 
 
-class RequestMethodErrorDto(BaseDto):
-    def __int__(self, expect, actual):
+class GeneralErrorDto(BaseResponseDto):
+    """
+    Will not provide detailed messages by default.
+    """
+
+    def __init__(self, code, msg="Not available"):
+        super().__init__(code, msg)
+
+
+class RequestMethodErrorDto(BaseResponseDto):
+    def __init__(self, expect, actual):
         super().__init__(ERROR_CODE['WRONG_REQUEST_METHOD'], "401 Bad request")
         self.descr = f"'{expect}' expected but got '{actual}'"
 
 
-class BadRequestDto(BaseDto):
-    def __init__(self, hint="not available"):
+class BadRequestDto(BaseResponseDto):
+    def __init__(self, hint="Not available"):
         super().__init__(ERROR_CODE['BAD_REQUEST'], "Request format error")
         self.hint = hint
-
-class GeneralErrorDto(BaseDto):
-    def __int__(self, code, msg):
-        super().__int__(code)
-        
