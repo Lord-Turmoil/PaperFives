@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from django import forms
 
 from shared.dtos.error import RequestMethodErrorDto, BadRequestDto
-from shared.dtos.user import CreateUserFailedDto, CreateUserSucceededDto
+from shared.dtos.user import CreateUserFailedDto, CreateUserSucceededDto, UserDto
 from shared.exceptions.json import JsonException
 from shared.utils.json_util import deserialize, serialize
 from users.models import User, UserAttribute
@@ -44,14 +44,15 @@ def get_user_by_id(request):
 
 @csrf_exempt
 def put_user(request):
+    request
     if request.method != 'POST':
         return HttpResponse(serialize(RequestMethodErrorDto('PUT', request.method)))
 
     try:
-        user_dto = deserialize(request.POST)
+        user_dto = deserialize(request.body, UserDto)
     except JsonException as e:
         print(e)
-        return Response(BadRequestDto("Bad"), HTTPStatus.BAD_REQUEST)
+        return HttpResponse(serialize(BadRequestDto("Bad")), HTTPStatus.BAD_REQUEST)
 
     print(user_dto)
 

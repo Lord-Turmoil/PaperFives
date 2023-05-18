@@ -4,8 +4,8 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta name="robots" content="NONE,NOARCHIVE">
-    <title>AssertionError
-        at /users/_put/</title>
+    <title>SMTPDataError
+        at /api/v1/users/verification/</title>
     <style type="text/css">
         html * {
             padding: 0;
@@ -316,9 +316,10 @@
 
 <body>
 <div id="summary">
-    <h1>AssertionError
-        at /users/_put/</h1>
-    <pre class="exception_value">.accepted_renderer not set on Response</pre>
+    <h1>SMTPDataError
+        at /api/v1/users/verification/</h1>
+    <pre
+            class="exception_value">(550, b&#x27;The recipient may contain a non-existent account, please check the recipient address.&#x27;)</pre>
     <table class="meta">
 
         <tr>
@@ -327,7 +328,7 @@
         </tr>
         <tr>
             <th>Request URL:</th>
-            <td>http://81.70.161.76:5000/users/_put/</td>
+            <td>http://81.70.161.76:5000/api/v1/users/verification/</td>
         </tr>
 
         <tr>
@@ -337,29 +338,29 @@
 
         <tr>
             <th>Exception Type:</th>
-            <td>AssertionError</td>
+            <td>SMTPDataError</td>
         </tr>
 
 
         <tr>
             <th>Exception Value:</th>
             <td>
-                <pre>.accepted_renderer not set on Response</pre>
+                <pre>(550, b&#x27;The recipient may contain a non-existent account, please check the recipient address.&#x27;)</pre>
             </td>
         </tr>
 
 
         <tr>
             <th>Exception Location:</th>
-            <td><span class="fname">/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/site-packages/rest_framework/response.py</span>,
-                line 55, in rendered_content
+            <td><span class="fname">/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/smtplib.py</span>, line
+                906, in sendmail
             </td>
         </tr>
 
 
         <tr>
             <th>Raised during:</th>
-            <td>users.views.test.put_user</td>
+            <td>users.views.register.get_verification_code</td>
         </tr>
 
         <tr>
@@ -382,7 +383,7 @@
         </tr>
         <tr>
             <th>Server time:</th>
-            <td>Wed, 17 May 2023 10:20:47 +0000</td>
+            <td>Thu, 18 May 2023 04:37:33 +0000</td>
         </tr>
     </table>
 </div>
@@ -402,69 +403,69 @@
                 line 55, in inner
 
 
-                <div class="context" id="c140381518534720">
+                <div class="context" id="c140032950679168">
 
-                    <ol start="48" class="pre-context" id="pre140381518534720">
+                    <ol start="48" class="pre-context" id="pre140032950679168">
 
-                        <li onclick="toggle('pre140381518534720', 'post140381518534720')">
+                        <li onclick="toggle('pre140032950679168', 'post140032950679168')">
                             <pre></pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518534720', 'post140381518534720')">
+                        <li onclick="toggle('pre140032950679168', 'post140032950679168')">
                             <pre>        return inner</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518534720', 'post140381518534720')">
+                        <li onclick="toggle('pre140032950679168', 'post140032950679168')">
                             <pre>    else:</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518534720', 'post140381518534720')">
+                        <li onclick="toggle('pre140032950679168', 'post140032950679168')">
                             <pre></pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518534720', 'post140381518534720')">
+                        <li onclick="toggle('pre140032950679168', 'post140032950679168')">
                             <pre>        @wraps(get_response)</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518534720', 'post140381518534720')">
+                        <li onclick="toggle('pre140032950679168', 'post140032950679168')">
                             <pre>        def inner(request):</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518534720', 'post140381518534720')">
+                        <li onclick="toggle('pre140032950679168', 'post140032950679168')">
                             <pre>            try:</pre>
                         </li>
 
                     </ol>
 
                     <ol start="55" class="context-line">
-                        <li onclick="toggle('pre140381518534720', 'post140381518534720')">
+                        <li onclick="toggle('pre140032950679168', 'post140032950679168')">
                             <pre>                response = get_response(request)</pre>
                             <span>…</span></li>
                     </ol>
 
-                    <ol start='56' class="post-context" id="post140381518534720">
+                    <ol start='56' class="post-context" id="post140032950679168">
 
-                        <li onclick="toggle('pre140381518534720', 'post140381518534720')">
+                        <li onclick="toggle('pre140032950679168', 'post140032950679168')">
                             <pre>            except Exception as exc:</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518534720', 'post140381518534720')">
+                        <li onclick="toggle('pre140032950679168', 'post140032950679168')">
                             <pre>                response = response_for_exception(request, exc)</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518534720', 'post140381518534720')">
+                        <li onclick="toggle('pre140032950679168', 'post140032950679168')">
                             <pre>            return response</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518534720', 'post140381518534720')">
+                        <li onclick="toggle('pre140032950679168', 'post140032950679168')">
                             <pre></pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518534720', 'post140381518534720')">
+                        <li onclick="toggle('pre140032950679168', 'post140032950679168')">
                             <pre>        return inner</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518534720', 'post140381518534720')">
+                        <li onclick="toggle('pre140032950679168', 'post140032950679168')">
                             <pre></pre>
                         </li>
 
@@ -476,7 +477,7 @@
                 <details>
                     <summary class="commands">Local vars</summary>
 
-                    <table class="vars" id="v140381518534720">
+                    <table class="vars" id="v140032950679168">
                         <thead>
                         <tr>
                             <th>Variable</th>
@@ -488,21 +489,21 @@
                         <tr>
                             <td>exc</td>
                             <td class="code">
-                                <pre>AssertionError(&#x27;.accepted_renderer not set on Response&#x27;)</pre>
+                                <pre>SMTPDataError(550, b&#x27;The recipient may contain a non-existent account, please check the recipient address.&#x27;)</pre>
                             </td>
                         </tr>
 
                         <tr>
                             <td>get_response</td>
                             <td class="code">
-                                <pre>&lt;bound method BaseHandler._get_response of &lt;django.core.handlers.wsgi.WSGIHandler object at 0x7fad2014f970&gt;&gt;</pre>
+                                <pre>&lt;bound method BaseHandler._get_response of &lt;django.core.handlers.wsgi.WSGIHandler object at 0x7f5bf7cfa970&gt;&gt;</pre>
                             </td>
                         </tr>
 
                         <tr>
                             <td>request</td>
                             <td class="code">
-                                <pre>&lt;WSGIRequest: POST &#x27;/users/_put/&#x27;&gt;</pre>
+                                <pre>&lt;WSGIRequest: POST &#x27;/api/v1/users/verification/&#x27;&gt;</pre>
                             </td>
                         </tr>
 
@@ -516,73 +517,73 @@
             <li class="frame django">
 
                 <code class="fname">/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/site-packages/django/core/handlers/base.py</code>,
-                line 220, in _get_response
+                line 197, in _get_response
 
 
-                <div class="context" id="c140381518536128">
+                <div class="context" id="c140032950679872">
 
-                    <ol start="213" class="pre-context" id="pre140381518536128">
+                    <ol start="190" class="pre-context" id="pre140032950679872">
 
-                        <li onclick="toggle('pre140381518536128', 'post140381518536128')">
-                            <pre>                self.check_response(</pre>
+                        <li onclick="toggle('pre140032950679872', 'post140032950679872')">
+                            <pre></pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518536128', 'post140381518536128')">
-                            <pre>                    response,</pre>
+                        <li onclick="toggle('pre140032950679872', 'post140032950679872')">
+                            <pre>        if response is None:</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518536128', 'post140381518536128')">
-                            <pre>                    middleware_method,</pre>
+                        <li onclick="toggle('pre140032950679872', 'post140032950679872')">
+                            <pre>            wrapped_callback = self.make_view_atomic(callback)</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518536128', 'post140381518536128')">
-                            <pre>                    name=&quot;%s.process_template_response&quot;</pre>
+                        <li onclick="toggle('pre140032950679872', 'post140032950679872')">
+                            <pre>            # If it is an asynchronous view, run it in a subthread.</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518536128', 'post140381518536128')">
-                            <pre>                    % (middleware_method.__self__.__class__.__name__,),</pre>
+                        <li onclick="toggle('pre140032950679872', 'post140032950679872')">
+                            <pre>            if asyncio.iscoroutinefunction(wrapped_callback):</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518536128', 'post140381518536128')">
-                            <pre>                )</pre>
+                        <li onclick="toggle('pre140032950679872', 'post140032950679872')">
+                            <pre>                wrapped_callback = async_to_sync(wrapped_callback)</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518536128', 'post140381518536128')">
+                        <li onclick="toggle('pre140032950679872', 'post140032950679872')">
                             <pre>            try:</pre>
                         </li>
 
                     </ol>
 
-                    <ol start="220" class="context-line">
-                        <li onclick="toggle('pre140381518536128', 'post140381518536128')">
-                            <pre>                response = response.render()</pre>
+                    <ol start="197" class="context-line">
+                        <li onclick="toggle('pre140032950679872', 'post140032950679872')">
+                            <pre>                response = wrapped_callback(request, *callback_args, **callback_kwargs)</pre>
                             <span>…</span></li>
                     </ol>
 
-                    <ol start='221' class="post-context" id="post140381518536128">
+                    <ol start='198' class="post-context" id="post140032950679872">
 
-                        <li onclick="toggle('pre140381518536128', 'post140381518536128')">
+                        <li onclick="toggle('pre140032950679872', 'post140032950679872')">
                             <pre>            except Exception as e:</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518536128', 'post140381518536128')">
+                        <li onclick="toggle('pre140032950679872', 'post140032950679872')">
                             <pre>                response = self.process_exception_by_middleware(e, request)</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518536128', 'post140381518536128')">
+                        <li onclick="toggle('pre140032950679872', 'post140032950679872')">
                             <pre>                if response is None:</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518536128', 'post140381518536128')">
+                        <li onclick="toggle('pre140032950679872', 'post140032950679872')">
                             <pre>                    raise</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518536128', 'post140381518536128')">
+                        <li onclick="toggle('pre140032950679872', 'post140032950679872')">
                             <pre></pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518536128', 'post140381518536128')">
-                            <pre>        return response</pre>
+                        <li onclick="toggle('pre140032950679872', 'post140032950679872')">
+                            <pre>        # Complain if the view returned None (a common error).</pre>
                         </li>
 
                     </ol>
@@ -593,7 +594,7 @@
                 <details>
                     <summary class="commands">Local vars</summary>
 
-                    <table class="vars" id="v140381518536128">
+                    <table class="vars" id="v140032950679872">
                         <thead>
                         <tr>
                             <th>Variable</th>
@@ -605,7 +606,7 @@
                         <tr>
                             <td>callback</td>
                             <td class="code">
-                                <pre>&lt;function put_user at 0x7fad1ea96940&gt;</pre>
+                                <pre>&lt;function get_verification_code at 0x7f5bf65db3a0&gt;</pre>
                             </td>
                         </tr>
 
@@ -633,7 +634,7 @@
                         <tr>
                             <td>request</td>
                             <td class="code">
-                                <pre>&lt;WSGIRequest: POST &#x27;/users/_put/&#x27;&gt;</pre>
+                                <pre>&lt;WSGIRequest: POST &#x27;/api/v1/users/verification/&#x27;&gt;</pre>
                             </td>
                         </tr>
 
@@ -647,14 +648,14 @@
                         <tr>
                             <td>self</td>
                             <td class="code">
-                                <pre>&lt;django.core.handlers.wsgi.WSGIHandler object at 0x7fad2014f970&gt;</pre>
+                                <pre>&lt;django.core.handlers.wsgi.WSGIHandler object at 0x7f5bf7cfa970&gt;</pre>
                             </td>
                         </tr>
 
                         <tr>
                             <td>wrapped_callback</td>
                             <td class="code">
-                                <pre>&lt;function put_user at 0x7fad1ea96940&gt;</pre>
+                                <pre>&lt;function get_verification_code at 0x7f5bf65db3a0&gt;</pre>
                             </td>
                         </tr>
 
@@ -667,74 +668,62 @@
 
             <li class="frame django">
 
-                <code class="fname">/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/site-packages/django/template/response.py</code>,
-                line 114, in render
+                <code class="fname">/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/site-packages/django/views/decorators/csrf.py</code>,
+                line 54, in wrapped_view
 
 
-                <div class="context" id="c140381518679040">
+                <div class="context" id="c140032950677952">
 
-                    <ol start="107" class="pre-context" id="pre140381518679040">
+                    <ol start="47" class="pre-context" id="pre140032950677952">
 
-                        <li onclick="toggle('pre140381518679040', 'post140381518679040')">
+                        <li onclick="toggle('pre140032950677952', 'post140032950677952')">
                             <pre></pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518679040', 'post140381518679040')">
-                            <pre>        If the content has already been rendered, this is a no-op.</pre>
-                        </li>
-
-                        <li onclick="toggle('pre140381518679040', 'post140381518679040')">
+                        <li onclick="toggle('pre140032950677952', 'post140032950677952')">
                             <pre></pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518679040', 'post140381518679040')">
-                            <pre>        Return the baked response instance.</pre>
+                        <li onclick="toggle('pre140032950677952', 'post140032950677952')">
+                            <pre>def csrf_exempt(view_func):</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518679040', 'post140381518679040')">
-                            <pre>        &quot;&quot;&quot;</pre>
+                        <li onclick="toggle('pre140032950677952', 'post140032950677952')">
+                            <pre>    &quot;&quot;&quot;Mark a view function as being exempt from the CSRF view protection.&quot;&quot;&quot;</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518679040', 'post140381518679040')">
-                            <pre>        retval = self</pre>
+                        <li onclick="toggle('pre140032950677952', 'post140032950677952')">
+                            <pre>    # view_func.csrf_exempt = True would also work, but decorators are nicer</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518679040', 'post140381518679040')">
-                            <pre>        if not self._is_rendered:</pre>
+                        <li onclick="toggle('pre140032950677952', 'post140032950677952')">
+                            <pre>    # if they don&#x27;t have side effects, so return a new function.</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950677952', 'post140032950677952')">
+                            <pre>    def wrapped_view(*args, **kwargs):</pre>
                         </li>
 
                     </ol>
 
-                    <ol start="114" class="context-line">
-                        <li onclick="toggle('pre140381518679040', 'post140381518679040')">
-                            <pre>            self.content = self.rendered_content</pre>
+                    <ol start="54" class="context-line">
+                        <li onclick="toggle('pre140032950677952', 'post140032950677952')">
+                            <pre>        return view_func(*args, **kwargs)</pre>
                             <span>…</span></li>
                     </ol>
 
-                    <ol start='115' class="post-context" id="post140381518679040">
+                    <ol start='55' class="post-context" id="post140032950677952">
 
-                        <li onclick="toggle('pre140381518679040', 'post140381518679040')">
-                            <pre>            for post_callback in self._post_render_callbacks:</pre>
-                        </li>
-
-                        <li onclick="toggle('pre140381518679040', 'post140381518679040')">
-                            <pre>                newretval = post_callback(retval)</pre>
-                        </li>
-
-                        <li onclick="toggle('pre140381518679040', 'post140381518679040')">
-                            <pre>                if newretval is not None:</pre>
-                        </li>
-
-                        <li onclick="toggle('pre140381518679040', 'post140381518679040')">
-                            <pre>                    retval = newretval</pre>
-                        </li>
-
-                        <li onclick="toggle('pre140381518679040', 'post140381518679040')">
-                            <pre>        return retval</pre>
-                        </li>
-
-                        <li onclick="toggle('pre140381518679040', 'post140381518679040')">
+                        <li onclick="toggle('pre140032950677952', 'post140032950677952')">
                             <pre></pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950677952', 'post140032950677952')">
+                            <pre>    wrapped_view.csrf_exempt = True</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950677952', 'post140032950677952')">
+                            <pre>    return wraps(view_func)(wrapped_view)</pre>
                         </li>
 
                     </ol>
@@ -745,7 +734,7 @@
                 <details>
                     <summary class="commands">Local vars</summary>
 
-                    <table class="vars" id="v140381518679040">
+                    <table class="vars" id="v140032950677952">
                         <thead>
                         <tr>
                             <th>Variable</th>
@@ -755,16 +744,23 @@
                         <tbody>
 
                         <tr>
-                            <td>retval</td>
+                            <td>args</td>
                             <td class="code">
-                                <pre>&lt;Response status_code=200, &quot;text/html; charset=utf-8&quot;&gt;</pre>
+                                <pre>(&lt;WSGIRequest: POST &#x27;/api/v1/users/verification/&#x27;&gt;,)</pre>
                             </td>
                         </tr>
 
                         <tr>
-                            <td>self</td>
+                            <td>kwargs</td>
                             <td class="code">
-                                <pre>&lt;Response status_code=200, &quot;text/html; charset=utf-8&quot;&gt;</pre>
+                                <pre>{}</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>view_func</td>
+                            <td class="code">
+                                <pre>&lt;function get_verification_code at 0x7f5bf6640790&gt;</pre>
                             </td>
                         </tr>
 
@@ -777,74 +773,74 @@
 
             <li class="frame user">
 
-                <code class="fname">/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/site-packages/rest_framework/response.py</code>,
-                line 55, in rendered_content
+                <code class="fname">/home/ubuntu/workspace/PaperFives/backend/users/views/register.py</code>, line
+                32, in get_verification_code
 
 
-                <div class="context" id="c140381518678016">
+                <div class="context" id="c140032950677824">
 
-                    <ol start="48" class="pre-context" id="pre140381518678016">
+                    <ol start="25" class="pre-context" id="pre140032950677824">
 
-                        <li onclick="toggle('pre140381518678016', 'post140381518678016')">
+                        <li onclick="toggle('pre140032950677824', 'post140032950677824')">
+                            <pre>        return BadRequestResponse(RequestMethodErrorDto(&#x27;POST&#x27;, request.method))</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950677824', 'post140032950677824')">
+                            <pre>    email = request.POST.get(&#x27;email&#x27;, None)</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950677824', 'post140032950677824')">
+                            <pre>    if not email:</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950677824', 'post140032950677824')">
+                            <pre>        return BadRequestResponse(BadRequestDto(&quot;missing &#x27;email&#x27; field&quot;))</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950677824', 'post140032950677824')">
                             <pre></pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518678016', 'post140381518678016')">
-                            <pre>    @property</pre>
+                        <li onclick="toggle('pre140032950677824', 'post140032950677824')">
+                            <pre>    code = generate_code()</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518678016', 'post140381518678016')">
-                            <pre>    def rendered_content(self):</pre>
-                        </li>
-
-                        <li onclick="toggle('pre140381518678016', 'post140381518678016')">
-                            <pre>        renderer = getattr(self, &#x27;accepted_renderer&#x27;, None)</pre>
-                        </li>
-
-                        <li onclick="toggle('pre140381518678016', 'post140381518678016')">
-                            <pre>        accepted_media_type = getattr(self, &#x27;accepted_media_type&#x27;, None)</pre>
-                        </li>
-
-                        <li onclick="toggle('pre140381518678016', 'post140381518678016')">
-                            <pre>        context = getattr(self, &#x27;renderer_context&#x27;, None)</pre>
-                        </li>
-
-                        <li onclick="toggle('pre140381518678016', 'post140381518678016')">
-                            <pre></pre>
+                        <li onclick="toggle('pre140032950677824', 'post140032950677824')">
+                            <pre>    try:</pre>
                         </li>
 
                     </ol>
 
-                    <ol start="55" class="context-line">
-                        <li onclick="toggle('pre140381518678016', 'post140381518678016')">
-                            <pre>        assert renderer, &quot;.accepted_renderer not set on Response&quot;</pre>
+                    <ol start="32" class="context-line">
+                        <li onclick="toggle('pre140032950677824', 'post140032950677824')">
+                            <pre>        send_code_email(email, code)</pre>
                             <span>…</span></li>
                     </ol>
 
-                    <ol start='56' class="post-context" id="post140381518678016">
+                    <ol start='33' class="post-context" id="post140032950677824">
 
-                        <li onclick="toggle('pre140381518678016', 'post140381518678016')">
-                            <pre>        assert accepted_media_type, &quot;.accepted_media_type not set on Response&quot;</pre>
+                        <li onclick="toggle('pre140032950677824', 'post140032950677824')">
+                            <pre>    except EmailException as e:</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518678016', 'post140381518678016')">
-                            <pre>        assert context is not None, &quot;.renderer_context not set on Response&quot;</pre>
+                        <li onclick="toggle('pre140032950677824', 'post140032950677824')">
+                            <pre>        return BaseResponse(GeneralErrorDto(ERROR_CODE[&#x27;SEND_EMAIL&#x27;], &quot;Failed to send email&quot;))</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518678016', 'post140381518678016')">
-                            <pre>        context[&#x27;response&#x27;] = self</pre>
+                        <li onclick="toggle('pre140032950677824', 'post140032950677824')">
+                            <pre>    request.session[&#x27;ver&#x27;] = { &#x27;email&#x27;: email, &#x27;code&#x27;: code }</pre>
                         </li>
 
-                        <li onclick="toggle('pre140381518678016', 'post140381518678016')">
+                        <li onclick="toggle('pre140032950677824', 'post140032950677824')">
+                            <pre>    request.session.set_expiry(60 * 10) # expire after 10 minutes</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950677824', 'post140032950677824')">
+                            <pre>    return BaseResponse(GoodDto(&quot;verification code sent&quot;))</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950677824', 'post140032950677824')">
                             <pre></pre>
-                        </li>
-
-                        <li onclick="toggle('pre140381518678016', 'post140381518678016')">
-                            <pre>        media_type = renderer.media_type</pre>
-                        </li>
-
-                        <li onclick="toggle('pre140381518678016', 'post140381518678016')">
-                            <pre>        charset = renderer.charset</pre>
                         </li>
 
                     </ol>
@@ -855,7 +851,7 @@
                 <details>
                     <summary class="commands">Local vars</summary>
 
-                    <table class="vars" id="v140381518678016">
+                    <table class="vars" id="v140032950677824">
                         <thead>
                         <tr>
                             <th>Variable</th>
@@ -865,30 +861,756 @@
                         <tbody>
 
                         <tr>
-                            <td>accepted_media_type</td>
+                            <td>code</td>
                             <td class="code">
-                                <pre>None</pre>
+                                <pre>&#x27;JIedyT&#x27;</pre>
                             </td>
                         </tr>
 
                         <tr>
-                            <td>context</td>
+                            <td>email</td>
                             <td class="code">
-                                <pre>None</pre>
+                                <pre>&#x27;18935085291@qq.com&#x27;</pre>
                             </td>
                         </tr>
 
                         <tr>
-                            <td>renderer</td>
+                            <td>request</td>
                             <td class="code">
-                                <pre>None</pre>
+                                <pre>&lt;WSGIRequest: POST &#x27;/api/v1/users/verification/&#x27;&gt;</pre>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </details>
+
+            </li>
+
+
+            <li class="frame user">
+
+                <code class="fname">/home/ubuntu/workspace/PaperFives/backend/shared/utils/email_util.py</code>,
+                line 45, in send_code_email
+
+
+                <div class="context" id="c140032950680064">
+
+                    <ol start="38" class="pre-context" id="pre140032950680064">
+
+                        <li onclick="toggle('pre140032950680064', 'post140032950680064')">
+                            <pre></pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680064', 'post140032950680064')">
+                            <pre>    template = loader.get_template(&#x27;email.html&#x27;)</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680064', 'post140032950680064')">
+                            <pre>    content = template.render({&#x27;code&#x27;: code})</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680064', 'post140032950680064')">
+                            <pre></pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680064', 'post140032950680064')">
+                            <pre>    msg = EmailMessage(title, content, EMAIL_FROM, [email])</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680064', 'post140032950680064')">
+                            <pre>    msg.content_subtype = &#x27;html&#x27;</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680064', 'post140032950680064')">
+                            <pre></pre>
+                        </li>
+
+                    </ol>
+
+                    <ol start="45" class="context-line">
+                        <li onclick="toggle('pre140032950680064', 'post140032950680064')">
+                            <pre>    send_status = msg.send()</pre>
+                            <span>…</span></li>
+                    </ol>
+
+                    <ol start='46' class="post-context" id="post140032950680064">
+
+                        <li onclick="toggle('pre140032950680064', 'post140032950680064')">
+                            <pre>    if not send_status:</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680064', 'post140032950680064')">
+                            <pre>        raise EmailException(send_status[&#x27;errmsg&#x27;])</pre>
+                        </li>
+
+                    </ol>
+
+                </div>
+
+
+                <details>
+                    <summary class="commands">Local vars</summary>
+
+                    <table class="vars" id="v140032950680064">
+                        <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr>
+                            <td>code</td>
+                            <td class="code">
+                                <pre>&#x27;JIedyT&#x27;</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>content</td>
+                            <td class="code">
+										<pre>(&#x27;&lt;!DOCTYPE html&gt;\n&#x27;
+ &#x27;&lt;html lang=&quot;en&quot;&gt;\n&#x27;
+ &#x27;&lt;head&gt;\n&#x27;
+ &#x27;    &lt;meta charset=&quot;UTF-8&quot;&gt;\n&#x27;
+ &#x27;    &lt;title&gt;Verification&lt;/title&gt;\n&#x27;
+ &#x27;    &lt;style&gt;\n&#x27;
+ &#x27;        body {\n&#x27;
+ &#x27;            font-family: &quot;Roboto&quot;, &quot;Lucida Grande&quot;, &quot;DejaVu Sans&quot;, &#x27;
+ &#x27;&quot;Bitstream Vera Sans&quot;, Verdana, Arial, sans-serif;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;        .wrapper {\n&#x27;
+ &#x27;            text-align: center;\n&#x27;
+ &#x27;            margin: 20px;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;        .title {\n&#x27;
+ &#x27;            text-align: center;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;        .code {\n&#x27;
+ &#x27;            color: darkviolet;\n&#x27;
+ &#x27;            margin: 20px;\n&#x27;
+ &#x27;            font-size: 3em;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;        .footer {\n&#x27;
+ &#x27;            text-align: center;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;    &lt;/style&gt;\n&#x27;
+ &#x27;&lt;/head&gt;\n&#x27;
+ &#x27;&lt;body&gt;\n&#x27;
+ &#x27;    &lt;h1 class=&quot;title&quot;&gt;Thanks for your registration!&lt;/h1&gt;\n&#x27;
+ &#x27;    &lt;hr/&gt;\n&#x27;
+ &#x27;    &lt;div class=&quot;wrapper&quot;&gt;\n&#x27;
+ &#x27;        &lt;h2&gt;Verification Code&lt;/h2&gt;\n&#x27;
+ &#x27;        &lt;div class=&quot;code&quot;&gt;JIedyT&lt;/div&gt;\n&#x27;
+ &#x27;        &lt;span&gt;Valid in 10 minutes&lt;/span&gt;\n&#x27;
+ &#x27;    &lt;/div&gt;\n&#x27;
+ &#x27;    &lt;hr/&gt;\n&#x27;
+ &#x27;    &lt;div class=&quot;footer&quot;&gt;\n&#x27;
+ &#x27;        &lt;p&gt;PaperFives Official Email&lt;/p&gt;\n&#x27;
+ &#x27;    &lt;/div&gt;\n&#x27;
+ &#x27;&lt;/body&gt;\n&#x27;
+ &#x27;&lt;/html&gt;&#x27;)</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>email</td>
+                            <td class="code">
+                                <pre>&#x27;18935085291@qq.com&#x27;</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>msg</td>
+                            <td class="code">
+                                <pre>&lt;django.core.mail.message.EmailMessage object at 0x7f5bf6480d00&gt;</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>template</td>
+                            <td class="code">
+                                <pre>&lt;django.template.backends.django.Template object at 0x7f5bf64805b0&gt;</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>title</td>
+                            <td class="code">
+                                <pre>&#x27;PaperFives Verification Email&#x27;</pre>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </details>
+
+            </li>
+
+
+            <li class="frame django">
+
+                <code class="fname">/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/site-packages/django/core/mail/message.py</code>,
+                line 298, in send
+
+
+                <div class="context" id="c140032950680512">
+
+                    <ol start="291" class="pre-context" id="pre140032950680512">
+
+                        <li onclick="toggle('pre140032950680512', 'post140032950680512')">
+                            <pre></pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680512', 'post140032950680512')">
+                            <pre>    def send(self, fail_silently=False):</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680512', 'post140032950680512')">
+                            <pre>        &quot;&quot;&quot;Send the email message.&quot;&quot;&quot;</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680512', 'post140032950680512')">
+                            <pre>        if not self.recipients():</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680512', 'post140032950680512')">
+                            <pre>            # Don&#x27;t bother creating the network connection if there&#x27;s nobody to</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680512', 'post140032950680512')">
+                            <pre>            # send to.</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680512', 'post140032950680512')">
+                            <pre>            return 0</pre>
+                        </li>
+
+                    </ol>
+
+                    <ol start="298" class="context-line">
+                        <li onclick="toggle('pre140032950680512', 'post140032950680512')">
+                            <pre>        return self.get_connection(fail_silently).send_messages([self])</pre>
+                            <span>…</span></li>
+                    </ol>
+
+                    <ol start='299' class="post-context" id="post140032950680512">
+
+                        <li onclick="toggle('pre140032950680512', 'post140032950680512')">
+                            <pre></pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680512', 'post140032950680512')">
+                            <pre>    def attach(self, filename=None, content=None, mimetype=None):</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680512', 'post140032950680512')">
+                            <pre>        &quot;&quot;&quot;</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680512', 'post140032950680512')">
+                            <pre>        Attach a file with the given filename and content. The filename can</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680512', 'post140032950680512')">
+                            <pre>        be omitted and the mimetype is guessed, if not provided.</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032950680512', 'post140032950680512')">
+                            <pre></pre>
+                        </li>
+
+                    </ol>
+
+                </div>
+
+
+                <details>
+                    <summary class="commands">Local vars</summary>
+
+                    <table class="vars" id="v140032950680512">
+                        <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr>
+                            <td>fail_silently</td>
+                            <td class="code">
+                                <pre>False</pre>
                             </td>
                         </tr>
 
                         <tr>
                             <td>self</td>
                             <td class="code">
-                                <pre>&lt;Response status_code=200, &quot;text/html; charset=utf-8&quot;&gt;</pre>
+                                <pre>&lt;django.core.mail.message.EmailMessage object at 0x7f5bf6480d00&gt;</pre>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </details>
+
+            </li>
+
+
+            <li class="frame django">
+
+                <code class="fname">/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/site-packages/django/core/mail/backends/smtp.py</code>,
+                line 131, in send_messages
+
+
+                <div class="context" id="c140032951238016">
+
+                    <ol start="124" class="pre-context" id="pre140032951238016">
+
+                        <li onclick="toggle('pre140032951238016', 'post140032951238016')">
+                            <pre>            new_conn_created = self.open()</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951238016', 'post140032951238016')">
+                            <pre>            if not self.connection or new_conn_created is None:</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951238016', 'post140032951238016')">
+                            <pre>                # We failed silently on open().</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951238016', 'post140032951238016')">
+                            <pre>                # Trying to send would be pointless.</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951238016', 'post140032951238016')">
+                            <pre>                return 0</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951238016', 'post140032951238016')">
+                            <pre>            num_sent = 0</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951238016', 'post140032951238016')">
+                            <pre>            for message in email_messages:</pre>
+                        </li>
+
+                    </ol>
+
+                    <ol start="131" class="context-line">
+                        <li onclick="toggle('pre140032951238016', 'post140032951238016')">
+                            <pre>                sent = self._send(message)</pre>
+                            <span>…</span></li>
+                    </ol>
+
+                    <ol start='132' class="post-context" id="post140032951238016">
+
+                        <li onclick="toggle('pre140032951238016', 'post140032951238016')">
+                            <pre>                if sent:</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951238016', 'post140032951238016')">
+                            <pre>                    num_sent += 1</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951238016', 'post140032951238016')">
+                            <pre>            if new_conn_created:</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951238016', 'post140032951238016')">
+                            <pre>                self.close()</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951238016', 'post140032951238016')">
+                            <pre>        return num_sent</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951238016', 'post140032951238016')">
+                            <pre></pre>
+                        </li>
+
+                    </ol>
+
+                </div>
+
+
+                <details>
+                    <summary class="commands">Local vars</summary>
+
+                    <table class="vars" id="v140032951238016">
+                        <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr>
+                            <td>email_messages</td>
+                            <td class="code">
+                                <pre>[&lt;django.core.mail.message.EmailMessage object at 0x7f5bf6480d00&gt;]</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>message</td>
+                            <td class="code">
+                                <pre>&lt;django.core.mail.message.EmailMessage object at 0x7f5bf6480d00&gt;</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>new_conn_created</td>
+                            <td class="code">
+                                <pre>True</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>num_sent</td>
+                            <td class="code">
+                                <pre>0</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>self</td>
+                            <td class="code">
+                                <pre>&lt;django.core.mail.backends.smtp.EmailBackend object at 0x7f5bf64803a0&gt;</pre>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </details>
+
+            </li>
+
+
+            <li class="frame django">
+
+                <code class="fname">/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/site-packages/django/core/mail/backends/smtp.py</code>,
+                line 149, in _send
+
+
+                <div class="context" id="c140032952911424">
+
+                    <ol start="142" class="pre-context" id="pre140032952911424">
+
+                        <li onclick="toggle('pre140032952911424', 'post140032952911424')">
+                            <pre>        encoding = email_message.encoding or settings.DEFAULT_CHARSET</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032952911424', 'post140032952911424')">
+                            <pre>        from_email = sanitize_address(email_message.from_email, encoding)</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032952911424', 'post140032952911424')">
+                            <pre>        recipients = [</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032952911424', 'post140032952911424')">
+                            <pre>            sanitize_address(addr, encoding) for addr in email_message.recipients()</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032952911424', 'post140032952911424')">
+                            <pre>        ]</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032952911424', 'post140032952911424')">
+                            <pre>        message = email_message.message()</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032952911424', 'post140032952911424')">
+                            <pre>        try:</pre>
+                        </li>
+
+                    </ol>
+
+                    <ol start="149" class="context-line">
+                        <li onclick="toggle('pre140032952911424', 'post140032952911424')">
+                            <pre>            self.connection.sendmail(</pre>
+                            <span>…</span></li>
+                    </ol>
+
+                    <ol start='150' class="post-context" id="post140032952911424">
+
+                        <li onclick="toggle('pre140032952911424', 'post140032952911424')">
+                            <pre>                from_email, recipients, message.as_bytes(linesep=&quot;\r\n&quot;)</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032952911424', 'post140032952911424')">
+                            <pre>            )</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032952911424', 'post140032952911424')">
+                            <pre>        except smtplib.SMTPException:</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032952911424', 'post140032952911424')">
+                            <pre>            if not self.fail_silently:</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032952911424', 'post140032952911424')">
+                            <pre>                raise</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032952911424', 'post140032952911424')">
+                            <pre>            return False</pre>
+                        </li>
+
+                    </ol>
+
+                </div>
+
+
+                <details>
+                    <summary class="commands">Local vars</summary>
+
+                    <table class="vars" id="v140032952911424">
+                        <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr>
+                            <td>email_message</td>
+                            <td class="code">
+                                <pre>&lt;django.core.mail.message.EmailMessage object at 0x7f5bf6480d00&gt;</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>encoding</td>
+                            <td class="code">
+                                <pre>&#x27;utf-8&#x27;</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>from_email</td>
+                            <td class="code">
+                                <pre>&#x27;tony-turmoil@qq.com&#x27;</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>message</td>
+                            <td class="code">
+                                <pre>&lt;django.core.mail.message.SafeMIMEText object at 0x7f5bf7128520&gt;</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>recipients</td>
+                            <td class="code">
+                                <pre>[&#x27;18935085291@qq.com&#x27;]</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>self</td>
+                            <td class="code">
+                                <pre>&lt;django.core.mail.backends.smtp.EmailBackend object at 0x7f5bf64803a0&gt;</pre>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </details>
+
+            </li>
+
+
+            <li class="frame user">
+
+                <code class="fname">/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/smtplib.py</code>, line
+                906, in sendmail
+
+
+                <div class="context" id="c140032951010880">
+
+                    <ol start="899" class="pre-context" id="pre140032951010880">
+
+                        <li onclick="toggle('pre140032951010880', 'post140032951010880')">
+                            <pre>            raise SMTPRecipientsRefused(senderrs)</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951010880', 'post140032951010880')">
+                            <pre>        (code, resp) = self.data(msg)</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951010880', 'post140032951010880')">
+                            <pre>        if code != 250:</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951010880', 'post140032951010880')">
+                            <pre>            if code == 421:</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951010880', 'post140032951010880')">
+                            <pre>                self.close()</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951010880', 'post140032951010880')">
+                            <pre>            else:</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951010880', 'post140032951010880')">
+                            <pre>                self._rset()</pre>
+                        </li>
+
+                    </ol>
+
+                    <ol start="906" class="context-line">
+                        <li onclick="toggle('pre140032951010880', 'post140032951010880')">
+                            <pre>            raise SMTPDataError(code, resp)</pre>
+                            <span>…</span></li>
+                    </ol>
+
+                    <ol start='907' class="post-context" id="post140032951010880">
+
+                        <li onclick="toggle('pre140032951010880', 'post140032951010880')">
+                            <pre>        #if we got here then somebody got our mail</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951010880', 'post140032951010880')">
+                            <pre>        return senderrs</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951010880', 'post140032951010880')">
+                            <pre></pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951010880', 'post140032951010880')">
+                            <pre>    def send_message(self, msg, from_addr=None, to_addrs=None,</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951010880', 'post140032951010880')">
+                            <pre>                     mail_options=(), rcpt_options=()):</pre>
+                        </li>
+
+                        <li onclick="toggle('pre140032951010880', 'post140032951010880')">
+                            <pre>        &quot;&quot;&quot;Converts message to a bytestring and passes it to sendmail.</pre>
+                        </li>
+
+                    </ol>
+
+                </div>
+
+
+                <details>
+                    <summary class="commands">Local vars</summary>
+
+                    <table class="vars" id="v140032951010880">
+                        <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr>
+                            <td>code</td>
+                            <td class="code">
+                                <pre>550</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>each</td>
+                            <td class="code">
+                                <pre>&#x27;18935085291@qq.com&#x27;</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>esmtp_opts</td>
+                            <td class="code">
+                                <pre>[&#x27;size=1262&#x27;]</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>from_addr</td>
+                            <td class="code">
+                                <pre>&#x27;tony-turmoil@qq.com&#x27;</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>mail_options</td>
+                            <td class="code">
+                                <pre>()</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>msg</td>
+                            <td class="code">
+										<pre>(b&#x27;Content-Type: text/html; charset=&quot;utf-8&quot;\r\nMIME-Version: 1.0\r\nContent-Tra&#x27;
+ b&#x27;nsfer-Encoding: 7bit\r\nSubject: PaperFives Verification Email\r\nFrom: tony&#x27;
+ b&#x27;-turmoil@qq.com\r\nTo: 18935085291@qq.com\r\nDate: Thu, 18 May 2023 04:37:32&#x27;
+ b&#x27; -0000\r\nMessage-ID: &lt;168438465269.329019.1147169196890736793@localhost.l&#x27;
+ b&#x27;ocaldomain&gt;\r\n\r\n&lt;!DOCTYPE html&gt;\r\n&lt;html lang=&quot;en&quot;&gt;\r\n&lt;head&gt;\r\n    &lt;m&#x27;
+ b&#x27;eta charset=&quot;UTF-8&quot;&gt;\r\n    &lt;title&gt;Verification&lt;/title&gt;\r\n    &lt;style&gt;\r\n&#x27;
+ b&#x27;        body {\r\n            font-family: &quot;Roboto&quot;, &quot;Lucida Grande&quot;, &quot;Dej&#x27;
+ b&#x27;aVu Sans&quot;, &quot;Bitstream Vera Sans&quot;, Verdana, Arial, sans-serif;\r\n        }&#x27;
+ b&#x27;\r\n        .wrapper {\r\n            text-align: center;\r\n            m&#x27;
+ b&#x27;argin: 20px;\r\n        }\r\n        .title {\r\n            text-align: c&#x27;
+ b&#x27;enter;\r\n        }\r\n        .code {\r\n            color: darkviolet;\r\n&#x27;
+ b&#x27;            margin: 20px;\r\n            font-size: 3em;\r\n        }\r\n &#x27;
+ b&#x27;       .footer {\r\n            text-align: center;\r\n        }\r\n    &lt;/&#x27;
+ b&#x27;style&gt;\r\n&lt;/head&gt;\r\n&lt;body&gt;\r\n    &lt;h1 class=&quot;title&quot;&gt;Thanks for your regis&#x27;
+ b&#x27;tration!&lt;/h1&gt;\r\n    &lt;hr/&gt;\r\n    &lt;div class=&quot;wrapper&quot;&gt;\r\n        &lt;h2&gt;Ver&#x27;
+ b&#x27;ification Code&lt;/h2&gt;\r\n        &lt;div class=&quot;code&quot;&gt;JIedyT&lt;/div&gt;\r\n        &lt;sp&#x27;
+ b&#x27;an&gt;Valid in 10 minutes&lt;/span&gt;\r\n    &lt;/div&gt;\r\n    &lt;hr/&gt;\r\n    &lt;div class&#x27;
+ b&#x27;=&quot;footer&quot;&gt;\r\n        &lt;p&gt;PaperFives Official Email&lt;/p&gt;\r\n    &lt;/div&gt;\r\n&lt;/&#x27;
+ b&#x27;body&gt;\r\n&lt;/html&gt;&#x27;)</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>rcpt_options</td>
+                            <td class="code">
+                                <pre>()</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>resp</td>
+                            <td class="code">
+										<pre>(b&#x27;The recipient may contain a non-existent account, please check the recipient&#x27;
+ b&#x27; address.&#x27;)</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>self</td>
+                            <td class="code">
+                                <pre>&lt;smtplib.SMTP object at 0x7f5bf64754f0&gt;</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>senderrs</td>
+                            <td class="code">
+                                <pre>{}</pre>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>to_addrs</td>
+                            <td class="code">
+                                <pre>[&#x27;18935085291@qq.com&#x27;]</pre>
                             </td>
                         </tr>
 
@@ -905,7 +1627,7 @@
         <div id="pastebinTraceback" class="pastebin">
             <input type="hidden" name="language" value="PythonConsole">
             <input type="hidden" name="title"
-                   value="AssertionError at /users/_put/">
+                   value="SMTPDataError at /api/v1/users/verification/">
             <input type="hidden" name="source" value="Django Dpaste Agent">
             <input type="hidden" name="poster" value="Django">
             <textarea name="content" id="traceback_area" cols="140" rows="25">
@@ -913,7 +1635,7 @@ Environment:
 
 
 Request Method: POST
-Request URL: http://81.70.161.76:5000/users/_put/
+Request URL: http://81.70.161.76:5000/api/v1/users/verification/
 
 Django Version: 4.1
 Python Version: 3.8.16
@@ -944,15 +1666,25 @@ Installed Middleware:
 Traceback (most recent call last):
   File "/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/site-packages/django/core/handlers/exception.py", line 55, in inner
     response = get_response(request)
-  File "/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/site-packages/django/core/handlers/base.py", line 220, in _get_response
-    response = response.render()
-  File "/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/site-packages/django/template/response.py", line 114, in render
-    self.content = self.rendered_content
-  File "/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/site-packages/rest_framework/response.py", line 55, in rendered_content
-    assert renderer, &quot;.accepted_renderer not set on Response&quot;
+  File "/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/home/ubuntu/workspace/PaperFives/backend/users/views/register.py", line 32, in get_verification_code
+    send_code_email(email, code)
+  File "/home/ubuntu/workspace/PaperFives/backend/shared/utils/email_util.py", line 45, in send_code_email
+    send_status = msg.send()
+  File "/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/site-packages/django/core/mail/message.py", line 298, in send
+    return self.get_connection(fail_silently).send_messages([self])
+  File "/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/site-packages/django/core/mail/backends/smtp.py", line 131, in send_messages
+    sent = self._send(message)
+  File "/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/site-packages/django/core/mail/backends/smtp.py", line 149, in _send
+    self.connection.sendmail(
+  File "/home/ubuntu/opt/miniconda3/envs/paper/lib/python3.8/smtplib.py", line 906, in sendmail
+    raise SMTPDataError(code, resp)
 
-Exception Type: AssertionError at /users/_put/
-Exception Value: .accepted_renderer not set on Response
+Exception Type: SMTPDataError at /api/v1/users/verification/
+Exception Value: (550, b&#x27;The recipient may contain a non-existent account, please check the recipient address.&#x27;)
 </textarea>
             <br><br>
             <input type="submit" value="Share this traceback on a public website">
@@ -987,9 +1719,9 @@ Exception Value: .accepted_renderer not set on Response
         <tbody>
 
         <tr>
-            <td>name</td>
+            <td>email</td>
             <td class="code">
-                <pre>&#x27;hello&#x27;</pre>
+                <pre>&#x27;18935085291@qq.com&#x27;</pre>
             </td>
         </tr>
 
@@ -1061,7 +1793,7 @@ Exception Value: .accepted_renderer not set on Response
         <tr>
             <td>CONTENT_LENGTH</td>
             <td class="code">
-                <pre>&#x27;164&#x27;</pre>
+                <pre>&#x27;178&#x27;</pre>
             </td>
         </tr>
 
@@ -1069,7 +1801,7 @@ Exception Value: .accepted_renderer not set on Response
             <td>CONTENT_TYPE</td>
             <td class="code">
 						<pre>(&#x27;multipart/form-data; &#x27;
- &#x27;boundary=--------------------------988775271765591795543353&#x27;)</pre>
+ &#x27;boundary=--------------------------078916420362796249609104&#x27;)</pre>
             </td>
         </tr>
 
@@ -1223,7 +1955,7 @@ Exception Value: .accepted_renderer not set on Response
         <tr>
             <td>PATH_INFO</td>
             <td class="code">
-                <pre>&#x27;/users/_put/&#x27;</pre>
+                <pre>&#x27;/api/v1/users/verification/&#x27;</pre>
             </td>
         </tr>
 
@@ -1328,21 +2060,21 @@ Exception Value: .accepted_renderer not set on Response
         <tr>
             <td>SSH_CLIENT</td>
             <td class="code">
-                <pre>&#x27;219.239.227.176 57807 22&#x27;</pre>
+                <pre>&#x27;219.239.227.176 55105 22&#x27;</pre>
             </td>
         </tr>
 
         <tr>
             <td>SSH_CONNECTION</td>
             <td class="code">
-                <pre>&#x27;219.239.227.176 57807 10.0.8.8 22&#x27;</pre>
+                <pre>&#x27;219.239.227.176 55105 10.0.8.8 22&#x27;</pre>
             </td>
         </tr>
 
         <tr>
             <td>SSH_TTY</td>
             <td class="code">
-                <pre>&#x27;/dev/pts/0&#x27;</pre>
+                <pre>&#x27;/dev/pts/1&#x27;</pre>
             </td>
         </tr>
 
@@ -1391,7 +2123,7 @@ Exception Value: .accepted_renderer not set on Response
         <tr>
             <td>XDG_SESSION_ID</td>
             <td class="code">
-                <pre>&#x27;272&#x27;</pre>
+                <pre>&#x27;1895&#x27;</pre>
             </td>
         </tr>
 
@@ -1440,7 +2172,7 @@ Exception Value: .accepted_renderer not set on Response
         <tr>
             <td>wsgi.input</td>
             <td class="code">
-                <pre>&lt;django.core.handlers.wsgi.LimitedStream object at 0x7fad1e908580&gt;</pre>
+                <pre>&lt;django.core.handlers.wsgi.LimitedStream object at 0x7f5bf642e1c0&gt;</pre>
             </td>
         </tr>
 
@@ -1582,10 +2314,12 @@ Exception Value: .accepted_renderer not set on Response
             <td>CONFIG</td>
             <td class="code">
 						<pre>{&#x27;DEFAULT_AVATAR_PATH&#x27;: &#x27;/static/avatar/default.png&#x27;,
- &#x27;ERROR_NO&#x27;: {&#x27;BAD_REQUEST&#x27;: 10002,
-              &#x27;CREATE_USER&#x27;: 11001,
-              &#x27;SUCCESS&#x27;: 0,
-              &#x27;WRONG_REQUEST_METHOD&#x27;: 10001},
+ &#x27;ERROR_CODE&#x27;: {&#x27;BAD_REQUEST&#x27;: 10002,
+                &#x27;CREATE_USER&#x27;: 11002,
+                &#x27;NOT_VERIFIED&#x27;: 11002,
+                &#x27;SEND_EMAIL&#x27;: 11001,
+                &#x27;SUCCESS&#x27;: 0,
+                &#x27;WRONG_REQUEST_METHOD&#x27;: 10001},
  &#x27;INVALID_NAME_LIST&#x27;: [&#x27;default&#x27;, &#x27;admin&#x27;, None, &#x27;none&#x27;]}</pre>
             </td>
         </tr>
@@ -1856,9 +2590,28 @@ Exception Value: .accepted_renderer not set on Response
         </tr>
 
         <tr>
+            <td>EMAIL_CONFIG</td>
+            <td class="code">
+						<pre>{&#x27;EMAIL_FROM&#x27;: &#x27;tony-turmoil@qq.com&#x27;,
+ &#x27;EMAIL_HOST&#x27;: &#x27;smtp.qq.com&#x27;,
+ &#x27;EMAIL_HOST_PASSWORD&#x27;: &#x27;********************&#x27;,
+ &#x27;EMAIL_HOST_USER&#x27;: &#x27;tony-turmoil@qq.com&#x27;,
+ &#x27;EMAIL_PORT&#x27;: 25,
+ &#x27;EMAIL_USE_TLS&#x27;: False}</pre>
+            </td>
+        </tr>
+
+        <tr>
+            <td>EMAIL_FROM</td>
+            <td class="code">
+                <pre>&#x27;tony-turmoil@qq.com&#x27;</pre>
+            </td>
+        </tr>
+
+        <tr>
             <td>EMAIL_HOST</td>
             <td class="code">
-                <pre>&#x27;localhost&#x27;</pre>
+                <pre>&#x27;smtp.qq.com&#x27;</pre>
             </td>
         </tr>
 
@@ -1872,7 +2625,7 @@ Exception Value: .accepted_renderer not set on Response
         <tr>
             <td>EMAIL_HOST_USER</td>
             <td class="code">
-                <pre>&#x27;&#x27;</pre>
+                <pre>&#x27;tony-turmoil@qq.com&#x27;</pre>
             </td>
         </tr>
 
@@ -1933,10 +2686,12 @@ Exception Value: .accepted_renderer not set on Response
         </tr>
 
         <tr>
-            <td>ERRNO</td>
+            <td>ERROR_CODE</td>
             <td class="code">
 						<pre>{&#x27;BAD_REQUEST&#x27;: 10002,
- &#x27;CREATE_USER&#x27;: 11001,
+ &#x27;CREATE_USER&#x27;: 11002,
+ &#x27;NOT_VERIFIED&#x27;: 11002,
+ &#x27;SEND_EMAIL&#x27;: 11001,
  &#x27;SUCCESS&#x27;: 0,
  &#x27;WRONG_REQUEST_METHOD&#x27;: 10001}</pre>
             </td>

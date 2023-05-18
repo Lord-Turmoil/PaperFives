@@ -4,6 +4,3 @@
 # @Author  : Tony Skywalker
 # @File    : login.py
 #
-
-def register(request):
-    pass

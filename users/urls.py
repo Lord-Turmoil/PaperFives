@@ -6,11 +6,13 @@
 #
 
 from django.urls import path
-from .views import test
+from .views import test, register
 
 urlpatterns = [
     # path('login/', )
     path('_get_all/', test.get_user_all),
     path('_get/', test.get_user_by_id),
-    path('_put/', test.put_user)
+    path('_put/', test.put_user),
+    path('verification/', register.get_verification_code),
+    path('register/', register.register)
 ]

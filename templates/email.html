@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verification</title>
+    <style>
+        body {
+            font-family: "Roboto", "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif;
+        }
+        .wrapper {
+            text-align: center;
+            margin: 20px;
+        }
+        .title {
+            text-align: center;
+        }
+        .code {
+            color: darkviolet;
+            margin: 20px;
+            font-size: 3em;
+        }
+        .footer {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">Thanks for your registration!</h1>
+    <hr/>
+    <div class="wrapper">
+        <h2>Verification Code</h2>
+        <div class="code">{{ code }}</div>
+        <span>Valid in 10 minutes</span>
+    </div>
+    <hr/>
+    <div class="footer">
+        <p>PaperFives Official Email</p>
+    </div>
+</body>
+</html>
