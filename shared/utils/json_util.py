@@ -16,6 +16,8 @@ import datetime
 import json
 from json import JSONEncoder
 
+from shared.exceptions.json import JsonSerializeException, JsonDeserializeException
+
 
 class AdvancedEncoder(JSONEncoder):
     def default(self, obj):
@@ -27,8 +29,18 @@ class AdvancedEncoder(JSONEncoder):
 
 
 def serialize(obj) -> str:
-    return json.dumps(obj, cls=AdvancedEncoder)
+    try:
+        return json.dumps(obj, cls=AdvancedEncoder)
+    except Exception:
+        raise JsonSerializeException("Failed to serialize", obj)
 
 
-def deserialize(json_str: str):
-    return json.loads(json_str)
+def deserialize(json_str: str, cls=None):
+    obj = None
+    try:
+        obj = json.loads(json_str)
+    except Exception:
+        raise JsonDeserializeException("Failed to deserialize", json_str)
+    if cls is not None and not isinstance(obj, cls):
+        raise JsonDeserializeException(f"Type mismatch, should be {cls.__name__}", json_str)
+    return obj
