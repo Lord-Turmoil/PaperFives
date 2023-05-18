@@ -15,3 +15,9 @@ class TokenTestCase(TestCase):
         self.assertFalse(verify_token(identity, t1), "1: should be false")
         self.assertFalse(verify_token(identity, t2), "2: should be false")
 
+
+class PassTestCase(TestCase):
+    def test_pass(self):
+        if True:
+            pass
+        print("hello there")

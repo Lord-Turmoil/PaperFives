@@ -6,7 +6,7 @@
 #
 
 from django.urls import path
-from .views import test, register
+from .views import test, register, login
 
 urlpatterns = [
     # path('login/', )
@@ -14,5 +14,6 @@ urlpatterns = [
     path('_get/', test.get_user_by_id),
     path('_put/', test.put_user),
     path('verification/', register.get_verification_code),
-    path('register/', register.register)
+    path('register/', register.register),
+    path('login/', login.login)
 ]

@@ -10,6 +10,17 @@
 from shared.response.base import BaseResponse
 from http import HTTPStatus
 
+
+class GoodResponse(BaseResponse):
+    def __init__(self, dto):
+        super().__init__(dto, HTTPStatus.BAD_REQUEST)
+
+
 class BadRequestResponse(BaseResponse):
     def __init__(self, dto):
         super().__init__(dto, HTTPStatus.BAD_REQUEST)
+
+
+class NotAuthorizedResponse(BaseResponse):
+    def __init__(self, dto):
+        super().__init__(dto, HTTPStatus.UNAUTHORIZED)
