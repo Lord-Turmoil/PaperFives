@@ -6,12 +6,12 @@
 from PaperFives.settings import ERROR_CODE
 
 
-class BaseDto:
-    def __init__(self, code, msg):
+class BaseResponseDto:
+    def __init__(self, code, msg="Not available"):
         self.code = code
         self.msg = msg
 
 
-class GoodDto(BaseDto):
-    def __init__(self, msg):
+class GoodResponseDto(BaseResponseDto):
+    def __init__(self, msg="Not available"):
         super().__init__(ERROR_CODE['SUCCESS'], msg)

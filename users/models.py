@@ -6,6 +6,7 @@
 import django.conf
 from django.db import models
 
+from PaperFives.settings import CONFIG
 from shared.utils.str_util import is_no_content
 
 
@@ -18,13 +19,11 @@ class UserAttribute(models.Model):
 
     sex = models.PositiveSmallIntegerField(choices=Sex.choices, default=Sex.UNKNOWN)
     institute = models.CharField(max_length=127)
-    avatar = models.CharField(max_length=127)  # avatar path
+    motto = models.CharField(max_length=127)
 
     @classmethod
-    def create(cls, _sex=Sex.UNKNOWN, _institute="", _avatar=""):
-        if is_no_content(_avatar):
-            _avatar = django.conf.settings.CONFIG['DEFAULT_AVATAR_PATH']
-        return cls(sex=_sex, institute=_institute, avatar=_avatar)
+    def create(cls, _sex=Sex.UNKNOWN, _institute="", _motto=""):
+        return cls(sex=_sex, institute=_institute, motto=_motto)
 
     class Meta:
         verbose_name = "user_attr"
@@ -49,20 +48,26 @@ class User(models.Model):
     uid = models.BigAutoField(primary_key=True)
     email = models.EmailField(max_length=63)
     username = models.CharField(max_length=63)
+    password = models.CharField(max_length=71)
+
+    # extra properties
+    avatar = models.CharField(max_length=127)
 
     # attribute & statistics
     attr = models.OneToOneField(UserAttribute, related_name='user', on_delete=models.CASCADE)
     stat = models.OneToOneField(UserStatistics, related_name='user', on_delete=models.CASCADE)
 
     @classmethod
-    def create(cls, _email, _username, _attr=None, _stat=None):
+    def create(cls, _email, _username, _password, _avatar="", _attr=None, _stat=None):
+        if is_no_content(_avatar):
+            _avatar = CONFIG['DEFAULT_AVATAR_PATH']
         if _attr is None:
             _attr = UserAttribute.create()
             _attr.save()
         if _stat is None:
             _stat = UserStatistics.create()
             _stat.save()
-        return cls(email=_email, username=_username, attr=_attr, stat=_stat)
+        return cls(email=_email, username=_username, password=_password, avatar=_avatar, attr=_attr, stat=_stat)
 
     @classmethod
     def get_external_uid(cls, _uid):

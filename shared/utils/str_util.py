@@ -12,7 +12,7 @@
 def is_null_or_empty(s: str) -> bool:
     if s is None:
         return True
-    if len(s) == 0:
+    if isinstance(s, str) and len(s) == 0:
         return True
     return False
 

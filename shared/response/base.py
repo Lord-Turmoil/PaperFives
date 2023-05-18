@@ -13,4 +13,4 @@ from shared.utils.json_util import serialize
 
 class BaseResponse(HttpResponse):
     def __init__(self, dto, status=HTTPStatus.OK):
-        super().__init__(serialize(dto), status=status)
+        super().__init__(serialize(dto), status=status, content_type="application/json", charset="utf-8")

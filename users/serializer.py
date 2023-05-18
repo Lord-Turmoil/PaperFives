@@ -15,7 +15,7 @@ from users.models import UserAttribute, UserStatistics, User
 class UserAttributeSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAttribute
-        fields = ('sex', 'institute', 'avatar')
+        fields = ('sex', 'institute', 'motto')
 
 
 class UserStatisticsSerializer(serializers.ModelSerializer):
@@ -27,7 +27,7 @@ class UserStatisticsSerializer(serializers.ModelSerializer):
 class UserSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('uid', 'email', 'username')
+        fields = ('uid', 'email', 'username', 'avatar')
 
 
 class UserSerializer(serializers.Serializer):
@@ -36,6 +36,6 @@ class UserSerializer(serializers.Serializer):
 
     class Meta:
         model = User
-        fields = ('uid', 'email', 'username', 'attr', 'stat')
+        fields = ('uid', 'email', 'username', 'avatar', 'attr', 'stat')
 
 
