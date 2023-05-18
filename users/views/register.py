@@ -18,29 +18,38 @@ from shared.utils.email_util import generate_code, send_code_email
 from shared.utils.json_util import deserialize_dict
 from users.models import User
 
+EMAIL_WHITE_LIST = [
+    "111@111.com",
+    "222@222.com",
+    "333@333.com"
+]  # for debug purpose
+
 
 @csrf_exempt
 def get_verification_code(request):
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
+
     email = request.POST.get('email', None)
     if not email:
         return BadRequestResponse(BadRequestDto("missing 'email' field"))
+
+    # registered user shouldn't get verification code
+    users = User.objects.filter(email=email)
+    if users.exists():
+        return BaseResponse(GeneralErrorDto(ERROR_CODE['DUPLICATE_USER'], "User already registered"))
 
     code = generate_code()
     try:
         send_code_email(email, code)
     except EmailException as e:
         return BaseResponse(GeneralErrorDto(ERROR_CODE['SEND_EMAIL'], "Failed to send email"))
-    request.session['ver'] = { 'email': email, 'code': code }
-    request.session.set_expiry(60 * 10) # expire after 10 minutes
+
+    request.session['ver'] = {'email': email, 'code': code}
+    request.session.set_expiry(60 * 10)  # expire after 10 minutes
+
     return BaseResponse(GoodDto("verification code sent"))
 
-EMAIL_WHITE_LIST = [
-    "111@111.com",
-    "222@222.com",
-    "333@333.com"
-] # for debug purpose
 
 @csrf_exempt
 def register(request):
@@ -53,7 +62,8 @@ def register(request):
     """
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
-    dto:RegisterDto = RegisterDto() # bad...
+
+    dto: RegisterDto = RegisterDto()  # bad...
     try:
         dto = deserialize_dict(request.POST, RegisterDto)
     except JsonException as e:
@@ -62,7 +72,7 @@ def register(request):
 
     users = User.objects.filter(email=dto.email[0])
     if users.exists():
-        return BaseResponse(GeneralErrorDto(ERROR_CODE['DUPLICATE_USER'], "User already registerd"))
+        return BaseResponse(GeneralErrorDto(ERROR_CODE['DUPLICATE_USER'], "User already registered"))
 
     if dto.email[0] not in EMAIL_WHITE_LIST:
         ver = request.session['ver']
@@ -77,7 +87,7 @@ def register(request):
         if ver['code'] != dto.code[0]:
             error_hint = "Oops! Wrong verification code!"
             return BaseResponse(GeneralErrorDto(error_code, error_hint))
-    request.session.clear() # clear verification code
+    request.session.clear()  # clear verification code
 
     # now, user is verified!
     user = User.create(dto.email[0], dto.username[0])
