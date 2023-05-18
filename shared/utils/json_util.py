@@ -73,6 +73,8 @@ def deserialize_dict(dict_obj, cls):
     """
     Deserialize dict object to object of specific class
     """
+    dict_obj.pop('csrfmiddlewaretoken', None)
+
     try:
         _check_type(dict_obj, cls())
     except AttributeError:
