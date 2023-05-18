@@ -5,11 +5,12 @@
 # @File    : token.py
 #
 # Description:
-#   For JWT token generation and verification.
+#   For JWT token and password generation & verification.
 #
 
 import hashlib
 
+from django.contrib.auth.hashers import make_password, check_password
 from django.core import signing
 import time
 
@@ -32,7 +33,7 @@ def _decrypt(src):
     return raw
 
 
-def generate_token(identity:str) -> str:
+def generate_token(identity: str) -> str:
     """
     Should pass an identity here, can be email or uid.
     :param identity: str that can determine a user
@@ -58,9 +59,11 @@ def _get_payload(token):
     payload = str(token).split('.')[1]
     return _decrypt(payload)
 
+
 def _get_header(token):
     header = str(token).split('.')[0]
     return _decrypt(header)
+
 
 def _verify_signature(token) -> bool:
     try:
@@ -72,6 +75,7 @@ def _verify_signature(token) -> bool:
     md5 = hashlib.md5()
     md5.update(("%s.%s" % (header, payload)).encode())
     return signature == md5.hexdigest()
+
 
 def _get_identity(token):
     payload = _get_payload(token)
@@ -89,3 +93,11 @@ def verify_token(identity, token) -> bool:
     if _get_header(token) != HEADER:
         return False
     return _get_identity(token) == identity and _get_expire(token) > time.time()
+
+
+def generate_password(password) -> str:
+    return make_password(password, SALT, 'pbkdf2_sha1')
+
+
+def verify_password(password, token) -> bool:
+    return check_password(password, token)
