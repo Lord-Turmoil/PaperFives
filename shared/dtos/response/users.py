@@ -6,7 +6,7 @@
 #
 
 from PaperFives.settings import ERROR_CODE
-from shared.dtos.response.base import BaseResponseDto
+from shared.dtos.response.base import BaseResponseDto, GoodResponseDto
 
 
 class NotAuthorizedDto(BaseResponseDto):
@@ -29,7 +29,7 @@ class WrongPasswordDto(BaseResponseDto):
         super().__init__(ERROR_CODE['WRONG_PASSWORD'], "Wrong password")
 
 
-class LoginSuccessDto(BaseResponseDto):
+class LoginSuccessDto(GoodResponseDto):
     """
     When logged in, server will return complete user info, and the
     corresponding login token.
@@ -60,9 +60,15 @@ class LoginSuccessDto(BaseResponseDto):
         """
         user and token are all dict object.
         """
-        super().__init__(ERROR_CODE['SUCCESS'], "Welcome back to PaperFives!")
+        super().__init__("Welcome back to PaperFives!")
         self.user = user
         self.token = token
+
+
+class UserProfileDto(GoodResponseDto):
+    def __init__(self, data):
+        super().__init__()
+        self.user = data
 
 
 class CreateUserFailedDto(BaseResponseDto):

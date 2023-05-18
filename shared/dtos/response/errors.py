@@ -27,3 +27,8 @@ class BadRequestDto(BaseResponseDto):
     def __init__(self, hint="Not available"):
         super().__init__(ERROR_CODE['BAD_REQUEST'], "Request format error")
         self.hint = hint
+
+
+class ServerErrorDto(BaseResponseDto):
+    def __init__(self, msg):
+        super().__init__(ERROR_CODE['SERVER_ERROR'], msg)
