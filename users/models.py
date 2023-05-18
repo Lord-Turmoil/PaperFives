@@ -58,9 +58,11 @@ class User(models.Model):
     def create(cls, _email, _username, _attr=None, _stat=None):
         if _attr is None:
             _attr = UserAttribute.create()
+            _attr.save()
         if _stat is None:
             _stat = UserStatistics.create()
-        return cls(email=_email, username=_username, _attr=_attr, stat=_stat)
+            _stat.save()
+        return cls(email=_email, username=_username, attr=_attr, stat=_stat)
 
     @classmethod
     def get_external_uid(cls, _uid):

@@ -4,11 +4,13 @@
 # @Author  : Tony Skywalker
 # @File    : base.py
 #
+from http import HTTPStatus
+
 from django.http import HttpResponse
 
 from shared.utils.json_util import serialize
 
 
 class BaseResponse(HttpResponse):
-    def __init__(self, dto, status):
+    def __init__(self, dto, status=HTTPStatus.OK):
         super().__init__(serialize(dto), status=status)

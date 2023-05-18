@@ -3,8 +3,15 @@
 # @Time    : 5/17/2023 14:25
 # @Author  : Tony Skywalker
 # @File    : base.py
+from PaperFives.settings import ERROR_CODE
 
-class BaseResponseDto:
+
+class BaseDto:
     def __init__(self, code, msg):
         self.code = code
         self.msg = msg
+
+
+class GoodDto(BaseDto):
+    def __init__(self, msg):
+        super().__init__(ERROR_CODE['SUCCESS'], msg)
