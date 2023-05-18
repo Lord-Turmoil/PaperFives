@@ -1,0 +1,70 @@
+* {
+    padding: inherit;
+    margin: 0px;
+}
+
+li {
+    list-style: none;
+}
+
+.clearfix:before,
+.clearfix::after {
+    content: "";
+    display: table;
+}
+
+.clearfix::after {
+    clear: both;
+}
+
+.clearfix {
+    *zoom: 1;
+}
+
+a {
+    text-decoration: none;
+}
+
+body {
+    font-family: "Roboto", "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif;
+}
+
+.header {
+    padding: 10px;
+    text-align: center;
+}
+
+.banner {
+    background-color: darkgray;
+}
+
+.banner .nav {
+    text-align: center;
+}
+
+.nav .nav-item {
+    display: inline-block;
+    padding: 10px;
+    text-align: center;
+    margin: 0 10px;
+    background-color: darkmagenta;
+    transition: 500ms;
+}
+
+.nav .nav-item a {
+    color: white;
+}
+
+.nav .nav-item:hover {
+    background-color: rebeccapurple;
+}
+
+.wrapper {
+    margin: 20px;
+    text-align: center;
+}
+
+.footer {
+    text-align: center;
+    padding: 10px;
+}

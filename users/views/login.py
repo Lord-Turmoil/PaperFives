@@ -11,7 +11,7 @@ from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
 from shared.dtos.response.users import NoSuchUserDto, WrongPasswordDto, LoginSuccessDto
 from shared.exceptions.json import JsonDeserializeException
 from shared.response.base import BaseResponse
-from shared.response.basic import BadRequestResponse
+from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.json_util import deserialize_dict
 from shared.utils.token import verify_password, generate_token
 from users.models import User

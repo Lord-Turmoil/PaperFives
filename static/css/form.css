@@ -1,0 +1,18 @@
+.wrapper form table {
+    width: 60%;
+    margin: 0 auto;
+}
+
+.field {
+    padding: 5px;
+}
+
+.field td {
+    margin: 0 5px;
+    height: 3em;
+    text-align: left;
+}
+
+.field .key {
+    text-align: right;
+}

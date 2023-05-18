@@ -88,6 +88,8 @@ def _get_expire(token):
 
 
 def verify_token(identity, token) -> bool:
+    if identity is None or token is None:
+        return False
     if not _verify_signature(token):
         return False
     if _get_header(token) != HEADER:
