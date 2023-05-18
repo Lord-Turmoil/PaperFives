@@ -147,3 +147,22 @@ All utility scripts are placed under `/shared/utils/`. Each util Python Script d
 ### 4.2.2 DTO package
 
 DTO, a.k.a. Data Transfer Object, is used to carry data between frontend and backend. Things will be much easier if they can be mapped to actual Python object, instead of raw JSON data.
+
+---
+
+# 5. Response Convention
+
+## 5.1 Base Response
+
+### 5.1.1 Response Format
+
+All responses guarantee to contain two fields: `errno` and `msg`. `errno` is the error number, with 0 indicates success. `msg` is the **basic** reason for an error. It may not be accurate, so it often comes with additional information.
+
+### 5.1.2 Error Code
+
+Error code has alias `code` in project, it is a five-digit number. First two digits indicates the category, while the other three indicates the specific error. Category starts with `10` to avoid leading 0.
+
+> Http status code will also be used to indicate general error. You can refer to this page:
+> - [Http Status Code](https://datatracker.ietf.org/doc/html/rfc9110.html#section-15)
+
+For all values and detailed information of `code`, please refer to `config.yaml`. :)

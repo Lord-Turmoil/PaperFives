@@ -34,6 +34,7 @@ else:
 
 with open("config.yaml", 'r') as f:
     CONFIG = yaml.safe_load(f)
+ERROR_CODE = CONFIG['ERROR_CODE']
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = SECRETS['key']
@@ -51,6 +52,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "corsheaders",
+    "rest_framework",
     "papers.apps.PapersConfig",
     "users.apps.UsersConfig",
     "msgs.apps.MsgsConfig"
