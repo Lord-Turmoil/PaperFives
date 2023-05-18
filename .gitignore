@@ -141,5 +141,3 @@ cython_debug/
 secrets.yaml
 secrets_debug.yaml
 **/migrations
-django
-uwsgi.ini
