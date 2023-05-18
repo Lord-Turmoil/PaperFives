@@ -11,6 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 from shared.dtos.response.errors import BadRequestDto, RequestMethodErrorDto, ServerErrorDto
 from shared.dtos.response.users import NoSuchUserDto, UserProfileDto
 from shared.response.basic import BadRequestResponse, GoodResponse, ServerErrorResponse
+from shared.utils.users.roles import is_user_admin, get_roles
+from shared.utils.users.users import get_user_from_request
 from users.models import User
 from users.serializer import UserSerializer, UserSimpleSerializer
 
@@ -49,4 +51,12 @@ def get_user(request):
         data = serializer(user).data
     except:
         return ServerErrorResponse(ServerErrorDto("Failed to get user data"))
+
+    profile = get_user_from_request(request)
+    if profile is not None:
+        if user.uid == profile.uid:
+            data['roles'] = get_roles(user)
+        elif is_user_admin(profile):
+            data['roles'] = get_roles(user)
+
     return GoodResponse(UserProfileDto(data))
