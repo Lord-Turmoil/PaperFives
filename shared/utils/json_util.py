@@ -35,12 +35,30 @@ def serialize(obj) -> str:
         raise JsonSerializeException("Failed to serialize", obj)
 
 
+def _check_type(dict_obj, cls_obj) -> bool:
+    if not dict_obj.keys() == cls_obj.__dict__.keys():
+        raise AttributeError()
+    for key in cls_obj.__dict__.keys():
+        if isinstance(dict_obj[key], type(cls_obj.__dict__[key])):
+            continue
+        if not _check_type(dict_obj[key], cls_obj.__dict__[key]):
+            raise AttributeError()
+    return True
+
+
 def deserialize(json_str: str, cls=None):
     obj = None
     try:
         obj = json.loads(json_str)
     except Exception:
         raise JsonDeserializeException("Failed to deserialize", json_str)
-    if cls is not None and not isinstance(obj, cls):
-        raise JsonDeserializeException(f"Type mismatch, should be {cls.__name__}", json_str)
+    if cls is not None:
+        try:
+            _check_type(obj, cls())
+        except AttributeError:
+            raise JsonDeserializeException(f"Type mismatch, should be {cls.__name__}", json_str)
+    if cls is not None:
+        ret = cls()
+        ret.__dict__ = obj
+        return ret
     return obj
