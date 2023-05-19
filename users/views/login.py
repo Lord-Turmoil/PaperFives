@@ -45,8 +45,7 @@ def login(request):
     request.session['uid'] = user.uid
     request.session.set_expiry(14 * 24 * 60 * 60)  # expire after 14 days
 
-    return GoodResponse(
-        LoginSuccessDto(UserSerializer(user).data))
+    return GoodResponse(LoginSuccessDto(UserSerializer(user).data))
 
 
 @csrf_exempt
