@@ -6,7 +6,7 @@
 #
 from shared.dtos.models.base import BaseDto
 from shared.utils.str_util import is_null_or_empty, is_no_content
-from users.models import UserAttribute
+from users.models import UserAttribute, User
 
 
 class UserAttrDto(BaseDto):
@@ -15,7 +15,7 @@ class UserAttrDto(BaseDto):
         self.institute: str = ""
 
     def is_valid(self) -> bool:
-        if self.sex not in UserAttribute.Sex.choices:
+        if self.sex not in UserAttribute.Sex.values:
             return False
         if is_no_content(self.institute):
             return False

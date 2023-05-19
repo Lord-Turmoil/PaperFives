@@ -13,17 +13,13 @@ try:
 except ImportError:
     MiddlewareMixin = object
 
+BASE_URL = "/api/v1/"
 API_WHITELIST = ["/api/user/login", "/api/user/register"]
-API_BLACKLIST = []
+API_BLACKLIST = [f"{BASE_URL}profile/profile",]
 
 class AuthorizeMiddleware(MiddlewareMixin):
     def process_request(self, request):
         if request.path not in API_BLACKLIST:
             return
-        identity = request.META.get('HTTP_IDENTITY')
-        token = request.META.get('HTTP_AUTHORIZATION')
-        if identity is None or token is None:
+        if request.get('uid', None) is None:
             return NotAuthorizedResponse(NotAuthorizedDto("No login information"))
-        if not verify_token(identity, token):
-            return NotAuthorizedResponse(NotAuthorizedDto("Invalid token"))
-        pass

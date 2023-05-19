@@ -21,7 +21,7 @@ class AlreadyLoggedInDto(BaseResponseDto):
 
 class NoSuchUserDto(BaseResponseDto):
     def __init__(self):
-        super().__init__(ERROR_CODE['NO_SUCH_USER'], "User does not exist!")
+        super().__init__(ERROR_CODE['NO_SUCH_USER'], "Whom are you looking for?")
 
 
 class WrongPasswordDto(BaseResponseDto):
@@ -56,13 +56,12 @@ class LoginSuccessDto(GoodResponseDto):
         }
     """
 
-    def __init__(self, user, token):
+    def __init__(self, user):
         """
         user and token are all dict object.
         """
         super().__init__("Welcome back to PaperFives!")
         self.user = user
-        self.token = token
 
 
 class UserProfileDto(GoodResponseDto):
@@ -71,11 +70,7 @@ class UserProfileDto(GoodResponseDto):
         self.user = data
 
 
-class CreateUserFailedDto(BaseResponseDto):
+class NotLoggedInDto(BaseResponseDto):
     def __init__(self):
-        super().__init__(ERROR_CODE['CREATE_USER'], "Failed to create user")
-
-
-class CreateUserSucceededDto(BaseResponseDto):
-    def __init__(self):
-        super().__init__(ERROR_CODE['SUCCESS'], "User created!")
+        super().__init__(ERROR_CODE['NOT_LOGGED_IN'], "Please login first.")
+       

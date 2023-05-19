@@ -1,0 +1,41 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PaperFives</title>
+    <link type="text/css" rel="stylesheet" href="{% static 'css/layout.css' %}">
+    <link type="text/css" rel="stylesheet" href="{% static 'css/welcome.css' %}">
+    <link type="text/css" rel="stylesheet" href="{% static 'css/form.css' %}">
+    <link type="text/css" rel="stylesheet" href="{% static 'css/profile.css' %}">
+</head>
+<body>
+<div class="header">
+    <h1>{% block title %}Paper Fives Base{% endblock title %}</h1>
+</div>
+<div class="banner">
+    <ul class="nav">
+        <li class="nav-item"><a href="/pseudo/">Welcome</a></li>
+        <li class="nav-item"><a href="/pseudo/login/">Login</a></li>
+        <li class="nav-item"><a href="/pseudo/logout/">Logout</a></li>
+        <li class="nav-item"><a href="/pseudo/register/">Register</a></li>
+        <li class="nav-item"><a href="/pseudo/profile/">Profile</a></li>
+        <li class="nav-item"><a href="/pseudo/login/">Login</a></li>
+    </ul>
+</div>
+<hr/>
+<div class="wrapper">
+    {% block body %}
+        <div class="prompt">
+            <p>If you see this, it means the backend server is successfully launched.</p>
+            <p>But there's no guarantee that it doesn't contain any bugs or will not crash. :)</p>
+        </div>
+    {% endblock %}
+</div>
+<hr/>
+<div class="footer">
+    <p class="copyright">Copyright &copy; Fives 2023</p>
+</div>
+</body>
+</html>

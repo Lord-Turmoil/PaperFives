@@ -6,4 +6,12 @@
 #
 # Description:
 #   For data validations.
+#
 
+VALID_IMAGE_FILE_EXT = ['.jpg', '.jpeg', '.png' ]
+
+def validate_image_name(filename: str):
+    for ext in VALID_IMAGE_FILE_EXT:
+        if filename.endswith(ext):
+            return True
+    return False

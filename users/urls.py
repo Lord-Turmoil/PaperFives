@@ -13,7 +13,10 @@ urlpatterns = [
     path('verification/', register.get_verification_code),
     path('register/', register.register),
     path('login/', login.login),
+    path('logout/', login.logout),
 
     # profile
-    path('profile/user', profile.get_user)
+    path('profile/user', profile.get_user),
+    path('profile/profile/', profile.edit_user_profile),
+    path('profile/avatar/', profile.edit_user_profile)
 ]

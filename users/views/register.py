@@ -4,9 +4,12 @@
 # @Author  : Tony Skywalker
 # @File    : register.py
 #
+import datetime
+
 from django.views.decorators.csrf import csrf_exempt
 
 from PaperFives.settings import ERROR_CODE
+from msgs.models import EmailRecord
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto, GeneralErrorDto
 from shared.dtos.models.users import RegisterDto
@@ -46,8 +49,11 @@ def get_verification_code(request):
     except EmailException as e:
         return BaseResponse(GeneralErrorDto(ERROR_CODE['SEND_EMAIL'], "Failed to send email"))
 
-    request.session['ver'] = {'email': email, 'code': code}
-    request.session.set_expiry(60 * 10)  # expire after 10 minutes
+    # add email into
+    EmailRecord.objects.filter(email=email, usage="reg").delete()  # delete previous
+    expire = datetime.datetime.now() + datetime.timedelta(minutes=10)
+    email = EmailRecord.create(email, code, expire, "reg")
+    email.save()
 
     return GoodResponse(GoodResponseDto("Verification code sent"))
 
@@ -76,20 +82,20 @@ def register(request):
     if users.exists():
         return BaseResponse(GeneralErrorDto(ERROR_CODE['DUPLICATE_USER'], "User already registered"))
 
-    if dto.email not in EMAIL_WHITE_LIST:
-        ver = request.session.get('ver')
-        error_hint = ""
-        error_code = ERROR_CODE['NOT_VERIFIED']
-        if ver is None:
-            error_hint = "Did you acquired verification code? Or has it expired?"
-            return BaseResponse(GeneralErrorDto(error_code, error_hint))
-        if ver['email'] != dto.email:
-            error_hint = "Did you secretly change your email?"
-            return BaseResponse(GeneralErrorDto(error_code, error_hint))
-        if ver['code'] != dto.code:
-            error_hint = "Oops! Wrong verification code!"
-            return BaseResponse(GeneralErrorDto(error_code, error_hint))
-    request.session.clear()  # clear verification code
+    # get email record
+    error_code = ERROR_CODE['NOT_VERIFIED']
+    emails = EmailRecord.objects.filter(email=dto.email, usage="reg")
+    if not emails.exists():
+        error_hint = "Did you acquired verification code? Or has it expired?"
+        return BaseResponse(GeneralErrorDto(error_code, error_hint))
+    email:EmailRecord = emails.first()
+    if datetime.datetime.now() > email.expire:
+        error_hint = "Oops! Verification code expired!"
+        return BaseResponse(GeneralErrorDto(error_code, error_hint))
+    if email.code != dto.code:
+        error_hint = "Oops! Wrong verification code!"
+        return BaseResponse(GeneralErrorDto(error_code, error_hint))
+    email.delete()
 
     # now, user is verified!
     user = User.create(dto.email, dto.username, generate_password(dto.password))

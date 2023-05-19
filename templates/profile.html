@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+{% block body %}
+    <form method="post" action="/api/v1/users/profile/profile/">
+        {% csrf_token %}
+        <table>
+            <tr class="field">
+                <td class="key"><span>Email</span></td>
+                <td><span>{{ user.email }}</span></td>
+            </tr>
+            <tr class="field">
+                <td class="key"><span>Username</span></td>
+                <td><input type="text" name="username" value="{{ user.username }}"/></td>
+            </tr>
+            <tr class="field">
+                <td class="key"><span>Sex</span></td>
+                <td>
+                    <select name="sex" id="sex">
+                        <option value="0">???</option>
+                        <option value="1">Male</option>
+                        <option value="2">Female</option>
+                    </select>
+                </td>
+            </tr>
+            <tr class="field">
+                <td class="key"><span>Institute</span></td>
+                <td><input type="text" name="institute" value="{{ user.attr.institute }}"/></td>
+            </tr>
+            <tr class="field">
+                <td class="key"><span>Motto</span></td>
+                <td><input type="text" name="motto" value="{{ user.attr.motto }}"/></td>
+            </tr>
+            <tr class="field">
+                <td class="key"><span>Submit</span></td>
+                <td><input type="submit"/></td>
+            </tr>
+        </table>
+    </form>
+    <hr/>
+    <div class="column">
+        <div class="left">
+            <div class="avatar">
+                <img src="{{ user.avatar }}">
+            </div>
+        </div>
+        <div class="right">
+            <form method="post" action="/api/v1/users/profile/avatar/">
+                {% csrf_token %}
+                <table>
+                    <tr class="field">
+                        <td class="key"><span>Avatar</span></td>
+                        <td><input type="file" name="file"/></td>
+                    </tr>
+                    <tr class="field">
+                        <td class="key"><span>Submit</span></td>
+                        <td><input type="submit"/></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        sex = {{ user.attr.sex }};
+        sex_select = document.getElementById("sex");
+        sex_select.getElementsByTagName("option")[sex].selected = true;
+    </script>
+{% endblock %}

@@ -1,0 +1,9 @@
+.avatar {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.avatar img {
+    vertical-align: middle;
+    width: 100%;
+}
