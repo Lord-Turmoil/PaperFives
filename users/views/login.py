@@ -7,6 +7,7 @@
 from django.views.decorators.csrf import csrf_exempt
 
 from shared.dtos.models.users import LoginDto
+from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
 from shared.dtos.response.users import NoSuchUserDto, WrongPasswordDto, LoginSuccessDto
 from shared.exceptions.json import JsonDeserializeException
@@ -37,7 +38,19 @@ def login(request):
     user = users.first()
     if not verify_password(dto.password, user.password):
         return BaseResponse(WrongPasswordDto())
-    token = generate_token(dto.email)
+
+    # add user session
+    request.session['uid'] = user.uid
+    request.session.set_expiry(14 * 24 * 60 * 60)  # expire after 14 days
 
     return GoodResponse(
-        LoginSuccessDto(UserSerializer(user).data, {'identity': dto.email, 'authorization': token}))
+        LoginSuccessDto(UserSerializer(user).data))
+
+
+@csrf_exempt
+def logout(request):
+    if request.method != 'POST':
+        return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
+    if request.session.get('uid') is not None:
+        request.session.clear()
+    return GoodResponse(GoodResponseDto("See you later!"))
