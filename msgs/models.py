@@ -78,10 +78,12 @@ class EmailRecord(models.Model):
     code = models.CharField(max_length=15)
     expire = models.DateTimeField()
     usage = models.CharField(max_length=15)
+    valid = models.BooleanField(default=True)
 
     @classmethod
     def create(cls, _email, _code, _expire, _usage):
         return cls(email=_email, code=_code, expire=_expire, usage=_usage)
 
     class Meta:
+        ordering = ['id']
         verbose_name = "email"
