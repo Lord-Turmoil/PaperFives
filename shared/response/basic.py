@@ -7,8 +7,9 @@
 # Description:
 #   Basic responses.
 #
-from shared.response.base import BaseResponse
 from http import HTTPStatus
+
+from shared.response.base import BaseResponse
 
 
 class GoodResponse(BaseResponse):

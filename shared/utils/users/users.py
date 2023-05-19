@@ -6,12 +6,11 @@
 #
 from django.core.handlers.wsgi import WSGIRequest
 
-from shared.utils.token import verify_token
 from users.models import User
 
 
 def get_user_from_request(request: WSGIRequest):
-    uid = request.session.get('uid', None)
+    uid = request.session.get('uid')
     if uid is None:
         return None
     users = User.objects.filter(uid=uid)

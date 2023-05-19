@@ -1,7 +1,6 @@
 import datetime
 
 from django.db import models
-from typing import List
 
 
 # Create your models here.

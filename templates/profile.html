@@ -6,11 +6,11 @@
         <table>
             <tr class="field">
                 <td class="key"><span>Email</span></td>
-                <td><span>{{ user.email }}</span></td>
+                <td><span>{{ data.email }}</span></td>
             </tr>
             <tr class="field">
                 <td class="key"><span>Username</span></td>
-                <td><input type="text" name="username" value="{{ user.username }}"/></td>
+                <td><input type="text" name="username" value="{{ data.username }}"/></td>
             </tr>
             <tr class="field">
                 <td class="key"><span>Sex</span></td>
@@ -24,11 +24,11 @@
             </tr>
             <tr class="field">
                 <td class="key"><span>Institute</span></td>
-                <td><input type="text" name="institute" value="{{ user.attr.institute }}"/></td>
+                <td><input type="text" name="institute" value="{{ data.attr.institute }}"/></td>
             </tr>
             <tr class="field">
                 <td class="key"><span>Motto</span></td>
-                <td><input type="text" name="motto" value="{{ user.attr.motto }}"/></td>
+                <td><input type="text" name="motto" value="{{ data.attr.motto }}"/></td>
             </tr>
             <tr class="field">
                 <td class="key"><span>Submit</span></td>
@@ -40,11 +40,11 @@
     <div class="column">
         <div class="left">
             <div class="avatar">
-                <img src="{{ user.avatar }}">
+                <img src="{{ data.avatar }}">
             </div>
         </div>
         <div class="right">
-            <form method="post" action="/api/v1/users/profile/avatar/">
+            <form method="post" enctype="multipart/form-data" action="/api/v1/users/profile/avatar/">
                 {% csrf_token %}
                 <table>
                     <tr class="field">
@@ -61,7 +61,7 @@
     </div>
 
     <script>
-        sex = {{ user.attr.sex }};
+        sex = {{ data.attr.sex }};
         sex_select = document.getElementById("sex");
         sex_select.getElementsByTagName("option")[sex].selected = true;
     </script>

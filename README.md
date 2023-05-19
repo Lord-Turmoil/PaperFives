@@ -34,7 +34,8 @@ There are four types of branch.
 
 ### 2.1.2 Push Order
 
-1. Developers should be on his/her own branch for daily development. You should remember to **pull** from `dev` regularly.
+1. Developers should be on his/her own branch for daily development. You should remember to **pull** from `dev`
+   regularly.
 
 2. Once a change is done, **push** from `{name}` to `dev` branch.
 
@@ -46,11 +47,12 @@ There are four types of branch.
 
 ## 2.2 Commit Convention
 
-To make commit more consistent, you **MUST** follow the commit convention. There should better be fewer changes in one commit.
+To make commit more consistent, you **MUST** follow the commit convention. There should better be fewer changes in one
+commit.
 
 > 'Fewer' doesn't mean fewer lines of code, but fewer functions.
 
-Generally, commit should be lower-case, and no final period punctuation. 
+Generally, commit should be lower-case, and no final period punctuation.
 
 ### 2.2.1 `feat`
 
@@ -107,7 +109,8 @@ trivial: correct spelling error
 
 Environment is based on `Python 3.8` using `conda`.
 
-> Environment should be created on Linux. Otherwise, fatal conflicts will occur between `mysqlclient` and `uwsgi`. For detailed information, please refer to this post:
+> Environment should be created on Linux. Otherwise, fatal conflicts will occur between `mysqlclient` and `uwsgi`. For
+> detailed information, please refer to this post:
 > - [Configure Remote Interpreter in PyCharm](http://www.tonys-studio.top/2023/05/14/Configure-Remote-Interpreter-in-PyCharm/)
 
 ## 3.2 Troubleshoot
@@ -132,7 +135,8 @@ conda install -c conda-forge uwsgi
 
 ## 4.1 Applications
 
-There are three main applications corresponding to the three sub-systems. They are `users`, `papers` and `msgs`. In addition, for test purpose, there is a `zeta` application.
+There are three main applications corresponding to the three sub-systems. They are `users`, `papers` and `msgs`. In
+addition, for test purpose, there is a `zeta` application.
 
 > We use `msgs` because there is a package `messages` in Django.
 
@@ -146,7 +150,8 @@ All utility scripts are placed under `/shared/utils/`. Each util Python Script d
 
 ### 4.2.2 DTO package
 
-DTO, a.k.a. Data Transfer Object, is used to carry data between frontend and backend. Things will be much easier if they can be mapped to actual Python object, instead of raw JSON data.
+DTO, a.k.a. Data Transfer Object, is used to carry data between frontend and backend. Things will be much easier if they
+can be mapped to actual Python object, instead of raw JSON data.
 
 ---
 
@@ -156,11 +161,14 @@ DTO, a.k.a. Data Transfer Object, is used to carry data between frontend and bac
 
 ### 5.1.1 Response Format
 
-All responses guarantee to contain two fields: `errno` and `msg`. `errno` is the error number, with 0 indicates success. `msg` is the **basic** reason for an error. It may not be accurate, so it often comes with additional information.
+All responses guarantee to contain two fields: `errno` and `msg`. `errno` is the error number, with 0 indicates
+success. `msg` is the **basic** reason for an error. It may not be accurate, so it often comes with additional
+information.
 
 ### 5.1.2 Error Code
 
-Error code has alias `code` in project, it is a five-digit number. First two digits indicates the category, while the other three indicates the specific error. Category starts with `10` to avoid leading 0.
+Error code has alias `code` in project, it is a five-digit number. First two digits indicates the category, while the
+other three indicates the specific error. Category starts with `10` to avoid leading 0.
 
 > Http status code will also be used to indicate general error. You can refer to this page:
 > - [Http Status Code](https://datatracker.ietf.org/doc/html/rfc9110.html#section-15)

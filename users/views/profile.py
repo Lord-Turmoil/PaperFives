@@ -6,13 +6,16 @@
 #
 # Description:
 #   This file contains APIs to get user information.
+import os
+
 from django.views.decorators.csrf import csrf_exempt
 
 from PaperFives.settings import CONFIG
 from shared.dtos.response.base import GoodResponseDto
-from shared.dtos.response.errors import BadRequestDto, RequestMethodErrorDto, ServerErrorDto, GeneralErrorDto
-from shared.dtos.response.users import NoSuchUserDto, UserProfileDto, NotLoggedInDto, NotAuthorizedDto
+from shared.dtos.response.errors import BadRequestDto, RequestMethodErrorDto, ServerErrorDto
+from shared.dtos.response.users import NoSuchUserDto, UserProfileDto, NotLoggedInDto
 from shared.response.basic import BadRequestResponse, GoodResponse, ServerErrorResponse
+from shared.utils.parameter import parse_param
 from shared.utils.str_util import is_no_content
 from shared.utils.users.roles import is_user_admin, get_roles
 from shared.utils.users.users import get_user_from_request
@@ -31,8 +34,9 @@ def get_user(request):
     """
     if request.method != 'GET':
         return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
-    mode = request.GET.get('mode', None)
-    uid = request.GET.get('uid', None)
+    params = parse_param(request)
+    mode = params.get('mode')
+    uid = params.get('uid')
     if mode is None or uid is None:
         return BadRequestResponse(BadRequestDto("missing parameters"))
 
@@ -84,11 +88,11 @@ def edit_user_profile(request):
         return GoodResponse(NoSuchUserDto())
     user = users.first()
 
-    data: dict = request.POST.dict()
-    username = data.get('username', None)
-    sex = int(data.get('sex', -1))
-    institute = data.get('institute', None)
-    motto = data.get('motto', None)
+    params = parse_param(request)
+    username = params.get('username')
+    sex = int(params.get('sex', -1))
+    institute = params.get('institute')
+    motto = params.get('motto')
 
     if not is_no_content(username):
         user.username = username
@@ -102,13 +106,14 @@ def edit_user_profile(request):
     attr.save()
     user.save()
 
-    return GoodResponse(GoodResponseDto("Changes saved!"))
+    return GoodResponse(UserProfileDto(UserSerializer(user).data))
 
 
 @csrf_exempt
 def edit_user_avatar(request):
     """
     Change user avatar.
+    This request must be multipart/form-data.
     """
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
@@ -121,23 +126,29 @@ def edit_user_avatar(request):
     user = users.first()
 
     # get avatar from request
-    filename = request.POST.get('file')
-    if filename is None:
-        return GoodResponse(GoodResponseDto("Nothing changed"))
-    if not validate_image_name(filename):
-        return BadRequestResponse(BadRequestDto("Invalid image type!"))
     file = request.FILES.get('file')
     if file is None:
-        return GoodResponse(GoodResponseDto("Nothing changed"))
+        return BadRequestResponse(BadRequestDto("Missing image file"))
+    if not validate_image_name(file.name):
+        return BadRequestResponse(BadRequestDto("Invalid image type!"))
 
     # save avatar to file.
-    avatar = f"{CONFIG['AVATAR_PATH']}{user.uid}.{filename.split('.')[-1]}"
+    avatar = f"{CONFIG['AVATAR_PATH']}{user.uid}.{file.name.split('.')[-1]}"
+    if user.avatar != CONFIG['DEFAULT_AVATAR']:  # has avatar before
+        if user.avatar != avatar:  # different filename
+            try:
+                os.remove(f"{CONFIG['PROJECT_PATH']}{user.avatar}")  # remove old avatar
+            except:
+                pass
+
     try:
-        with open(avatar, "wb+") as f:
-            for chunk in f.chunks():
-                f.write(chunk)
+        f = open(f"{CONFIG['PROJECT_PATH']}{avatar}", "wb")
+        for chunk in file.chunks():
+            f.write(chunk)
+        f.close()
     except:
         return ServerErrorResponse(ServerErrorDto("Failed to save avatar!"))
+
     user.avatar = avatar
     user.save()
 

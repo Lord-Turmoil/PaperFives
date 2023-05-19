@@ -1,5 +1,9 @@
-from django.test import TestCase
+import datetime
 
+from django.test import TestCase
+from django.utils import timezone
+
+from msgs.models import EmailRecord
 from shared.utils.token import generate_token, verify_token
 
 
@@ -21,3 +25,16 @@ class PassTestCase(TestCase):
         if True:
             pass
         print("hello there")
+
+
+class DateTimeTestCase(TestCase):
+    def test_time(self):
+        emails = EmailRecord.objects.all()
+        if not emails.exists():
+            print('Bad')
+        else:
+            email = emails.first()
+            if timezone.now() > email.expire:
+                print('Yes')
+            else:
+                print('No')

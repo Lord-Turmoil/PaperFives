@@ -7,4 +7,3 @@
 # For account related responses.
 #
 
-from shared.response.base import BaseResponse

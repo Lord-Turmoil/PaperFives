@@ -9,10 +9,10 @@
 #
 
 import hashlib
+import time
 
 from django.contrib.auth.hashers import make_password, check_password
 from django.core import signing
-import time
 
 from PaperFives import settings
 

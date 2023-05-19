@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}Register{% endblock %}
+{% block title %}Register As User{% endblock %}
 {% block body %}
     <form method="post" action="/api/v1/users/register/">
         {% csrf_token %}
         <table>
             <tr class="field">
                 <td class="key"><span>Email</span></td>
-                <td><input type="text" name="email"/></td>
+                <td><input type="email" name="email"/></td>
             </tr>
             <tr class="field">
                 <td class="key"><span>Username</span></td>
@@ -31,7 +31,7 @@
         <table>
             <tr class="field">
                 <td class="key"><span>Email</span></td>
-                <td><input type="text" name="email"/></td>
+                <td><input type="email" name="email"/></td>
             </tr>
             <tr class="field">
                 <td class="key"><span>Send Verification Code</span></td>
