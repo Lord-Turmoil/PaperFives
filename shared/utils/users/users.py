@@ -11,11 +11,10 @@ from users.models import User
 
 
 def get_user_from_request(request: WSGIRequest):
-    identity = request.META.get('HTTP_IDENTITY')
-    token = request.META.get('HTTP_AUTHORIZATION')
-    if not verify_token(identity, token):
+    uid = request.session.get('uid', None)
+    if uid is None:
         return None
-    users = User.objects.filter(email=identity)
-    if not users.exists():
-        return None
-    return users.first()
+    users = User.objects.filter(uid=uid)
+    if users.exists():
+        return users.first()
+    return None
