@@ -1,0 +1,90 @@
+* {
+    padding: inherit;
+    margin: 0px;
+}
+
+li {
+    list-style: none;
+}
+
+.clearfix:before,
+.clearfix::after {
+    content: "";
+    display: table;
+}
+
+.clearfix::after {
+    clear: both;
+}
+
+.clearfix {
+    *zoom: 1;
+}
+
+a {
+    text-decoration: none;
+}
+
+body {
+    font-family: "Roboto", "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif;
+}
+
+.header {
+    padding: 10px;
+    text-align: center;
+}
+
+.banner {
+    background-color: darkgray;
+}
+
+.banner .nav {
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+}
+
+.nav .nav-item {
+    flex: 1;
+    text-align: center;
+    height: 2.5em;
+    margin: 0 10px;
+    background-color: darkmagenta;
+    transition: 500ms;
+}
+
+.nav .nav-item a {
+    display: inline-block;
+    line-height: 2.5em;
+    height: 100%;
+    width: 100%;
+    color: white;
+}
+
+.nav .nav-item:hover {
+    background-color: rebeccapurple;
+}
+
+.wrapper {
+    text-align: center;
+    width: 90%;
+    margin: 20px auto;
+}
+
+.footer {
+    text-align: center;
+    padding: 10px;
+}
+
+.column {
+    display: flex;
+    flex-direction: row;
+}
+
+.left {
+    flex: 4;
+}
+
+.right {
+    flex: 6;
+}

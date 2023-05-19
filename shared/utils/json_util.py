@@ -47,6 +47,12 @@ def _check_type(dict_obj, cls_obj) -> bool:
 
 
 def deserialize(json_str: str, cls=None):
+    """
+    Deserialize json string to object of specific class
+    :param json_str: raw json string
+    :param cls: class to convert, if None, will leave json as dict
+    :return: object of class cls, or dict
+    """
     obj = None
     try:
         obj = json.loads(json_str)
@@ -61,4 +67,18 @@ def deserialize(json_str: str, cls=None):
         ret = cls()
         ret.__dict__ = obj
         return ret
+    return obj
+
+def deserialize_dict(dict_obj, cls):
+    """
+    Deserialize dict object to object of specific class
+    """
+    dict_obj.pop('csrfmiddlewaretoken', None)
+
+    try:
+        _check_type(dict_obj, cls())
+    except AttributeError:
+        raise JsonDeserializeException(f"Type mismatch, should be {cls.__name__}", dict_obj)
+    obj = cls()
+    obj.__dict__ = dict_obj
     return obj

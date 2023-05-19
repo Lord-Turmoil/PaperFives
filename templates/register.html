@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block body %}
+    <form method="post" action="/api/v1/users/register/">
+        {% csrf_token %}
+        <table>
+            <tr class="field">
+                <td class="key"><span>Email</span></td>
+                <td><input type="text" name="email"/></td>
+            </tr>
+            <tr class="field">
+                <td class="key"><span>Username</span></td>
+                <td><input type="text" name="username"/></td>
+            </tr>
+            <tr class="field">
+                <td class="key"><span>Password</span></td>
+                <td><input type="text" name="password"/></td>
+            </tr>
+            <tr class="field">
+                <td class="key"><span>Verification Code</span></td>
+                <td><input type="text" name="code"/></td>
+            </tr>
+            <tr class="field">
+                <td class="key"><span>Submit</span></td>
+                <td><input type="submit"/></td>
+            </tr>
+        </table>
+    </form>
+    <hr/>
+    <form method="post" action="/api/v1/users/verification/">
+        <table>
+            <tr class="field">
+                <td class="key"><span>Email</span></td>
+                <td><input type="text" name="email"/></td>
+            </tr>
+            <tr class="field">
+                <td class="key"><span>Send Verification Code</span></td>
+                <td><input type="submit" value="Send"/></td>
+            </tr>
+        </table>
+    </form>
+{% endblock %}

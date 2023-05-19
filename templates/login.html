@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block body %}
+    <form method="post" action="/api/v1/users/login/">
+        {% csrf_token %}
+        <table>
+            <tr class="field">
+                <td class="key"><span>Email</span></td>
+                <td><input type="text" name="email"/></td>
+            </tr>
+            <tr class="field">
+                <td class="key"><span>Password</span></td>
+                <td><input type="text" name="password"/></td>
+            </tr>
+            <tr class="field">
+                <td class="key"><span>Submit</span></td>
+                <td><input type="submit"/></td>
+            </tr>
+        </table>
+    </form>
+{% endblock %}
+{% load static %}

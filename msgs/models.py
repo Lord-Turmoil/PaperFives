@@ -71,3 +71,17 @@ class ImagePayload(models.Model):
 
     class Meta:
         verbose_name = "image_payload"
+
+
+class EmailRecord(models.Model):
+    email = models.EmailField()
+    code = models.CharField(max_length=15)
+    expire = models.DateTimeField()
+    usage = models.CharField(max_length=15)
+
+    @classmethod
+    def create(cls, _email, _code, _expire, _usage):
+        return cls(email=_email, code=_code, expire=_expire, usage=_usage)
+
+    class Meta:
+        verbose_name = "email"

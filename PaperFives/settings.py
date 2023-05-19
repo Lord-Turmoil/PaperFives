@@ -132,10 +132,26 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [
+    "static"
+]
 
 ################################################################################
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+################################################################################
+# Email configuration
+#
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_CONFIG = SECRETS['email']
+EMAIL_HOST = EMAIL_CONFIG['EMAIL_HOST']
+EMAIL_PORT = EMAIL_CONFIG['EMAIL_PORT']
+EMAIL_HOST_USER = EMAIL_CONFIG['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = EMAIL_CONFIG['EMAIL_HOST_PASSWORD']
+EMAIL_USE_TLS = EMAIL_CONFIG['EMAIL_USE_TLS']
+EMAIL_FROM = EMAIL_CONFIG['EMAIL_FROM']

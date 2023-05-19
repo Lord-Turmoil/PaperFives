@@ -6,11 +6,17 @@
 #
 
 from django.urls import path
-from .views import test
+from .views import register, login, profile
 
 urlpatterns = [
-    # path('login/', )
-    path('_get_all/', test.get_user_all),
-    path('_get/', test.get_user_by_id),
-    path('_put/', test.put_user)
+    # basic register and login
+    path('verification/', register.get_verification_code),
+    path('register/', register.register),
+    path('login/', login.login),
+    path('logout/', login.logout),
+
+    # profile
+    path('profile/user', profile.get_user),
+    path('profile/profile/', profile.edit_user_profile),
+    path('profile/avatar/', profile.edit_user_profile)
 ]
