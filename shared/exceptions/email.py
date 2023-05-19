@@ -8,7 +8,7 @@
 
 class EmailException(Exception):
     def __init__(self, msg):
-       self.msg = msg
+        self.msg = msg
 
     def __str__(self):
         return f"Failed to send msg: {self.msg}"

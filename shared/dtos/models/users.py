@@ -5,8 +5,8 @@
 # @File    : user.py
 #
 from shared.dtos.models.base import BaseDto
-from shared.utils.str_util import is_null_or_empty, is_no_content
-from users.models import UserAttribute, User
+from shared.utils.str_util import is_no_content
+from users.models import UserAttribute
 
 
 class UserAttrDto(BaseDto):
@@ -42,6 +42,7 @@ class RegisterDto(BaseDto):
         self.username: str = ""
         self.password: str = ""
         self.code: str = ""
+
 
 class LoginDto(BaseDto):
     def __init__(self):

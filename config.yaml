@@ -1,5 +1,6 @@
+PROJECT_PATH: .
 AVATAR_PATH: /static/avatar/
-DEFAULT_AVATAR: /static/avatar/default.jpg
+DEFAULT_AVATAR: /static/avatar/default.png
 INVALID_NAME_LIST:
   - default
   - admin
@@ -10,7 +11,7 @@ ERROR_CODE:
   SERVER_ERROR: 10111
   WRONG_REQUEST_METHOD: 10001
   BAD_REQUEST: 10002
-  NO_AUTH: 10003
+  NOT_AUTHORIZED: 10003
 
   SEND_EMAIL: 11001
   NOT_VERIFIED: 11002

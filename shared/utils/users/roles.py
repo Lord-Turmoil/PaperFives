@@ -41,4 +41,3 @@ def is_user_admin(user) -> bool:
     if user is None:
         return False
     return Role.RoleName.ADMIN in get_roles(user)
-

@@ -8,10 +8,10 @@ from PaperFives.settings import ERROR_CODE
 
 class BaseResponseDto:
     def __init__(self, code, msg="Not available"):
-        self.code = code
-        self.msg = msg
+        self.meta = {'status': code, 'msg': msg}
+        self.data = {}
 
 
 class GoodResponseDto(BaseResponseDto):
-    def __init__(self, msg="Not available"):
+    def __init__(self, msg="What a nice request!"):
         super().__init__(ERROR_CODE['SUCCESS'], msg)
