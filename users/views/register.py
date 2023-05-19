@@ -19,6 +19,7 @@ from shared.response.base import BaseResponse
 from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.email_util import generate_code, send_code_email
 from shared.utils.json_util import deserialize_dict
+from shared.utils.parameter import parse_param
 from shared.utils.token import generate_password
 from users.models import User, Role
 
@@ -33,8 +34,8 @@ EMAIL_WHITE_LIST = [
 def get_verification_code(request):
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
-
-    email = request.POST.get('email', None)
+    params = parse_param(request)
+    email = params.get('email')
     if not email:
         return BadRequestResponse(BadRequestDto("missing 'email' field"))
 
@@ -70,9 +71,10 @@ def register(request):
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
 
+    params = parse_param(request)
     dto: RegisterDto = RegisterDto()  # bad...
     try:
-        dto = deserialize_dict(request.POST.dict(), RegisterDto)
+        dto = deserialize_dict(params, RegisterDto)
     except JsonException as e:
         return BadRequestResponse(BadRequestDto(e))
     if not dto.is_valid():

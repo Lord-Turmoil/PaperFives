@@ -14,6 +14,7 @@ from shared.exceptions.json import JsonDeserializeException
 from shared.response.base import BaseResponse
 from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.json_util import deserialize_dict
+from shared.utils.parameter import parse_param
 from shared.utils.token import verify_password
 from users.models import User
 from users.serializer import UserSerializer
@@ -23,10 +24,11 @@ from users.serializer import UserSerializer
 def login(request):
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
+    params = parse_param(request)
 
     dto: LoginDto = LoginDto()
     try:
-        dto = deserialize_dict(request.POST.dict(), LoginDto)
+        dto = deserialize_dict(params, LoginDto)
     except JsonDeserializeException as e:
         return BadRequestResponse(BadRequestDto(e))
     if not dto.is_valid():

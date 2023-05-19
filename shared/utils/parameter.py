@@ -12,7 +12,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from shared.utils.json_util import deserialize
 
 
-def parse_param(request: WSGIRequest):
+def parse_param(request: WSGIRequest) -> dict:
     """
     This will not handle multipart/form-data request!
     :return: all parameters in dictionary
