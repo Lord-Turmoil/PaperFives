@@ -20,13 +20,13 @@ class GeneralErrorDto(BaseResponseDto):
 class RequestMethodErrorDto(BaseResponseDto):
     def __init__(self, expect, actual):
         super().__init__(ERROR_CODE['WRONG_REQUEST_METHOD'], "401 Bad request")
-        self.descr = f"'{expect}' expected but got '{actual}'"
+        self.data = {'descr': f"'{expect}' expected but got '{actual}'"}
 
 
 class BadRequestDto(BaseResponseDto):
     def __init__(self, hint="Not available"):
         super().__init__(ERROR_CODE['BAD_REQUEST'], "Request format error")
-        self.hint = hint
+        self.data = {'descr': hint}
 
 
 class ServerErrorDto(BaseResponseDto):

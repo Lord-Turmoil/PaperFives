@@ -34,9 +34,11 @@ class LoginSuccessDto(GoodResponseDto):
     When logged in, server will return complete user info, and the
     corresponding login token.
     {
-        "code": 0,
-        "msg": "...",
-        "user": {
+        "meta": {
+            "code": 0,
+            "msg": "..."
+        },
+        "data": {
             "uid": 123,
             "email": "...",
             "username": "...",
@@ -49,11 +51,8 @@ class LoginSuccessDto(GoodResponseDto):
                 "publish_cnt": 123,
                 "message_cnt": 456
             }
-        },
-        "token": {
-            "identity": "...",
-            "token": "..."
         }
+    }
     """
 
     def __init__(self, user):
@@ -61,13 +60,13 @@ class LoginSuccessDto(GoodResponseDto):
         user and token are all dict object.
         """
         super().__init__("Welcome back to PaperFives!")
-        self.user = user
+        self.data = user
 
 
 class UserProfileDto(GoodResponseDto):
     def __init__(self, data):
         super().__init__()
-        self.user = data
+        self.data = data
 
 
 class NotLoggedInDto(BaseResponseDto):
