@@ -143,4 +143,4 @@ secrets_debug.yaml
 **/migrations
 django
 uwsgi.*
-static/
+static/avatar/
