@@ -13,5 +13,5 @@ class BaseResponseDto:
 
 
 class GoodResponseDto(BaseResponseDto):
-    def __init__(self, msg="Not available"):
+    def __init__(self, msg="What a nice request!"):
         super().__init__(ERROR_CODE['SUCCESS'], msg)
