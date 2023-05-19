@@ -69,6 +69,7 @@ def deserialize(json_str: str, cls=None):
         return ret
     return obj
 
+
 def deserialize_dict(dict_obj, cls):
     """
     Deserialize dict object to object of specific class

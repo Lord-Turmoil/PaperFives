@@ -6,7 +6,6 @@
 #
 from django.core.handlers.wsgi import WSGIRequest
 
-from shared.utils.token import verify_token
 from users.models import User
 
 

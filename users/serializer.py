@@ -9,6 +9,7 @@
 #
 
 from rest_framework import serializers
+
 from users.models import UserAttribute, UserStatistics, User
 
 
@@ -41,5 +42,3 @@ class UserSerializer(serializers.Serializer):
     class Meta:
         model = User
         fields = ('uid', 'email', 'username', 'avatar', 'attr', 'stat')
-
-

@@ -72,4 +72,3 @@ class UserProfileDto(GoodResponseDto):
 class NotLoggedInDto(BaseResponseDto):
     def __init__(self):
         super().__init__(ERROR_CODE['NOT_LOGGED_IN'], "Please login first.")
-       

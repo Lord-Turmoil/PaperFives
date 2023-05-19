@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
-
-from users.models import *
-from papers.models import *
 from msgs.models import *
+from papers.models import *
+from users.models import *
+
+# Register your models here.
 
 admin.site.register(UserAttribute)
 admin.site.register(UserStatistics)
@@ -22,4 +22,3 @@ admin.site.register(Message)
 admin.site.register(TextPayload)
 admin.site.register(LinkPayload)
 admin.site.register(ImagePayload)
-

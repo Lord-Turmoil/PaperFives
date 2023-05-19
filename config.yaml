@@ -1,3 +1,4 @@
+PROJECT_PATH: .
 AVATAR_PATH: /static/avatar/
 DEFAULT_AVATAR: /static/avatar/default.jpg
 INVALID_NAME_LIST:

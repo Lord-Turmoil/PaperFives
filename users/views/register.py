@@ -10,9 +10,9 @@ from django.views.decorators.csrf import csrf_exempt
 
 from PaperFives.settings import ERROR_CODE
 from msgs.models import EmailRecord
+from shared.dtos.models.users import RegisterDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto, GeneralErrorDto
-from shared.dtos.models.users import RegisterDto
 from shared.exceptions.email import EmailException
 from shared.exceptions.json import JsonException
 from shared.response.base import BaseResponse
@@ -88,7 +88,7 @@ def register(request):
     if not emails.exists():
         error_hint = "Did you acquired verification code? Or has it expired?"
         return BaseResponse(GeneralErrorDto(error_code, error_hint))
-    email:EmailRecord = emails.first()
+    email: EmailRecord = emails.first()
     if datetime.datetime.now() > email.expire:
         error_hint = "Oops! Verification code expired!"
         return BaseResponse(GeneralErrorDto(error_code, error_hint))

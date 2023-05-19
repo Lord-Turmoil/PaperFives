@@ -14,7 +14,7 @@ from shared.exceptions.json import JsonDeserializeException
 from shared.response.base import BaseResponse
 from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.json_util import deserialize_dict
-from shared.utils.token import verify_password, generate_token
+from shared.utils.token import verify_password
 from users.models import User
 from users.serializer import UserSerializer
 

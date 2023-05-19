@@ -3,7 +3,6 @@
 # - https://docs.djangoproject.com/en/4.2/topics/db/examples/one_to_one/
 # - https://docs.djangoproject.com/en/4.2/topics/db/examples/many_to_many/
 #
-import django.conf
 from django.db import models
 
 from PaperFives.settings import CONFIG

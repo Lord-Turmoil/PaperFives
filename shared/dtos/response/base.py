@@ -8,7 +8,7 @@ from PaperFives.settings import ERROR_CODE
 
 class BaseResponseDto:
     def __init__(self, code, msg="Not available"):
-        self.meta = {'status': code, 'msg': msg }
+        self.meta = {'status': code, 'msg': msg}
         self.data = {}
 
 

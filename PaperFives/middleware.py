@@ -6,7 +6,6 @@
 #
 from shared.dtos.response.users import NotAuthorizedDto
 from shared.response.basic import NotAuthorizedResponse
-from shared.utils.token import verify_token
 
 try:
     from django.utils.deprecation import MiddlewareMixin  # Django 1.10.x
@@ -15,7 +14,8 @@ except ImportError:
 
 BASE_URL = "/api/v1/"
 API_WHITELIST = ["/api/user/login", "/api/user/register"]
-API_BLACKLIST = [f"{BASE_URL}profile/profile",]
+API_BLACKLIST = [f"{BASE_URL}profile/profile", ]
+
 
 class AuthorizeMiddleware(MiddlewareMixin):
     def process_request(self, request):
