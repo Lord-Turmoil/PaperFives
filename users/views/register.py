@@ -14,15 +14,17 @@ from msgs.models import EmailRecord
 from shared.dtos.models.users import RegisterDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto, GeneralErrorDto
-from shared.dtos.response.users import NoSuchUserDto
+from shared.dtos.response.users import NoSuchUserDto, NotAuthorizedDto
 from shared.exceptions.email import EmailException
 from shared.exceptions.json import JsonException
 from shared.response.base import BaseResponse
-from shared.response.basic import BadRequestResponse, GoodResponse
+from shared.response.basic import BadRequestResponse, GoodResponse, NotAuthorizedResponse
 from shared.utils.email_util import generate_code, send_code_email
 from shared.utils.json_util import deserialize_dict
 from shared.utils.parameter import parse_param
 from shared.utils.token import generate_password
+from shared.utils.users.roles import is_user_admin
+from shared.utils.users.users import get_user_from_request
 from users.models import User, Role
 
 EMAIL_WHITE_LIST = [
@@ -149,11 +151,17 @@ def cancel_account(request):
     email = params.get('email')
     if email is None:
         return BadRequestResponse(BadRequestDto("Missing email"))
-
     users = User.objects.filter(email=email)
     if not users.exists():
         return GoodResponse(NoSuchUserDto())
     user = users.first()
+
+    profile = get_user_from_request(request)
+    if profile is None:
+        return NotAuthorizedResponse(NotAuthorizedDto("Login before you cancel the account"))
+    if not is_user_admin(profile):
+        if profile.email != user.email:
+            return NotAuthorizedResponse(NotAuthorizedDto("You cannot cancel other people!"))
     user.attr.delete()
     user.stat.delete()
     user.delete()

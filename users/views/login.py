@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from shared.dtos.models.users import LoginDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
-from shared.dtos.response.users import NoSuchUserDto, WrongPasswordDto, LoginSuccessDto
+from shared.dtos.response.users import NoSuchUserDto, WrongPasswordDto, LoginSuccessDto, NotLoggedInDto
 from shared.exceptions.json import JsonDeserializeException
 from shared.response.base import BaseResponse
 from shared.response.basic import BadRequestResponse, GoodResponse
@@ -55,4 +55,6 @@ def logout(request):
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
     if request.session.get('uid') is not None:
         request.session.clear()
+    else:
+        return GoodResponse(NotLoggedInDto())
     return GoodResponse(GoodResponseDto("See you later!"))

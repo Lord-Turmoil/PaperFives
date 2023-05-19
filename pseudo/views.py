@@ -28,8 +28,22 @@ def logout(request):
 
 
 @csrf_exempt
-def register(request):
+def register_user(request):
     return render(request, 'register.html')
+
+
+@csrf_exempt
+def register_admin(request):
+    return render(request, 'register-admin.html')
+
+
+@csrf_exempt
+def cancel(request):
+    user = get_user_from_request(request)
+    if user is None:
+        return render(request, 'not_logged_in.html')
+    data = deserialize(serialize(UserProfileDto(UserSerializer(user).data)))
+    return render(request, 'cancel.html', data)
 
 
 @csrf_exempt
@@ -38,5 +52,4 @@ def profile(request):
     if user is None:
         return render(request, 'not_logged_in.html')
     data = deserialize(serialize(UserProfileDto(UserSerializer(user).data)))
-    print(data)
     return render(request, 'profile.html', data)
