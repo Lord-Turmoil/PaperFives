@@ -12,18 +12,26 @@ from django.core.handlers.wsgi import WSGIRequest
 from shared.utils.json_util import deserialize
 
 
+def _parse_POST_param(request: WSGIRequest) -> dict:
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        return deserialize(request.body)
+    elif content_type == 'application/x-www-form-urlencoded':
+        return request.POST.dict()
+    return {}
+
+
+def _parse_GET_param(request: WSGIRequest) -> dict:
+    return request.GET.dict()
+
+
 def parse_param(request: WSGIRequest) -> dict:
     """
     This will not handle multipart/form-data request!
     :return: all parameters in dictionary
     """
-    content_type = request.headers.get('Content-Type')
-    if content_type == 'application/json':
-        return deserialize(request.body)
-    if content_type == 'application/x-www-form-urlencoded':
-        if request.method == 'POST':
-            return request.POST.dict()
-        elif request.method == 'GET':
-            return request.GET.dict()
-        return {}
+    if request.method == 'POST':
+        return _parse_POST_param(request)
+    elif request.method == 'GET':
+        return _parse_GET_param(request)
     return {}
