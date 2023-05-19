@@ -144,3 +144,4 @@ secrets_debug.yaml
 django
 uwsgi.*
 uwsgi.*
+static/

@@ -12,7 +12,6 @@ class GeneralErrorDto(BaseResponseDto):
     """
     Will not provide detailed messages by default.
     """
-
     def __init__(self, code, msg="Not available"):
         super().__init__(code, msg)
 
