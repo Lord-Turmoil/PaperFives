@@ -12,7 +12,9 @@ from .views import register, login, profile
 urlpatterns = [
     # basic register and login
     path('verification/', register.get_verification_code),
-    path('register/', register.register),
+    path('register/', register.register_as_user),
+    path('register-admin/', register.register_as_admin),
+    path('cancel/', register.cancel_account),
     path('login/', login.login),
     path('logout/', login.logout),
 

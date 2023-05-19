@@ -146,8 +146,7 @@ def edit_user_avatar(request):
         for chunk in file.chunks():
             f.write(chunk)
         f.close()
-    except Exception as e:
-        print(e)
+    except:
         return ServerErrorResponse(ServerErrorDto("Failed to save avatar!"))
 
     user.avatar = avatar
