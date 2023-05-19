@@ -21,5 +21,5 @@ class AuthorizeMiddleware(MiddlewareMixin):
     def process_request(self, request):
         if request.path not in API_BLACKLIST:
             return
-        if request.get('uid', None) is None:
+        if request.session.get('uid', None) is None:
             return NotAuthorizedResponse(NotAuthorizedDto("No login information"))
