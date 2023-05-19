@@ -60,7 +60,7 @@ class User(models.Model):
     @classmethod
     def create(cls, _email, _username, _password, _avatar="", _attr=None, _stat=None):
         if is_no_content(_avatar):
-            _avatar = CONFIG['DEFAULT_AVATAR_PATH']
+            _avatar = CONFIG['DEFAULT_AVATAR']
         if _attr is None:
             _attr = UserAttribute.create()
             _attr.save()

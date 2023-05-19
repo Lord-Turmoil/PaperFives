@@ -31,6 +31,10 @@ class UserSimpleSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.Serializer):
+    uid = serializers.IntegerField()
+    email = serializers.EmailField()
+    username = serializers.CharField()
+    avatar = serializers.CharField()
     attr = UserAttributeSerializer()
     stat = UserStatisticsSerializer()
 
