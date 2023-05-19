@@ -1,6 +1,6 @@
 PROJECT_PATH: .
 AVATAR_PATH: /static/avatar/
-DEFAULT_AVATAR: /static/avatar/default.jpg
+DEFAULT_AVATAR: /static/avatar/default.png
 INVALID_NAME_LIST:
   - default
   - admin
