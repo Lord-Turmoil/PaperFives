@@ -1,37 +1,8 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PaperFives</title>
-    <link type="text/css" rel="stylesheet" href="{% static 'css/layout.css' %}">
-    <link type="text/css" rel="stylesheet" href="{% static 'css/welcome.css' %}">
-</head>
-<body>
-<div class="header">
-    <h1>PaperFives Sample Page</h1>
-</div>
-<hr/>
-<div class="banner">
-    <ul class="nav">
-        <li class="nav-item"><a href="/pseudo/login/">Login</a></li>
-        <li class="nav-item"><a href="/pseudo/register/">Register</a></li>
-        <li class="nav-item"><a href="/pseudo/login/">Login</a></li>
-        <li class="nav-item"><a href="/pseudo/login/">Login</a></li>
-    </ul>
-</div>
-<hr/>
-<div class="wrapper">
+{% extends 'base.html' %}
+{% block title %}PaperFives Sample Page{% endblock %}
+{% block body %}
     <div class="prompt">
         <p>If you see this, it means the backend server is successfully launched.</p>
         <p>But there's no guarantee that it doesn't contain any bugs or will not crash. :)</p>
     </div>
-</div>
-<hr/>
-<div class="footer">
-    <p class="copyright">Copyright &copy; Fives 2023</p>
-</div>
-</body>
-</html>
+{% endblock %}
