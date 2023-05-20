@@ -170,4 +170,4 @@ def cancel_account(request):
     user.stat.delete()
     user.delete()
 
-    return GoodResponse(GoodResponseDto("Parting is such sweet sorrow"))
+    return GoodResponse(GoodResponseDto("Parting is such sweet sorrow."))
