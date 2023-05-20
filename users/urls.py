@@ -25,7 +25,8 @@ urlpatterns = [
     path('profile/password/', profile.edit_user_password),
 
     # query user
-    path('query', users.query_users),
+    path('query/query', users.query_users),
+    path('query/get/', users.get_users),
 
     # follow
     path('favorite/follow/', follow.follow_user),

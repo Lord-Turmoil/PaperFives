@@ -4,6 +4,7 @@
 # @Author  : Tony Skywalker
 # @File    : user.py
 #
+from typing import List
 
 from shared.dtos.models.base import BaseDto
 from shared.utils.str_util import is_no_content
@@ -55,3 +56,9 @@ class LoginDto(BaseDto):
     def __init__(self):
         self.email: str = ""
         self.password: str = ""
+
+
+class GetUsersDto(BaseDto):
+    def __init__(self):
+        self.mode: str = ""
+        self.users: List[int] = []
