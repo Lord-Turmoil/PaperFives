@@ -84,4 +84,4 @@ class FollowNothingErrorDto(BaseResponseDto):
 
 class UserListDto(GoodResponseDto):
     def __init__(self, user_list):
-        super.__init__(data={'list': user_list})
+        super().__init__(data={'list': user_list})
