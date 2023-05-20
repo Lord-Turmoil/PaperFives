@@ -105,7 +105,7 @@ class Role(models.Model):
 
 class FavoriteUser(models.Model):
     # Two fields with the same foreign key seems to cause conflict?
-    src_uid = models.BigIntegerField(primary_key=True)
+    src_uid = models.BigIntegerField()
     dst_uid = models.BigIntegerField()
 
     @classmethod
