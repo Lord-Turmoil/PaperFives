@@ -17,10 +17,10 @@ from shared.dtos.response.users import NoSuchUserDto, UserProfileDto, NotLoggedI
 from shared.response.basic import BadRequestResponse, GoodResponse, ServerErrorResponse
 from shared.utils.parameter import parse_param
 from shared.utils.str_util import is_no_content
-from shared.utils.token import verify_password
+from shared.utils.token import verify_password, generate_password
 from shared.utils.users.roles import is_user_admin, get_roles
 from shared.utils.users.users import get_user_from_request
-from shared.utils.validator import validate_image_name
+from shared.utils.validator import validate_image_name, validate_password
 from users.models import User, UserAttribute
 from users.serializer import UserSerializer, UserSimpleSerializer
 
@@ -154,7 +154,7 @@ def edit_user_avatar(request):
     user.avatar = avatar
     user.save()
 
-    return GoodResponse(GoodResponseDto("Enjoy your new avatar! :)"))
+    return GoodResponse(UserProfileDto(UserSimpleSerializer(user).data))
 
 
 @csrf_exempt
@@ -177,3 +177,10 @@ def edit_user_password(request):
         return BadRequestResponse(BadRequestDto("missing parameters"))
     if not verify_password(old_pwd, user.password):
         return GoodResponse(WrongPasswordDto())
+    if not validate_password(new_pwd):
+        return BadRequestResponse(BadRequestDto("Invalid password formt"))
+
+    user.password = generate_password(new_pwd)
+    user.save()
+
+    return GoodResponse(GoodResponseDto("Password changed!"))

@@ -72,3 +72,13 @@ class UserProfileDto(GoodResponseDto):
 class NotLoggedInDto(BaseResponseDto):
     def __init__(self):
         super().__init__(ERROR_CODE['NOT_LOGGED_IN'], "Please login first.")
+
+
+class FollowSelfErrorDto(BaseResponseDto):
+    def __init__(self):
+        super().__init__(ERROR_CODE['FOLLOW_SELF'], "You can't follow or unfollow your self!")
+
+
+class FollowNothingErrorDto(BaseResponseDto):
+    def __init__(self):
+        super().__init__(ERROR_CODE['FOLLOW_NOTHING'], "The user you're looking for does not exist.")

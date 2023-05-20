@@ -7,7 +7,7 @@
 
 from django.urls import path
 
-from .views import register, login, profile
+from .views import register, login, profile, follow
 
 urlpatterns = [
     # basic register and login
@@ -21,5 +21,10 @@ urlpatterns = [
     # profile
     path('profile/user', profile.get_user),
     path('profile/profile/', profile.edit_user_profile),
-    path('profile/avatar/', profile.edit_user_avatar)
+    path('profile/avatar/', profile.edit_user_avatar),
+    path('profile/password/', profile.edit_user_password),
+
+    # follow
+    path('favorite/follow/', follow.follow_user),
+    path('favorite/unfollow/', follow.unfollow_user),
 ]
