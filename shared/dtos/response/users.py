@@ -64,8 +64,7 @@ class LoginSuccessDto(GoodResponseDto):
 
 class UserProfileDto(GoodResponseDto):
     def __init__(self, data):
-        super().__init__()
-        self.data = data
+        super().__init__(data=data)
 
 
 class NotLoggedInDto(BaseResponseDto):
@@ -81,3 +80,8 @@ class FollowSelfErrorDto(BaseResponseDto):
 class FollowNothingErrorDto(BaseResponseDto):
     def __init__(self):
         super().__init__(ERROR_CODE['FOLLOW_NOTHING'], "The user you're looking for does not exist.")
+
+
+class UserListDto(GoodResponseDto):
+    def __init__(self, user_list):
+        super.__init__(data={'list': user_list})

@@ -4,6 +4,7 @@
 # @Author  : Tony Skywalker
 # @File    : user.py
 #
+
 from shared.dtos.models.base import BaseDto
 from shared.utils.str_util import is_no_content
 from shared.utils.validator import validate_email, validate_password
