@@ -25,6 +25,7 @@ from shared.utils.parameter import parse_param
 from shared.utils.token import generate_password
 from shared.utils.users.roles import is_user_admin
 from shared.utils.users.users import get_user_from_request
+from shared.utils.validator import validate_email
 from users.models import User, Role
 
 EMAIL_WHITE_LIST = [
@@ -41,12 +42,15 @@ def get_verification_code(request):
     params = parse_param(request)
     email = params.get('email')
     if not email:
-        return BadRequestResponse(BadRequestDto("missing 'email' field"))
+        return BadRequestResponse(BadRequestDto("Missing 'email' field"))
 
     # registered user shouldn't get verification code
     users = User.objects.filter(email=email)
     if users.exists():
         return BaseResponse(GeneralErrorDto(ERROR_CODE['DUPLICATE_USER'], "User already registered"))
+
+    if not validate_email(email):
+        return BadRequestDto(BadRequestDto("Invalid email format!"))
 
     code = generate_code()
     try:
