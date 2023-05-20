@@ -13,10 +13,11 @@ from django.views.decorators.csrf import csrf_exempt
 from PaperFives.settings import CONFIG
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import BadRequestDto, RequestMethodErrorDto, ServerErrorDto
-from shared.dtos.response.users import NoSuchUserDto, UserProfileDto, NotLoggedInDto
+from shared.dtos.response.users import NoSuchUserDto, UserProfileDto, NotLoggedInDto, WrongPasswordDto
 from shared.response.basic import BadRequestResponse, GoodResponse, ServerErrorResponse
 from shared.utils.parameter import parse_param
 from shared.utils.str_util import is_no_content
+from shared.utils.token import verify_password
 from shared.utils.users.roles import is_user_admin, get_roles
 from shared.utils.users.users import get_user_from_request
 from shared.utils.validator import validate_image_name
@@ -154,3 +155,25 @@ def edit_user_avatar(request):
     user.save()
 
     return GoodResponse(GoodResponseDto("Enjoy your new avatar! :)"))
+
+
+@csrf_exempt
+def edit_user_password(request):
+    if request.method != 'POST':
+        return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
+    uid = request.session.get('uid')
+    if uid is None:
+        return GoodResponse(NotLoggedInDto())
+    users = User.objects.filter(uid=uid)
+    if not users.exists():
+        return GoodResponse(NoSuchUserDto())
+    user = users.first()
+
+    params = parse_param(request)
+
+    old_pwd = params.get('old')
+    new_pwd = params.get('new')
+    if old_pwd is None or new_pwd is None:
+        return BadRequestResponse(BadRequestDto("missing parameters"))
+    if not verify_password(old_pwd, user.password):
+        return GoodResponse(WrongPasswordDto())

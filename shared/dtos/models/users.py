@@ -6,6 +6,7 @@
 #
 from shared.dtos.models.base import BaseDto
 from shared.utils.str_util import is_no_content
+from shared.utils.validator import validate_email, validate_password
 from users.models import UserAttribute
 
 
@@ -42,6 +43,11 @@ class RegisterDto(BaseDto):
         self.username: str = ""
         self.password: str = ""
         self.code: str = ""
+
+    def is_valid(self) -> bool:
+        if not self.is_valid_base():
+            return False
+        return validate_email(self.email) and validate_password(self.password)
 
 
 class LoginDto(BaseDto):
