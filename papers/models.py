@@ -71,6 +71,7 @@ class Paper(models.Model):
         ordering = ['pid']
         verbose_name = 'paper'
 
+
 class Area(models.Model):
     first_level_discipline_code = models.IntegerField()
     second_level_discipline_code = models.IntegerField()
@@ -78,10 +79,11 @@ class Area(models.Model):
 
     @classmethod
     def create(cls, _FLDC, _SLDC, _name):
-        return cls(first_level_discipline_code = _FLDC, second_level_discipline_code = _SLDC, name = _name)
+        return cls(first_level_discipline_code=_FLDC, second_level_discipline_code=_SLDC, name=_name)
 
     class Meta:
         verbose_name = "area"
+
 
 class PaperAreaRelation(models.Model):
     paper = models.ForeignKey(Paper, related_name="areas", on_delete=models.CASCADE)
@@ -89,6 +91,8 @@ class PaperAreaRelation(models.Model):
 
     class Meta:
         verbose_name = "paper_area_relation"
+
+
 class Author(models.Model):
     email = models.EmailField()  # will be linked to User via email
     name = models.CharField(max_length=63)
