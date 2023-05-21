@@ -22,6 +22,7 @@ class Message(models.Model):
     # message attribute
     timestamp = models.DateTimeField()
     mtype = models.PositiveSmallIntegerField(choices=MessageType.choices, default=MessageType.TEXT)
+    checked = models.BooleanField()
 
     @classmethod
     def create(cls, _src, _dst, _type, _time=None):
