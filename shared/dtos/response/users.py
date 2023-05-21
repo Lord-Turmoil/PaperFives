@@ -59,16 +59,29 @@ class LoginSuccessDto(GoodResponseDto):
         """
         user and token are all dict object.
         """
-        super().__init__("Welcome back to PaperFives!")
-        self.data = user
+        super().__init__("Welcome back to PaperFives!", data=user)
 
 
 class UserProfileDto(GoodResponseDto):
     def __init__(self, data):
-        super().__init__()
-        self.data = data
+        super().__init__(data=data)
 
 
 class NotLoggedInDto(BaseResponseDto):
     def __init__(self):
         super().__init__(ERROR_CODE['NOT_LOGGED_IN'], "Please login first.")
+
+
+class FollowSelfErrorDto(BaseResponseDto):
+    def __init__(self):
+        super().__init__(ERROR_CODE['FOLLOW_SELF'], "You can't follow or unfollow your self!")
+
+
+class FollowNothingErrorDto(BaseResponseDto):
+    def __init__(self):
+        super().__init__(ERROR_CODE['FOLLOW_NOTHING'], "The user you're looking for does not exist.")
+
+
+class UserListDto(GoodResponseDto):
+    def __init__(self, user_list):
+        super().__init__(data={'list': user_list})

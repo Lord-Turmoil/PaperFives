@@ -7,12 +7,21 @@
 # Description:
 #   For data validations.
 #
+import re
 
 VALID_IMAGE_FILE_EXT = ['.jpg', '.jpeg', '.png']
 
 
-def validate_image_name(filename: str):
+def validate_image_name(filename: str) -> bool:
     for ext in VALID_IMAGE_FILE_EXT:
         if filename.endswith(ext):
             return True
     return False
+
+
+def validate_email(email: str) -> bool:
+    return re.match('^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$', email)
+
+
+def validate_password(password: str) -> bool:
+    return re.match('^[a-zA-Z0-9_]{6,16}$', password)

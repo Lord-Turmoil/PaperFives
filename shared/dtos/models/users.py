@@ -4,8 +4,11 @@
 # @Author  : Tony Skywalker
 # @File    : user.py
 #
+from typing import List
+
 from shared.dtos.models.base import BaseDto
 from shared.utils.str_util import is_no_content
+from shared.utils.validator import validate_email, validate_password
 from users.models import UserAttribute
 
 
@@ -43,8 +46,19 @@ class RegisterDto(BaseDto):
         self.password: str = ""
         self.code: str = ""
 
+    def is_valid(self) -> bool:
+        if not self.is_valid_base():
+            return False
+        return validate_email(self.email) and validate_password(self.password)
+
 
 class LoginDto(BaseDto):
     def __init__(self):
         self.email: str = ""
         self.password: str = ""
+
+
+class GetUsersDto(BaseDto):
+    def __init__(self):
+        self.mode: str = ""
+        self.users: List[int] = []

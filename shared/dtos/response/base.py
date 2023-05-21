@@ -7,11 +7,11 @@ from PaperFives.settings import ERROR_CODE
 
 
 class BaseResponseDto:
-    def __init__(self, code, msg="Not available"):
+    def __init__(self, code, msg="Not available", **kwargs):
         self.meta = {'status': code, 'msg': msg}
-        self.data = {}
+        self.data = kwargs.get('data', {})
 
 
 class GoodResponseDto(BaseResponseDto):
-    def __init__(self, msg="What a nice request!"):
-        super().__init__(ERROR_CODE['SUCCESS'], msg)
+    def __init__(self, msg="What a nice request!", **kwargs):
+        super().__init__(ERROR_CODE['SUCCESS'], msg, **kwargs)

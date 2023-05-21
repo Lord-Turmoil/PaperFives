@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Cancel Account{% endblock %}
+{% block body %}
+    <form method="post" action="/api/v1/users/cancel/">
+        {% csrf_token %}
+        <table>
+            <tr class="field">
+                <td class="key"><span>Email</span></td>
+                <td><input type="email" name="email" value="{{ data.email }}"/></td>
+            </tr>
+            <tr>
+                <td class="key"><span>Click to Cancel Account</span></td>
+                <td><input type="submit" value="Cancel"/></td>
+            </tr>
+        </table>
+    </form>
+{% endblock %}
