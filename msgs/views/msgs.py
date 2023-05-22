@@ -13,8 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from msgs.models import Message, TextPayload, LinkPayload, ImagePayload
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
-from shared.dtos.response.msgs import TextMessageResponseData, LinkMessageResponseData, ImageMessageResponseData, \
-    MessageResponseDto
+from shared.dtos.response.msgs import TextMessageResponseData, LinkMessageResponseData, ImageMessageResponseData
 from shared.dtos.response.users import NotLoggedInDto
 from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.parameter import parse_param
@@ -61,7 +60,6 @@ def get_messages(request):
         return GoodResponse(NotLoggedInDto())
 
     # query settings
-    page_size = 20
     try:
         ps = params.get('ps')
         page_size = 20 if is_no_content(ps) else int(ps)
@@ -85,7 +83,7 @@ def get_messages(request):
     msg: Message
     msg_list = []
     for msg in page.object_list:
-        if msg.checked:
+        if not msg.checked:
             msg.checked = True
             msg.save()
             user: User = get_user_by_uid(msg.dst_uid)
