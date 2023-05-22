@@ -56,11 +56,11 @@ def query_users(request):
     # get results
     users = User.objects.all()
     if email is not None:
-        users = users.filter(email__contains=email)
+        users = users.filter(email__icontains=email)
     if username is not None:
-        users = users.filter(username__contains=username)
+        users = users.filter(username__icontains=username)
     if institute is not None:
-        users = users.filter(attr__institute__contains=institute)
+        users = users.filter(attr__institute__icontains=institute)
 
     # paginate
     paginator = Paginator(users, page_size)

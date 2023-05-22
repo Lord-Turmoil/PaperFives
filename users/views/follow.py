@@ -12,6 +12,7 @@ from shared.dtos.response.users import NotLoggedInDto, NoSuchUserDto, FollowSelf
     UserListDto
 from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.parameter import parse_param
+from shared.utils.users.users import get_user_from_request
 from users.models import User, FavoriteUser
 
 
@@ -49,13 +50,9 @@ def follow_user(request):
 def unfollow_user(request):
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
-    uid = request.session.get('uid')
-    if uid is None:
+    user = get_user_from_request(request)
+    if user is None:
         return GoodResponse(NotLoggedInDto())
-    users = User.objects.filter(uid=uid)
-    if not users.exists():
-        return GoodResponse(NoSuchUserDto())
-    user = users.first()
 
     params = parse_param(request)
     target = params.get('uid')
