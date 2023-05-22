@@ -17,3 +17,10 @@ def get_user_from_request(request: WSGIRequest):
     if users.exists():
         return users.first()
     return None
+
+def get_user_by_uid(uid):
+    users = User.objects.filter(uid=uid)
+    if users.exists():
+        return users.first()
+    return None
+
