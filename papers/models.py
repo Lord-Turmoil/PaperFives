@@ -30,10 +30,11 @@ class PaperStatistics(models.Model):
     cites = models.IntegerField(default=0)
     downloads = models.IntegerField(default=0)
     favorites = models.IntegerField(default=0)
+    clicks = models.IntegerField(default=0)
 
     @classmethod
-    def create(cls, _cites=0, _downloads=0, _favorites=0):
-        return cls(cites=_cites, downloads=_downloads, favorites=_favorites)
+    def create(cls, _cites=0, _downloads=0, _favorites=0, _clicks=0):
+        return cls(cites=_cites, downloads=_downloads, favorites=_favorites, clicks=_clicks)
 
     class Meta:
         verbose_name = 'paper_stat'
