@@ -70,7 +70,7 @@ def query_users(request):
     data = {
         'ps': page_size,
         'p': page.number,
-        'total': paginator.num_pages,
+        'total': users.count(),
         'next': paginator.num_pages > page.number,
         'users': []
     }
