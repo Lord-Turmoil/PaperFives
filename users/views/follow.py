@@ -58,13 +58,13 @@ def unfollow_user(request):
     target = params.get('uid')
     if target is None:
         return BadRequestResponse(BadRequestDto("Whom are you going to unfollow?"))
-    if target == uid:
+    if target == user.uid:
         return GoodResponse(FollowSelfErrorDto())
     # No need to check this in unfollow?
     # if not User.objects.filter(uid=target).exists():
     #     return BadRequestResponse(FollowNothingErrorDto())
 
-    follows = FavoriteUser.objects.filter(src_uid=uid, dst_uid=target)
+    follows = FavoriteUser.objects.filter(src_uid=user.uid, dst_uid=target)
     if not follows.exists():
         return GoodResponse(GoodResponseDto("User already unfollowed"))
     follows.delete()
