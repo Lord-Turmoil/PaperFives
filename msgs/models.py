@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import models
+from django.utils import timezone
 
 
 # Create your models here.
@@ -22,16 +23,16 @@ class Message(models.Model):
     # message attribute
     timestamp = models.DateTimeField()
     mtype = models.PositiveSmallIntegerField(choices=MessageType.choices, default=MessageType.TEXT)
-    checked = models.BooleanField()
+    checked = models.BooleanField(default=False)
 
     @classmethod
-    def create(cls, _src, _dst, _type, _time=None):
+    def create(cls, _mid, _src, _dst, _type, _time=None):
         """
         by default, timestamp is the time when object is created
         """
         if _time is None:
-            _time = datetime.datetime.now()
-        return cls(src_uid=_src, dst_uid=_dst, timestamp=_time, mtype=_type)
+            _time = timezone.now()
+        return cls(mid=_mid, src_uid=_src, dst_uid=_dst, timestamp=_time, mtype=_type)
 
     class Meta:
         verbose_name = "message"
