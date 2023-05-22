@@ -4,6 +4,7 @@
 # @Author  : Tony Skywalker
 # @File    : register.py
 #
+
 import datetime
 
 from django.utils import timezone
@@ -20,7 +21,7 @@ from shared.exceptions.json import JsonException
 from shared.response.base import BaseResponse
 from shared.response.basic import BadRequestResponse, GoodResponse, NotAuthorizedResponse
 from shared.utils.email_util import generate_code, send_code_email
-from shared.utils.json_util import deserialize_dict
+from shared.utils.json_util import deserialize
 from shared.utils.parameter import parse_param
 from shared.utils.token import generate_password
 from shared.utils.users.roles import is_user_admin
@@ -81,7 +82,8 @@ def _register(request):
     params = parse_param(request)
     dto: RegisterDto = RegisterDto()  # bad...
     try:
-        dto = deserialize_dict(params, RegisterDto)
+        params.pop('csrfmiddlewaretoken', None)
+        dto = deserialize(params, RegisterDto)
     except JsonException as e:
         return None, BadRequestResponse(BadRequestDto(e))
     if not dto.is_valid():

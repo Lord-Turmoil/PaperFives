@@ -19,7 +19,9 @@ class JsonSerializeException(JsonException):
         self.obj = obj
 
     def __str__(self):
-        return super().__str__() + f"\n\tOn object: {'None' if self.obj is None else self.obj.__dict__}"
+        _str = super().__str__()
+        _str += f"\n\tOn object: {'None' if self.obj is None else self.obj.__dict__}"
+        return _str
 
 
 class JsonDeserializeException(JsonException):
@@ -28,4 +30,6 @@ class JsonDeserializeException(JsonException):
         self.obj = obj
 
     def __str__(self):
-        return super().__str__() + f"\n\tOn string: {'None' if self.obj is None else self.obj}"
+        _str = super().__str__()
+        _str += f"\n\tOn string: {'None' if self.obj is None else self.obj}"
+        return _str

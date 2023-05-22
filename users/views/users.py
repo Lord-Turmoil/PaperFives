@@ -12,7 +12,7 @@ from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
 from shared.exceptions.json import JsonDeserializeException
 from shared.response.basic import BadRequestResponse, GoodResponse
-from shared.utils.json_util import deserialize_dict
+from shared.utils.json_util import deserialize
 from shared.utils.parameter import parse_param
 from shared.utils.str_util import is_no_content
 from users.models import User
@@ -91,7 +91,8 @@ def get_users(request):
         return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
     params = None
     try:
-        params: GetUsersDto = deserialize_dict(parse_param(request), GetUsersDto)
+        params.pop('csrfmiddlewaretoken', None)
+        params: GetUsersDto = deserialize(parse_param(request), GetUsersDto)
     except JsonDeserializeException as e:
         return BadRequestResponse(BadRequestDto(e))
 

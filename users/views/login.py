@@ -13,7 +13,7 @@ from shared.dtos.response.users import NoSuchUserDto, WrongPasswordDto, LoginSuc
 from shared.exceptions.json import JsonDeserializeException
 from shared.response.base import BaseResponse
 from shared.response.basic import BadRequestResponse, GoodResponse
-from shared.utils.json_util import deserialize_dict
+from shared.utils.json_util import deserialize
 from shared.utils.parameter import parse_param
 from shared.utils.token import verify_password
 from users.models import User
@@ -28,7 +28,8 @@ def login(request):
 
     dto: LoginDto = LoginDto()
     try:
-        dto = deserialize_dict(params, LoginDto)
+        params.pop('csrfmiddlewaretoken', None)
+        dto = deserialize(params, LoginDto)
     except JsonDeserializeException as e:
         return BadRequestResponse(BadRequestDto(e))
     if not dto.is_valid():

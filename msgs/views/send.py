@@ -19,7 +19,7 @@ from shared.dtos.response.msgs import MessageResponseDto, TextMessageResponseDat
 from shared.dtos.response.users import NotLoggedInDto, NoSuchUserDto
 from shared.exceptions.json import JsonDeserializeException
 from shared.response.basic import BadRequestResponse, GoodResponse, ServerErrorResponse
-from shared.utils.json_util import deserialize_dict
+from shared.utils.json_util import deserialize
 from shared.utils.parameter import parse_param
 from shared.utils.users.users import get_user_from_request, get_user_by_uid
 from shared.utils.validator import validate_image_name
@@ -135,7 +135,8 @@ def send_msg(request):
     # parse request parameter
     data = None
     try:
-        data = deserialize_dict(params, dto_cls)
+        params.pop('csrfmiddlewaretoken', None)
+        data = deserialize(params, dto_cls)
     except JsonDeserializeException as e:
         return BadRequestResponse(BadRequestDto(e))
 
