@@ -9,9 +9,8 @@ from shared.dtos.models.base import BaseDto
 class PaperAttrDto(BaseDto):
     def __init__(self):
         self.title: str = ""
-        self.keywords: str = ""
         self.abstract: str = ""
-        self.publish_date: str = "" # is that appropriate?
+        self.area_name: str = ""
 
 class PaperDto:
     def __init__(self):
