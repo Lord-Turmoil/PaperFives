@@ -46,6 +46,20 @@ def _check_type(dict_obj, cls_obj) -> bool:
     return True
 
 
+def _construct_cls(dict_obj, cls):
+    model = cls()
+    obj = cls()
+    for key in model.__dict__.keys():
+        if isinstance(dict_obj[key], type(model.__dict__[key])):
+            obj.__dict__[key] = dict_obj[key]
+            continue
+        attr = _construct_cls(dict_obj[key], type(model.__dict__[key]))
+        if attr is None:
+            raise AttributeError()
+        obj.__dict__[key] = attr
+    return obj
+
+
 def deserialize(json_str: str, cls=None):
     """
     Deserialize json string to object of specific class
@@ -64,8 +78,10 @@ def deserialize(json_str: str, cls=None):
         except AttributeError:
             raise JsonDeserializeException(f"Type mismatch, should be {cls.__name__}", json_str)
     if cls is not None:
-        ret = cls()
-        ret.__dict__ = obj
+        try:
+            ret = _construct_cls(obj, cls)
+        except AttributeError:
+            raise JsonDeserializeException(f"Type mismatch, should be {cls.__name__}", obj)
         return ret
     return obj
 
@@ -75,11 +91,11 @@ def deserialize_dict(dict_obj, cls):
     Deserialize dict object to object of specific class
     """
     dict_obj.pop('csrfmiddlewaretoken', None)
-
+    obj = None
     try:
         _check_type(dict_obj, cls())
+        obj = _construct_cls(dict_obj, cls)
     except AttributeError:
         raise JsonDeserializeException(f"Type mismatch, should be {cls.__name__}", dict_obj)
-    obj = cls()
-    obj.__dict__ = dict_obj
+
     return obj

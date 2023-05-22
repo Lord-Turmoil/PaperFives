@@ -178,7 +178,7 @@ def edit_user_password(request):
     if not verify_password(old_pwd, user.password):
         return GoodResponse(WrongPasswordDto())
     if not validate_password(new_pwd):
-        return BadRequestResponse(BadRequestDto("Invalid password formt"))
+        return BadRequestResponse(BadRequestDto("Invalid password format"))
 
     user.password = generate_password(new_pwd)
     user.save()
