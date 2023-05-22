@@ -47,8 +47,8 @@ class Paper(models.Model):
     path = models.CharField(max_length=127)
 
     # attribute & statistics
-    attr = models.OneToOneField(PaperAttribute, on_delete=models.CASCADE)
-    stat = models.OneToOneField(PaperStatistics, on_delete=models.CASCADE)
+    attr = models.OneToOneField(PaperAttribute, related_name="paper", on_delete=models.CASCADE)
+    stat = models.OneToOneField(PaperStatistics, related_name="paper", on_delete=models.CASCADE)
 
     @classmethod
     def create(cls, _path, _attr, _stat=None):
@@ -67,6 +67,9 @@ class Paper(models.Model):
         if _pid < Paper.PID_OFFSET:
             return _pid
         return _pid - Paper.PID_OFFSET
+
+    def get_clinks(self):
+        return self.stat.clicks
 
     class Meta:
         ordering = ['pid']
@@ -92,7 +95,6 @@ class PaperAreaRelation(models.Model):
 
     class Meta:
         verbose_name = "paper_area_relation"
-
 
 class Author(models.Model):
     email = models.EmailField()  # will be linked to User via email
