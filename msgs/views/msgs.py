@@ -86,10 +86,44 @@ def get_messages(request):
         if not msg.checked:
             msg.checked = True
             msg.save()
-            user: User = get_user_by_uid(msg.dst_uid)
-            if user is not None:
-                user.stat.message_cnt -= 1
-                user.stat.save()
+            user.stat.message_cnt -= 1
+        msg_data, hint = _construct_msg(msg)
+        if msg_data is None:
+            continue
+        msg_list.append(msg_data)
+    data['msgs'] = msg_list
+
+    user.stat.save()
+
+    return GoodResponse(GoodResponseDto(data=data))
+
+
+@csrf_exempt
+def get_unread_msg(request):
+    if request.method != 'GET':
+        return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
+    params = parse_param(request)
+
+    user:User = get_user_from_request(request)
+    if user is None:
+        return GoodResponse(NotLoggedInDto())
+
+    messages = Message.objects.filter(dst_uid=user.uid, checked=False).order_by('-timestamp')
+    total = messages.count()
+    # construct result
+    data = {
+        'total': total
+    }
+
+    user.stat.message_cnt -= total
+    if user.stat.message_cnt < 0:
+        user.stat.message_cnt = 0
+    user.save()
+
+    msg_list = []
+    for msg in messages:
+        msg.checked = True
+        msg.save()
         msg_data, hint = _construct_msg(msg)
         if msg_data is None:
             continue
