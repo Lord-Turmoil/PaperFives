@@ -42,5 +42,5 @@ def parse_param(request: WSGIRequest) -> dict:
 def parse_value(val, _type):
     try:
         return _type(val)
-    except ValueError:
+    except:
         return None
