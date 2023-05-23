@@ -104,13 +104,11 @@ def _construct_cls(dict_obj, cls):
 def deserialize(obj, cls=None):
     if isinstance(obj, dict):
         pass
-    elif isinstance(obj, str):
+    else:
         try:
             obj = json.loads(obj, cls=AdvancedDecoder)
         except:
             raise JsonDeserializeException("Failed to deserialize", obj)
-    else:
-        raise JsonDeserializeException("Type not supported", None)
 
     if cls is None:
         return obj

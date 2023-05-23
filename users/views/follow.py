@@ -20,27 +20,23 @@ from users.models import User, FavoriteUser
 def follow_user(request):
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
-    uid = request.session.get('uid')
-    if uid is None:
+    user: User = get_user_from_request(request)
+    if user is None:
         return GoodResponse(NotLoggedInDto())
-    users = User.objects.filter(uid=uid)
-    if not users.exists():
-        return GoodResponse(NoSuchUserDto())
-    user = users.first()
 
     params = parse_param(request)
     target = params.get('uid')
     if target is None:
         return BadRequestResponse(BadRequestDto("Whom are you going to follow?"))
-    if target == uid:
+    if target == user.uid:
         return GoodResponse(FollowSelfErrorDto())
     if not User.objects.filter(uid=target).exists():
         return BadRequestResponse(FollowNothingErrorDto())
 
-    follows = FavoriteUser.objects.filter(src_uid=uid, dst_uid=target)
+    follows = FavoriteUser.objects.filter(src_uid=user.uid, dst_uid=target)
     if follows.exists():
         return GoodResponse(GoodResponseDto("User already followed"))
-    follow = FavoriteUser.create(uid, target)
+    follow = FavoriteUser.create(user.uid, target)
     follow.save()
 
     return GoodResponse(GoodResponseDto("User followed"))

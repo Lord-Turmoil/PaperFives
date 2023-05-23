@@ -55,11 +55,12 @@ class LoginSuccessDto(GoodResponseDto):
     }
     """
 
-    def __init__(self, user):
+    def __init__(self, user, token):
         """
         user and token are all dict object.
         """
         super().__init__("Welcome back to PaperFives!", data=user)
+        self.token = token
 
 
 class UserProfileDto(GoodResponseDto):
