@@ -10,5 +10,6 @@ from django.urls import path
 from .views import search
 
 urlpatterns = [
-    path('search/', search.brief_search),
+    path('search/brief', search.brief_search),
+    path('search/main', search.list_search)
 ]

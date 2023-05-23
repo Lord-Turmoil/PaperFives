@@ -81,6 +81,7 @@ class Area(models.Model):
     second_level_discipline_code = models.IntegerField()
     name = models.CharField(max_length=63)
 
+    papers = models.ManyToManyField(Paper, related_name="areas")
     @classmethod
     def create(cls, _FLDC, _SLDC, _name):
         return cls(first_level_discipline_code=_FLDC, second_level_discipline_code=_SLDC, name=_name)
@@ -88,13 +89,6 @@ class Area(models.Model):
     class Meta:
         verbose_name = "area"
 
-
-class PaperAreaRelation(models.Model):
-    paper = models.ForeignKey(Paper, related_name="areas", on_delete=models.CASCADE)
-    area = models.ForeignKey(Area, related_name="papers", on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = "paper_area_relation"
 
 class Author(models.Model):
     email = models.EmailField()  # will be linked to User via email
