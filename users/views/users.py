@@ -17,6 +17,7 @@ from shared.utils.parameter import parse_param
 from shared.utils.str_util import is_no_content
 from users.models import User
 from users.serializer import UserSerializer, UserSimpleSerializer, UserPrivateSerializer
+from users.views.utils.users import get_users_from_uid_list
 
 
 @csrf_exempt
@@ -102,11 +103,7 @@ def get_users(request):
         serializer = UserSimpleSerializer
     uid_list = data.users
 
-    payload = {'users': []}
-    for uid in uid_list:
-        users = User.objects.filter(uid=uid)
-        if not users.exists():
-            continue
-        payload['users'].append(serializer(users.first()).data)
+    payload = {'users': get_users_from_uid_list(uid_list, serializer)}
     payload['total'] = len(payload['users'])
+
     return GoodResponse(GoodResponseDto(data=payload))
