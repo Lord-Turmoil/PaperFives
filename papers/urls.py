@@ -11,4 +11,9 @@ from .views import search
 
 urlpatterns = [
     path('search/', search.brief_search),
+    # path('edit/upload/info/', edit.upload.upload_info),
+    # path('edit/upload/file/', edit.upload.upload_file),
+    # path('edit/publish/', edit.publish.publish),
+    # path('download/info', download.get_info),
+    # path('download/file', download.get_file),
 ]
