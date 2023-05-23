@@ -34,8 +34,9 @@ def brief_search(request):
 
     return GoodResponse(GoodResponseDto(data=data))
 
+
 @csrf_exempt
-def list_search(request):
+def search(request):
     if request.method != 'GET':
         return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
 
@@ -87,7 +88,7 @@ def list_search(request):
     return GoodResponse(GoodResponseDto(data=data))
 
 
-def detail(request):
+def review(request):
     if request.method != 'GET':
         return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
 
@@ -95,5 +96,7 @@ def detail(request):
     pid = params.get('pid')
 
     paper = Paper.objects.get(pid=pid)
+    paper.stat.cites += 1
+    paper.save()
 
     return GoodResponse(GoodResponseDto(data=PaperSerializer(paper)))

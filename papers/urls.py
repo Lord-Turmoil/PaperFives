@@ -10,7 +10,10 @@ from django.urls import path
 from .views import search
 
 urlpatterns = [
-    path('search/', search.brief_search),
+    path('mainpage_list', search.brief_search),
+    path('search', search.search),
+    path('review/user', search.review)
+
     # path('edit/upload/info/', edit.upload.upload_info),
     # path('edit/upload/file/', edit.upload.upload_file),
     # path('edit/publish/', edit.publish.publish),
