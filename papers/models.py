@@ -92,24 +92,13 @@ class Area(models.Model):
     secondary = models.IntegerField()
     name = models.CharField(max_length=63)
 
+    papers = models.ManyToManyField(Paper, related_name="areas")
     @classmethod
     def create(cls, _primary, _secondary, _name):
         return cls(primary=_primary, secondary=_secondary, name=_name)
 
     class Meta:
         verbose_name = "area"
-
-
-class PaperAreaRelation(models.Model):
-    paper = models.ForeignKey(Paper, related_name="paper_area", on_delete=models.CASCADE)
-    area = models.ForeignKey(Area, related_name="paper_area", on_delete=models.CASCADE)
-
-    @classmethod
-    def create(cls, _paper, _area):
-        return cls(paper=_paper, area=_area)
-
-    class Meta:
-        verbose_name = "paper_area"
 
 
 class Author(models.Model):
