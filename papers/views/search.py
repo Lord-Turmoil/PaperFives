@@ -86,17 +86,3 @@ def search(request):
     }
 
     return GoodResponse(GoodResponseDto(data=data))
-
-
-def review(request):
-    if request.method != 'GET':
-        return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
-
-    params = parse_param(request)
-    pid = params.get('pid')
-
-    paper = Paper.objects.get(pid=pid)
-    paper.stat.cites += 1
-    paper.save()
-
-    return GoodResponse(GoodResponseDto(data=PaperSerializer(paper)))
