@@ -42,3 +42,10 @@ def get_user_by_uid(uid):
     if users.exists():
         return users.first()
     return None
+
+
+def get_user_by_email(email):
+    users = User.objects.filter(email=email)
+    if users.exists():
+        return users.first()
+    return None
