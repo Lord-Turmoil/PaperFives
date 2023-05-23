@@ -15,7 +15,8 @@ from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import BadRequestDto, RequestMethodErrorDto, ServerErrorDto
 from shared.dtos.response.users import NoSuchUserDto, UserProfileDto, NotLoggedInDto, WrongPasswordDto
 from shared.response.basic import BadRequestResponse, GoodResponse, ServerErrorResponse
-from shared.utils.parameter import parse_param, parse_value
+from shared.utils.parameter import parse_param
+from shared.utils.parser import parse_value
 from shared.utils.str_util import is_no_content
 from shared.utils.token import verify_password, generate_password
 from shared.utils.users.roles import is_user_admin, get_role

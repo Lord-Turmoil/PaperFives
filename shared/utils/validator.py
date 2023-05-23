@@ -20,8 +20,12 @@ def validate_image_name(filename: str) -> bool:
 
 
 def validate_email(email: str) -> bool:
-    return re.match('^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$', email)
+    if re.match('^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$', email):
+        return True
+    return False
 
 
 def validate_password(password: str) -> bool:
-    return re.match('^[a-zA-Z0-9_]{6,16}$', password)
+    if re.match('^[a-zA-Z0-9_]{6,16}$', password):
+        return True
+    return False

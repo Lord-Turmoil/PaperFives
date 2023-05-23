@@ -37,10 +37,3 @@ def parse_param(request: WSGIRequest) -> dict:
     elif request.method == 'GET':
         return _parse_GET_param(request)
     return {}
-
-
-def parse_value(val, _type):
-    try:
-        return _type(val)
-    except:
-        return None

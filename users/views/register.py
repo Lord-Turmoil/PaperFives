@@ -58,6 +58,7 @@ def get_verification_code(request):
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
     params = parse_param(request)
+
     email = params.get('email')
     if not email:
         return BadRequestResponse(BadRequestDto("Missing 'email' field"))
