@@ -62,13 +62,13 @@ def get_verification_code(request):
     if not email:
         return BadRequestResponse(BadRequestDto("Missing 'email' field"))
 
+    if not validate_email(email):
+        return BadRequestResponse(BadRequestDto("Invalid email format!"))
+
     # registered user shouldn't get verification code
     users = User.objects.filter(email=email)
     if users.exists():
         return BaseResponse(GeneralErrorDto(ERROR_CODE['DUPLICATE_USER'], "User already registered"))
-
-    if not validate_email(email):
-        return BadRequestDto(BadRequestDto("Invalid email format!"))
 
     # async task will return immediately
     _send_code_email_task.delay(email)
