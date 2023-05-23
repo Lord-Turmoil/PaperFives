@@ -7,6 +7,7 @@
 
 import datetime
 
+from celery import shared_task
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
@@ -36,34 +37,42 @@ EMAIL_WHITE_LIST = [
 ]  # for debug purpose
 
 
-@csrf_exempt
-def get_verification_code(request):
-    if request.method != 'POST':
-        return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
-    params = parse_param(request)
-    email = params.get('email')
-    if not email:
-        return BadRequestResponse(BadRequestDto("Missing 'email' field"))
-
-    # registered user shouldn't get verification code
-    users = User.objects.filter(email=email)
-    if users.exists():
-        return BaseResponse(GeneralErrorDto(ERROR_CODE['DUPLICATE_USER'], "User already registered"))
-
-    if not validate_email(email):
-        return BadRequestDto(BadRequestDto("Invalid email format!"))
-
+@shared_task()
+def _send_code_email_task(email):
     code = generate_code()
     try:
         send_code_email(email, code)
     except EmailException as e:
-        return BaseResponse(GeneralErrorDto(ERROR_CODE['SEND_EMAIL'], "Failed to send email"))
+        # return BaseResponse(GeneralErrorDto(ERROR_CODE['SEND_EMAIL'], "Failed to send email"))
+        return
 
     # add email into
     EmailRecord.objects.filter(email=email, usage="reg").delete()  # delete previous
     expire = timezone.now() + datetime.timedelta(minutes=10)
     email = EmailRecord.create(email, code, expire, "reg")
     email.save()
+
+
+@csrf_exempt
+def get_verification_code(request):
+    if request.method != 'POST':
+        return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
+    params = parse_param(request)
+
+    email = params.get('email')
+    if not email:
+        return BadRequestResponse(BadRequestDto("Missing 'email' field"))
+
+    if not validate_email(email):
+        return BadRequestResponse(BadRequestDto("Invalid email format!"))
+
+    # registered user shouldn't get verification code
+    users = User.objects.filter(email=email)
+    if users.exists():
+        return BaseResponse(GeneralErrorDto(ERROR_CODE['DUPLICATE_USER'], "User already registered"))
+
+    # async task will return immediately
+    _send_code_email_task.delay(email)
 
     return GoodResponse(GoodResponseDto("Verification code sent"))
 

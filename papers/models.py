@@ -66,7 +66,7 @@ class Paper(models.Model):
         PASSED = 3, "Passed"
 
     pid = models.BigAutoField(primary_key=True)
-    path = models.CharField(max_length=127)
+    path = models.CharField(max_length=127, default="")
 
     status = models.PositiveSmallIntegerField(choices=Status.choices, default=Status.DRAFT)
 
@@ -77,7 +77,7 @@ class Paper(models.Model):
     @classmethod
     def create(cls, _path, _attr, _stat=None):
         if _path is None:
-            _path = CONFIG['DEFAULT_PAPER_PATH']
+            _path = ""
         if _stat is None:
             _stat = PaperStatistics.create()
         return cls(path=_path, attr=_attr, stat=_stat)

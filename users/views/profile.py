@@ -16,10 +16,11 @@ from shared.dtos.response.errors import BadRequestDto, RequestMethodErrorDto, Se
 from shared.dtos.response.users import NoSuchUserDto, UserProfileDto, NotLoggedInDto, WrongPasswordDto
 from shared.response.basic import BadRequestResponse, GoodResponse, ServerErrorResponse
 from shared.utils.parameter import parse_param
+from shared.utils.parser import parse_value
 from shared.utils.str_util import is_no_content
 from shared.utils.token import verify_password, generate_password
-from shared.utils.users.roles import is_user_admin, get_roles
-from shared.utils.users.users import get_user_from_request
+from shared.utils.users.roles import is_user_admin, get_role
+from shared.utils.users.users import get_user_from_request, get_user_by_uid, get_user_by_email
 from shared.utils.validator import validate_image_name, validate_password
 from users.models import User, UserAttribute
 from users.serializer import UserSerializer, UserSimpleSerializer, UserPrivateSerializer
@@ -36,21 +37,31 @@ def get_user(request):
     if request.method != 'GET':
         return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
     params = parse_param(request)
-    mode = params.get('mode')
-    uid = params.get('uid')
-    if mode is None or uid is None:
-        return BadRequestResponse(BadRequestDto("missing parameters"))
-    try:
-        uid = int(uid)
-    except:
-        return BadRequestResponse(BadRequestDto("Wrong type of uid"))
+    mode = parse_value(params.get('mode', 'min'), str)
+    uid = parse_value(params.get('uid'), int)
+    email = parse_value(params.get('email'), str)
 
-    profile = get_user_from_request(request)    # current user
+    if mode is None:
+        return BadRequestResponse(BadRequestDto("Missing mode"))
+
+    # get user from given parameters
+    user: User
+    if uid is not None:
+        user = get_user_by_uid(uid)
+    elif email is not None:
+        user = get_user_by_email(email)
+    else:
+        return BadRequestResponse(BadRequestDto("Must provide either uid or email"))
+    if user is None:
+        return GoodResponse(NoSuchUserDto())
+
+    # get current user
+    profile = get_user_from_request(request)  # current user
 
     # switch mode
     serializer = None
     if mode == 'all':
-        if profile is not None and profile.uid == uid:
+        if profile is not None and profile.uid == user.uid:
             serializer = UserSerializer
         else:
             serializer = UserPrivateSerializer
@@ -59,21 +70,14 @@ def get_user(request):
     else:
         return BadRequestResponse(BadRequestDto("invalid mode"))
 
-    # get original user
-    users = User.objects.filter(uid=uid)
-    if not users.exists():
-        return GoodResponse(NoSuchUserDto())
-    user = users.first()
+    # construct data
     data = None
     try:
         data = serializer(user).data
     except:
         return ServerErrorResponse(ServerErrorDto("Failed to get user data"))
 
-    if (profile is not None) and (user.uid == profile.uid or is_user_admin(profile)):
-        data['roles'] = get_roles(user)
-    else:
-        data['roles'] = []
+    data['role'] = get_role(user)
 
     return GoodResponse(UserProfileDto(data))
 

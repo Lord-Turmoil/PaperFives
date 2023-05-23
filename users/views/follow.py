@@ -11,11 +11,12 @@ from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
 from shared.dtos.response.users import NotLoggedInDto, NoSuchUserDto, FollowSelfErrorDto, FollowNothingErrorDto, \
     UserListDto
 from shared.response.basic import BadRequestResponse, GoodResponse
-from shared.utils.parameter import parse_param, parse_value
+from shared.utils.parameter import parse_param
+from shared.utils.parser import parse_value
 from shared.utils.users.users import get_user_from_request
 from users.models import User, FavoriteUser
 from users.serializer import UserSimpleSerializer
-from users.views.utils.users import get_users_from_user_list, get_users_from_uid_list
+from users.views.utils.users import get_users_from_uid_list
 
 
 @csrf_exempt

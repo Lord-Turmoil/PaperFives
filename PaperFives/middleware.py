@@ -15,8 +15,15 @@ except ImportError:
 
 BASE_URL = "/api/v1/"
 PSEUDO_BASE_URL = "/pseudo/"
+
 API_WHITELIST = ["/api/v1/user/login/", "/api/v1/user/register/"]
-API_BLACKLIST = [f"{BASE_URL}users/profile/profile/", ]
+
+API_BLACKLIST = [
+    f"{BASE_URL}users/profile/profile",
+    f"{BASE_URL}edit/upload/info",
+    f"{BASE_URL}edit/upload/file",
+]
+
 API_PSEUDO_BLACKLIST = [f"{PSEUDO_BASE_URL}cancel/"]
 
 

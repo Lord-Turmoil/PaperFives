@@ -19,12 +19,12 @@ class GoodResponse(BaseResponse):
 
 class BadRequestResponse(BaseResponse):
     def __init__(self, dto):
-        super().__init__(dto, HTTPStatus.BAD_REQUEST)
+        super().__init__(dto, HTTPStatus.OK)
 
 
 class NotAuthorizedResponse(BaseResponse):
     def __init__(self, dto):
-        super().__init__(dto, HTTPStatus.UNAUTHORIZED)
+        super().__init__(dto, HTTPStatus.OK)
 
 
 class ServerErrorResponse(BaseResponse):

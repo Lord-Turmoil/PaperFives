@@ -166,4 +166,9 @@ EMAIL_FROM = EMAIL_CONFIG['EMAIL_FROM']
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOWED_ORIGINS = SECRETS['CORS_ALLOWED_ORIGINS']
 
-APPEND_SLASH = True
+################################################################################
+# Celery settings
+#
+
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"

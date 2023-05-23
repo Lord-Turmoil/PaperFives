@@ -15,6 +15,7 @@ import datetime
 import json
 
 from shared.exceptions.json import JsonSerializeException, JsonDeserializeException
+from shared.utils.parser import parse_value
 
 
 class AdvancedEncoder(json.JSONEncoder):
@@ -90,11 +91,35 @@ def _check_type(dict_obj, cls_obj) -> bool:
     return True
 
 
+BASIC_TYPE_LIST = [int, float, str]
+
+
+def _is_basic(_type):
+    return _type in BASIC_TYPE_LIST
+
+
 def _construct_cls(dict_obj, cls):
+    if _is_basic(cls):
+        obj = parse_value(dict_obj, cls)
+        if obj is None:
+            raise AttributeError("Not basic type!")
+        return obj
+
     model = cls()
     obj = cls()
+
     for key in model.__dict__.keys():
-        if isinstance(dict_obj[key], type(model.__dict__[key])):
+        t = type(model.__dict__[key])
+        if isinstance(dict_obj[key], t):
+            if issubclass(t, list):
+                try:
+                    k = type(model.__dict__[key][0])
+                except IndexError:
+                    raise AttributeError("Missing default value")
+                obj.__dict__[key].clear()  # clear default value
+                for v in dict_obj[key]:
+                    obj.__dict__[key].append(_construct_cls(v, k))
+                continue
             obj.__dict__[key] = dict_obj[key]
             continue
         obj.__dict__[key] = _construct_cls(dict_obj[key], type(model.__dict__[key]))
@@ -121,6 +146,7 @@ def deserialize(obj, cls=None):
         raise JsonDeserializeException(f"Type mismatch, should be {cls.__name__}", obj)
 
     return obj
+
 
 def deserialize_dict(dict_obj, cls):
     """

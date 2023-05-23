@@ -29,6 +29,24 @@ def get_roles_by_email(email: str):
     return get_roles(users.first())
 
 
+def get_role(user: User):
+    roles = user.roles.all()
+    if not roles.exists():
+        return Role.RoleName.VISITOR
+    if Role.RoleName.ADMIN in roles:
+        return Role.RoleName.ADMIN
+    if Role.RoleName.SCHOLAR in roles:
+        return Role.RoleName.SCHOLAR
+    return Role.RoleName.USER
+
+
+def get_role_by_id(uid):
+    users = User.objects.filter(uid=uid)
+    if not users.exists():
+        return Role.RoleName.VISITOR
+    return get_role(users.first())
+
+
 def is_user_visitor_by_id(uid: int) -> bool:
     return Role.RoleName.VISITOR in get_roles_by_id(uid)
 
