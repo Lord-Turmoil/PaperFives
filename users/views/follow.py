@@ -11,9 +11,11 @@ from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
 from shared.dtos.response.users import NotLoggedInDto, NoSuchUserDto, FollowSelfErrorDto, FollowNothingErrorDto, \
     UserListDto
 from shared.response.basic import BadRequestResponse, GoodResponse
-from shared.utils.parameter import parse_param
+from shared.utils.parameter import parse_param, parse_value
 from shared.utils.users.users import get_user_from_request
 from users.models import User, FavoriteUser
+from users.serializer import UserSimpleSerializer
+from users.views.utils.users import get_users_from_user_list, get_users_from_uid_list
 
 
 @csrf_exempt
@@ -76,8 +78,8 @@ def get_followers(request):
     if request.method != 'GET':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
     params = parse_param(request)
-    uid = params.get('uid')
-    if uid is None or not isinstance(uid, int):
+    uid = parse_value(params.get('uid'), int)
+    if uid is None:
         return BadRequestResponse(BadRequestDto("Missing 'uid'"))
 
     users = User.objects.filter(uid=uid)
@@ -87,7 +89,9 @@ def get_followers(request):
 
     # get all followers
     followers = FavoriteUser.objects.filter(dst_uid=user.uid)
-    follower_list = [follower.src_uid for follower in followers]
+    follower_list = get_users_from_uid_list(
+        [follower.src_uid for follower in followers],
+        UserSimpleSerializer)
 
     return GoodResponse(UserListDto(follower_list))
 
@@ -100,8 +104,8 @@ def get_followees(request):
     if request.method != 'GET':
         return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
     params = parse_param(request)
-    uid = params.get('uid')
-    if uid is None or not isinstance(uid, int):
+    uid = parse_value(params.get('uid'), int)
+    if uid is None:
         return BadRequestResponse(BadRequestDto("Missing 'uid'"))
 
     users = User.objects.filter(uid=uid)
@@ -111,6 +115,8 @@ def get_followees(request):
 
     # get all followees
     followees = FavoriteUser.objects.filter(src_uid=user.uid)
-    followee_list = [followee.dst_uid for followee in followees]
+    followee_list = get_users_from_uid_list(
+        [followee.dst_uid for followee in followees],
+        UserSimpleSerializer)
 
     return GoodResponse(UserListDto(followee_list))
