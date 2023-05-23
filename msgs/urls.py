@@ -10,6 +10,6 @@ from .views import send, msgs
 
 urlpatterns = [
     # path('login/', )
-    path('send/', send.send_msg),
-    path('get/', msgs.get_messages)
+    path('send', send.send_msg),
+    path('get', msgs.get_messages)
 ]
