@@ -7,6 +7,7 @@
 
 import datetime
 
+from celery import shared_task
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
@@ -36,6 +37,22 @@ EMAIL_WHITE_LIST = [
 ]  # for debug purpose
 
 
+@shared_task()
+def _send_code_email_task(email):
+    code = generate_code()
+    try:
+        send_code_email(email, code)
+    except EmailException as e:
+        # return BaseResponse(GeneralErrorDto(ERROR_CODE['SEND_EMAIL'], "Failed to send email"))
+        return
+
+    # add email into
+    EmailRecord.objects.filter(email=email, usage="reg").delete()  # delete previous
+    expire = timezone.now() + datetime.timedelta(minutes=10)
+    email = EmailRecord.create(email, code, expire, "reg")
+    email.save()
+
+
 @csrf_exempt
 def get_verification_code(request):
     if request.method != 'POST':
@@ -53,17 +70,8 @@ def get_verification_code(request):
     if not validate_email(email):
         return BadRequestDto(BadRequestDto("Invalid email format!"))
 
-    code = generate_code()
-    try:
-        send_code_email(email, code)
-    except EmailException as e:
-        return BaseResponse(GeneralErrorDto(ERROR_CODE['SEND_EMAIL'], "Failed to send email"))
-
-    # add email into
-    EmailRecord.objects.filter(email=email, usage="reg").delete()  # delete previous
-    expire = timezone.now() + datetime.timedelta(minutes=10)
-    email = EmailRecord.create(email, code, expire, "reg")
-    email.save()
+    # async task will return immediately
+    _send_code_email_task.delay(email)
 
     return GoodResponse(GoodResponseDto("Verification code sent"))
 

@@ -10,6 +10,7 @@
 
 from random import Random
 
+from celery import shared_task
 from django.core.mail import EmailMessage
 from django.template import loader
 

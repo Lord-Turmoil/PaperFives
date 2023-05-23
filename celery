@@ -1,0 +1,9 @@
+#!/bin/bash
+
+echo "use 'celery info' to show info message"
+
+if [ "$1" == "info" ]; then
+  python -m celery -A PaperFives worker -l info
+else
+  python -m celery -A PaperFives worker
+fi
