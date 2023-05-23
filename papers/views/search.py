@@ -6,7 +6,8 @@
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 
-from papers.models import Paper, Area, PaperAreaRelation
+from papers.models import Paper
+from papers.serializer import PaperSerializer
 from papers.views.utils.listing import get_top_clicked_papers
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
@@ -33,7 +34,7 @@ def brief_search(request):
 
     return GoodResponse(GoodResponseDto(data=data))
 
-
+@csrf_exempt
 def list_search(request):
     if request.method != 'GET':
         return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
@@ -42,9 +43,9 @@ def list_search(request):
     cont = params.get('content')
     area_name = params.get('area')
 
+    # Don't ensure that if we get many area_name, this filter can run
     if not is_no_content(area_name):
-        area_set = Area.objects.filter(name__icontains=area_name)
-        paper_set = PaperAreaRelation.objects.filter(area__in=area_set).values('paper')
+        paper_set = Paper.objects.filter(areas__name=area_name)
     else:
         paper_set = Paper.objects.all()
 
@@ -87,4 +88,12 @@ def list_search(request):
 
 
 def detail(request):
-    return
+    if request.method != 'GET':
+        return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
+
+    params = parse_param(request)
+    pid = params.get('pid')
+
+    paper = Paper.objects.get(pid=pid)
+
+    return GoodResponse(GoodResponseDto(data=PaperSerializer(paper)))

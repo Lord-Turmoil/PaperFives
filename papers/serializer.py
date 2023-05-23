@@ -19,7 +19,7 @@ class PaperAttributeSerializer(serializers.ModelSerializer):
 class PaperStatisticsSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaperStatistics
-        fields = ('cites', 'downloads', 'favorites')
+        fields = ('cites', 'downloads', 'favorites', 'clicks')
 
 
 class AuthorSerializer(serializers.ModelSerializer):
