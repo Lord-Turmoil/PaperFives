@@ -16,7 +16,7 @@ from shared.utils.json_util import deserialize
 from shared.utils.parameter import parse_param
 from shared.utils.str_util import is_no_content
 from users.models import User
-from users.serializer import UserSerializer, UserSimpleSerializer
+from users.serializer import UserSerializer, UserSimpleSerializer, UserPrivateSerializer
 
 
 @csrf_exempt
@@ -89,24 +89,24 @@ def query_users(request):
 def get_users(request):
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
-    params = None
+    params = parse_param(request)
     try:
         params.pop('csrfmiddlewaretoken', None)
-        params: GetUsersDto = deserialize(parse_param(request), GetUsersDto)
+        data: GetUsersDto = deserialize(params, GetUsersDto)
     except JsonDeserializeException as e:
         return BadRequestResponse(BadRequestDto(e))
 
-    if params.mode == 'all':
-        serializer = UserSerializer
+    if data.mode == 'all':
+        serializer = UserPrivateSerializer
     else:
         serializer = UserSimpleSerializer
-    uid_list = params.users
+    uid_list = data.users
 
-    data = {'users': []}
+    payload = {'users': []}
     for uid in uid_list:
         users = User.objects.filter(uid=uid)
         if not users.exists():
             continue
-        data['users'].append(serializer(users.first()).data)
-    data['total'] = len(data['users'])
-    return GoodResponse(GoodResponseDto(data=data))
+        payload['users'].append(serializer(users.first()).data)
+    payload['total'] = len(payload['users'])
+    return GoodResponse(GoodResponseDto(data=payload))

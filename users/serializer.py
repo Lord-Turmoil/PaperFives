@@ -25,6 +25,12 @@ class UserStatisticsSerializer(serializers.ModelSerializer):
         fields = ('publish_cnt', 'message_cnt')
 
 
+class UserPrivateStatisticsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserStatistics
+        fields = ('publish_cnt',)
+
+
 class UserSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -38,6 +44,19 @@ class UserSerializer(serializers.Serializer):
     avatar = serializers.CharField()
     attr = UserAttributeSerializer()
     stat = UserStatisticsSerializer()
+
+    class Meta:
+        model = User
+        fields = ('uid', 'email', 'username', 'avatar', 'attr', 'stat')
+
+
+class UserPrivateSerializer(serializers.Serializer):
+    uid = serializers.IntegerField()
+    email = serializers.EmailField()
+    username = serializers.CharField()
+    avatar = serializers.CharField()
+    attr = UserAttributeSerializer()
+    stat = UserPrivateStatisticsSerializer()
 
     class Meta:
         model = User
