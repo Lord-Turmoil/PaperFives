@@ -37,7 +37,7 @@ class UserSimpleSerializer(serializers.ModelSerializer):
         fields = ('uid', 'email', 'username', 'avatar')
 
 
-class UserSerializer(serializers.Serializer):
+class UserSerializer(serializers.ModelSerializer):
     uid = serializers.IntegerField()
     email = serializers.EmailField()
     username = serializers.CharField()
@@ -50,7 +50,7 @@ class UserSerializer(serializers.Serializer):
         fields = ('uid', 'email', 'username', 'avatar', 'attr', 'stat')
 
 
-class UserPrivateSerializer(serializers.Serializer):
+class UserPrivateSerializer(serializers.ModelSerializer):
     uid = serializers.IntegerField()
     email = serializers.EmailField()
     username = serializers.CharField()
