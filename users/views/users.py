@@ -12,11 +12,12 @@ from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
 from shared.exceptions.json import JsonDeserializeException
 from shared.response.basic import BadRequestResponse, GoodResponse
-from shared.utils.json_util import deserialize_dict
+from shared.utils.json_util import deserialize
 from shared.utils.parameter import parse_param
 from shared.utils.str_util import is_no_content
 from users.models import User
-from users.serializer import UserSerializer, UserSimpleSerializer
+from users.serializer import UserSerializer, UserSimpleSerializer, UserPrivateSerializer
+from users.views.utils.users import get_users_from_uid_list
 
 
 @csrf_exempt
@@ -56,11 +57,11 @@ def query_users(request):
     # get results
     users = User.objects.all()
     if email is not None:
-        users = users.filter(email__contains=email)
+        users = users.filter(email__icontains=email)
     if username is not None:
-        users = users.filter(username__contains=username)
+        users = users.filter(username__icontains=username)
     if institute is not None:
-        users = users.filter(attr__institute__contains=institute)
+        users = users.filter(attr__institute__icontains=institute)
 
     # paginate
     paginator = Paginator(users, page_size)
@@ -70,7 +71,7 @@ def query_users(request):
     data = {
         'ps': page_size,
         'p': page.number,
-        'total': paginator.num_pages,
+        'total': users.count(),
         'next': paginator.num_pages > page.number,
         'users': []
     }
@@ -89,23 +90,20 @@ def query_users(request):
 def get_users(request):
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
-    params = None
+    params = parse_param(request)
     try:
-        params: GetUsersDto = deserialize_dict(parse_param(request), GetUsersDto)
+        params.pop('csrfmiddlewaretoken', None)
+        data: GetUsersDto = deserialize(params, GetUsersDto)
     except JsonDeserializeException as e:
         return BadRequestResponse(BadRequestDto(e))
 
-    if params.mode == 'all':
-        serializer = UserSerializer
+    if data.mode == 'all':
+        serializer = UserPrivateSerializer
     else:
         serializer = UserSimpleSerializer
-    uid_list = params.users
+    uid_list = data.users
 
-    data = {'users': []}
-    for uid in uid_list:
-        users = User.objects.filter(uid=uid)
-        if not users.exists():
-            continue
-        data['users'].append(serializer(users.first()).data)
-    data['total'] = len(data['users'])
-    return GoodResponse(GoodResponseDto(data=data))
+    payload = {'users': get_users_from_uid_list(uid_list, serializer)}
+    payload['total'] = len(payload['users'])
+
+    return GoodResponse(GoodResponseDto(data=payload))

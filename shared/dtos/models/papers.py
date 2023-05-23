@@ -3,8 +3,9 @@
 # @Time    : 2023/5/21 14:31
 # @Author  : Lynx
 # @File    : papers.py
-
+#
 from shared.dtos.models.base import BaseDto
+
 
 class PaperAttrDto(BaseDto):
     def __init__(self):

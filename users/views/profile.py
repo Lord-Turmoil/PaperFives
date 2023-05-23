@@ -22,7 +22,7 @@ from shared.utils.users.roles import is_user_admin, get_roles
 from shared.utils.users.users import get_user_from_request
 from shared.utils.validator import validate_image_name, validate_password
 from users.models import User, UserAttribute
-from users.serializer import UserSerializer, UserSimpleSerializer
+from users.serializer import UserSerializer, UserSimpleSerializer, UserPrivateSerializer
 
 
 @csrf_exempt
@@ -40,11 +40,20 @@ def get_user(request):
     uid = params.get('uid')
     if mode is None or uid is None:
         return BadRequestResponse(BadRequestDto("missing parameters"))
+    try:
+        uid = int(uid)
+    except:
+        return BadRequestResponse(BadRequestDto("Wrong type of uid"))
+
+    profile = get_user_from_request(request)    # current user
 
     # switch mode
     serializer = None
     if mode == 'all':
-        serializer = UserSerializer
+        if profile is not None and profile.uid == uid:
+            serializer = UserSerializer
+        else:
+            serializer = UserPrivateSerializer
     elif mode == 'min':
         serializer = UserSimpleSerializer
     else:
@@ -61,7 +70,6 @@ def get_user(request):
     except:
         return ServerErrorResponse(ServerErrorDto("Failed to get user data"))
 
-    profile = get_user_from_request(request)
     if (profile is not None) and (user.uid == profile.uid or is_user_admin(profile)):
         data['roles'] = get_roles(user)
     else:
@@ -81,13 +89,9 @@ def edit_user_profile(request):
     """
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
-    uid = request.session.get('uid')
-    if uid is None:
+    user = get_user_from_request(request)
+    if user is None:
         return GoodResponse(NotLoggedInDto())
-    users = User.objects.filter(uid=uid)
-    if not users.exists():
-        return GoodResponse(NoSuchUserDto())
-    user = users.first()
 
     params = parse_param(request)
     username = params.get('username')
@@ -118,13 +122,9 @@ def edit_user_avatar(request):
     """
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
-    uid = request.session.get('uid')
-    if uid is None:
+    user: User = get_user_from_request(request)
+    if user is None:
         return GoodResponse(NotLoggedInDto())
-    users = User.objects.filter(uid=uid)
-    if not users.exists():
-        return GoodResponse(NoSuchUserDto())
-    user = users.first()
 
     # get avatar from request
     file = request.FILES.get('file')
@@ -161,13 +161,9 @@ def edit_user_avatar(request):
 def edit_user_password(request):
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
-    uid = request.session.get('uid')
-    if uid is None:
+    user = get_user_from_request(request)
+    if user is None:
         return GoodResponse(NotLoggedInDto())
-    users = User.objects.filter(uid=uid)
-    if not users.exists():
-        return GoodResponse(NoSuchUserDto())
-    user = users.first()
 
     params = parse_param(request)
 
@@ -178,7 +174,7 @@ def edit_user_password(request):
     if not verify_password(old_pwd, user.password):
         return GoodResponse(WrongPasswordDto())
     if not validate_password(new_pwd):
-        return BadRequestResponse(BadRequestDto("Invalid password formt"))
+        return BadRequestResponse(BadRequestDto("Invalid password format"))
 
     user.password = generate_password(new_pwd)
     user.save()

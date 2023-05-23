@@ -1,6 +1,21 @@
-import datetime
-
 from django.db import models
+from django.utils import timezone
+
+from PaperFives.settings import CONFIG
+
+"""
+  When user edits paper, all changes will be saved to DraftPaper table,
+and can be modified many times before really publishes.
+  When user publishes a paper, it will then be stored to PublishedPaper
+table, with the same 'uid' and 'pid', and set to PENDING.
+  When a admin reviews paper, he/she will first see a list of papers of
+PENDING status, and can select any of them.
+  When admin reviews paper, the status of the paper will be set to
+REVIEWING and block other admins. When quits, the client must send a
+request to set it to PENDING again.
+  When a paper passes review, it will be marked PASSED, and will then be
+searched.
+"""
 
 
 # Create your models here.
@@ -19,7 +34,7 @@ class PaperAttribute(models.Model):
         on creation.
         """
         if _publish_date is None:
-            _publish_date = datetime.date.today()
+            _publish_date = timezone.datetime.today()
         return cls(title=_title, keywords=_keywords, abstract=_abstract, publish_date=_publish_date)
 
     class Meta:
@@ -41,10 +56,19 @@ class PaperStatistics(models.Model):
 
 
 class Paper(models.Model):
-    PID_OFFSET = 1000000000
+    class Status(models.IntegerChoices):
+        # Only used in DraftPaper
+        DRAFT = 0, "Draft"
+
+        # When paper is published, it will first be set to Pending
+        PENDING = 1, "Pending"
+        REVIEWING = 2, "Reviewing"
+        PASSED = 3, "Passed"
 
     pid = models.BigAutoField(primary_key=True)
     path = models.CharField(max_length=127)
+
+    status = models.PositiveSmallIntegerField(choices=Status.choices, default=Status.DRAFT)
 
     # attribute & statistics
     attr = models.OneToOneField(PaperAttribute, related_name="paper", on_delete=models.CASCADE)
@@ -52,24 +76,11 @@ class Paper(models.Model):
 
     @classmethod
     def create(cls, _path, _attr, _stat=None):
+        if _path is None:
+            _path = CONFIG['DEFAULT_PAPER_PATH']
         if _stat is None:
             _stat = PaperStatistics.create()
         return cls(path=_path, attr=_attr, stat=_stat)
-
-    @classmethod
-    def get_external_pid(cls, _pid):
-        if _pid < Paper.PID_OFFSET:
-            return _pid + Paper.PID_OFFSET
-        return _pid
-
-    @classmethod
-    def get_internal_uid(cls, _pid):
-        if _pid < Paper.PID_OFFSET:
-            return _pid
-        return _pid - Paper.PID_OFFSET
-
-    def get_clinks(self):
-        return self.stat.clicks
 
     class Meta:
         ordering = ['pid']
@@ -77,17 +88,28 @@ class Paper(models.Model):
 
 
 class Area(models.Model):
-    first_level_discipline_code = models.IntegerField()
-    second_level_discipline_code = models.IntegerField()
+    primary = models.IntegerField()
+    secondary = models.IntegerField()
     name = models.CharField(max_length=63)
 
-    papers = models.ManyToManyField(Paper, related_name="areas")
     @classmethod
-    def create(cls, _FLDC, _SLDC, _name):
-        return cls(first_level_discipline_code=_FLDC, second_level_discipline_code=_SLDC, name=_name)
+    def create(cls, _primary, _secondary, _name):
+        return cls(primary=_primary, secondary=_secondary, name=_name)
 
     class Meta:
         verbose_name = "area"
+
+
+class PaperAreaRelation(models.Model):
+    paper = models.ForeignKey(Paper, related_name="paper_area", on_delete=models.CASCADE)
+    area = models.ForeignKey(Area, related_name="paper_area", on_delete=models.CASCADE)
+
+    @classmethod
+    def create(cls, _paper, _area):
+        return cls(paper=_paper, area=_area)
+
+    class Meta:
+        verbose_name = "paper_area"
 
 
 class Author(models.Model):
@@ -124,7 +146,7 @@ class Reference(models.Model):
 
 
 class FavoritePaper(models.Model):
-    uid = models.BigIntegerField(primary_key=True)
+    uid = models.BigIntegerField()
     pid = models.BigIntegerField()
 
     @classmethod
@@ -136,3 +158,9 @@ class FavoritePaper(models.Model):
 
     class Meta:
         verbose_name = 'fav_paper'
+
+
+class PublishedPaper(models.Model):
+    uid = models.BigIntegerField()
+    pid = models.BigIntegerField()
+    lead = models.BooleanField()  # whether is lead-author or not

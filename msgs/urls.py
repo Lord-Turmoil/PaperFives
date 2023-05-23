@@ -4,7 +4,12 @@
 # @Author  : Tony Skywalker
 # @File    : urls.py
 #
+from django.urls import path
+
+from .views import send, msgs
 
 urlpatterns = [
     # path('login/', )
+    path('send', send.send_msg),
+    path('get', msgs.get_messages)
 ]

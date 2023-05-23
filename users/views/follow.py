@@ -11,35 +11,34 @@ from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
 from shared.dtos.response.users import NotLoggedInDto, NoSuchUserDto, FollowSelfErrorDto, FollowNothingErrorDto, \
     UserListDto
 from shared.response.basic import BadRequestResponse, GoodResponse
-from shared.utils.parameter import parse_param
+from shared.utils.parameter import parse_param, parse_value
+from shared.utils.users.users import get_user_from_request
 from users.models import User, FavoriteUser
+from users.serializer import UserSimpleSerializer
+from users.views.utils.users import get_users_from_user_list, get_users_from_uid_list
 
 
 @csrf_exempt
 def follow_user(request):
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
-    uid = request.session.get('uid')
-    if uid is None:
+    user: User = get_user_from_request(request)
+    if user is None:
         return GoodResponse(NotLoggedInDto())
-    users = User.objects.filter(uid=uid)
-    if not users.exists():
-        return GoodResponse(NoSuchUserDto())
-    user = users.first()
 
     params = parse_param(request)
     target = params.get('uid')
     if target is None:
         return BadRequestResponse(BadRequestDto("Whom are you going to follow?"))
-    if target == uid:
+    if target == user.uid:
         return GoodResponse(FollowSelfErrorDto())
     if not User.objects.filter(uid=target).exists():
         return BadRequestResponse(FollowNothingErrorDto())
 
-    follows = FavoriteUser.objects.filter(src_uid=uid, dst_uid=target)
+    follows = FavoriteUser.objects.filter(src_uid=user.uid, dst_uid=target)
     if follows.exists():
         return GoodResponse(GoodResponseDto("User already followed"))
-    follow = FavoriteUser.create(uid, target)
+    follow = FavoriteUser.create(user.uid, target)
     follow.save()
 
     return GoodResponse(GoodResponseDto("User followed"))
@@ -49,25 +48,21 @@ def follow_user(request):
 def unfollow_user(request):
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
-    uid = request.session.get('uid')
-    if uid is None:
+    user = get_user_from_request(request)
+    if user is None:
         return GoodResponse(NotLoggedInDto())
-    users = User.objects.filter(uid=uid)
-    if not users.exists():
-        return GoodResponse(NoSuchUserDto())
-    user = users.first()
 
     params = parse_param(request)
     target = params.get('uid')
     if target is None:
         return BadRequestResponse(BadRequestDto("Whom are you going to unfollow?"))
-    if target == uid:
+    if target == user.uid:
         return GoodResponse(FollowSelfErrorDto())
     # No need to check this in unfollow?
     # if not User.objects.filter(uid=target).exists():
     #     return BadRequestResponse(FollowNothingErrorDto())
 
-    follows = FavoriteUser.objects.filter(src_uid=uid, dst_uid=target)
+    follows = FavoriteUser.objects.filter(src_uid=user.uid, dst_uid=target)
     if not follows.exists():
         return GoodResponse(GoodResponseDto("User already unfollowed"))
     follows.delete()
@@ -83,8 +78,8 @@ def get_followers(request):
     if request.method != 'GET':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
     params = parse_param(request)
-    uid = params.get('uid')
-    if uid is None or not isinstance(uid, int):
+    uid = parse_value(params.get('uid'), int)
+    if uid is None:
         return BadRequestResponse(BadRequestDto("Missing 'uid'"))
 
     users = User.objects.filter(uid=uid)
@@ -94,7 +89,9 @@ def get_followers(request):
 
     # get all followers
     followers = FavoriteUser.objects.filter(dst_uid=user.uid)
-    follower_list = [follower.src_uid for follower in followers]
+    follower_list = get_users_from_uid_list(
+        [follower.src_uid for follower in followers],
+        UserSimpleSerializer)
 
     return GoodResponse(UserListDto(follower_list))
 
@@ -107,8 +104,8 @@ def get_followees(request):
     if request.method != 'GET':
         return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
     params = parse_param(request)
-    uid = params.get('uid')
-    if uid is None or not isinstance(uid, int):
+    uid = parse_value(params.get('uid'), int)
+    if uid is None:
         return BadRequestResponse(BadRequestDto("Missing 'uid'"))
 
     users = User.objects.filter(uid=uid)
@@ -118,6 +115,8 @@ def get_followees(request):
 
     # get all followees
     followees = FavoriteUser.objects.filter(src_uid=user.uid)
-    followee_list = [followee.dst_uid for followee in followees]
+    followee_list = get_users_from_uid_list(
+        [followee.dst_uid for followee in followees],
+        UserSimpleSerializer)
 
     return GoodResponse(UserListDto(followee_list))

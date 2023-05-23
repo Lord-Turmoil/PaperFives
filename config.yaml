@@ -1,11 +1,17 @@
 PROJECT_PATH: .
 AVATAR_PATH: /static/avatar/
 DEFAULT_AVATAR: /static/avatar/default.png
+IMG_MSG_PATH: /static/img_msg/
+DEFAULT_IMG_MSG: /static/img_msg/default.png
+PAPER_PATH: /static/img_msg/
+DEFAULT_PAPER_PATH: /static/img_msg/default.pdf
+
 INVALID_NAME_LIST:
   - default
   - admin
   - null
   - none
+
 ERROR_CODE:
   SUCCESS: 0
   SERVER_ERROR: 10111
@@ -24,3 +30,6 @@ ERROR_CODE:
 
   FOLLOW_SELF: 13001
   FOLLOW_NOTHING: 13002
+
+  MESSAGE_SELF: 14001
+

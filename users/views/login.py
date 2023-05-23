@@ -13,9 +13,9 @@ from shared.dtos.response.users import NoSuchUserDto, WrongPasswordDto, LoginSuc
 from shared.exceptions.json import JsonDeserializeException
 from shared.response.base import BaseResponse
 from shared.response.basic import BadRequestResponse, GoodResponse
-from shared.utils.json_util import deserialize_dict
+from shared.utils.json_util import deserialize
 from shared.utils.parameter import parse_param
-from shared.utils.token import verify_password
+from shared.utils.token import verify_password, generate_token
 from users.models import User
 from users.serializer import UserSerializer
 
@@ -28,7 +28,8 @@ def login(request):
 
     dto: LoginDto = LoginDto()
     try:
-        dto = deserialize_dict(params, LoginDto)
+        params.pop('csrfmiddlewaretoken', None)
+        dto = deserialize(params, LoginDto)
     except JsonDeserializeException as e:
         return BadRequestResponse(BadRequestDto(e))
     if not dto.is_valid():
@@ -42,14 +43,18 @@ def login(request):
         return BaseResponse(WrongPasswordDto())
 
     # add user session
-    request.session['uid'] = user.uid
-    request.session.set_expiry(14 * 24 * 60 * 60)  # expire after 14 days
+    # request.session['uid'] = user.uid
+    # request.session.set_expiry(14 * 24 * 60 * 60)  # expire after 14 days
+    token = generate_token(user.uid)
 
-    return GoodResponse(LoginSuccessDto(UserSerializer(user).data))
+    return GoodResponse(LoginSuccessDto(UserSerializer(user).data, token))
 
 
 @csrf_exempt
 def logout(request):
+    """
+    Since JWT is used, this will no loner work.
+    """
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
     if request.session.get('uid') is not None:

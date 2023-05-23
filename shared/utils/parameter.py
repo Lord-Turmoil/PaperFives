@@ -13,10 +13,12 @@ from shared.utils.json_util import deserialize
 
 
 def _parse_POST_param(request: WSGIRequest) -> dict:
-    content_type = request.headers.get('Content-Type')
+    content_type: str = str(request.headers.get('Content-Type'))
     if content_type == 'application/json':
         return deserialize(request.body)
     elif content_type == 'application/x-www-form-urlencoded':
+        return request.POST.dict()
+    elif content_type.startswith('multipart/form-data'):
         return request.POST.dict()
     return {}
 
@@ -35,3 +37,10 @@ def parse_param(request: WSGIRequest) -> dict:
     elif request.method == 'GET':
         return _parse_GET_param(request)
     return {}
+
+
+def parse_value(val, _type):
+    try:
+        return _type(val)
+    except ValueError:
+        return None

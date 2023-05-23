@@ -36,9 +36,11 @@ def _decrypt(src):
 def generate_token(identity: str) -> str:
     """
     Should pass an identity here, can be email or uid.
+    :param password: used for salt
     :param identity: str that can determine a user
     :return:
     """
+
     header = _encrypt(HEADER)
 
     # valid in 14 days
@@ -77,24 +79,29 @@ def _verify_signature(token) -> bool:
     return signature == md5.hexdigest()
 
 
-def _get_identity(token):
+def get_identity_from_token(token):
     payload = _get_payload(token)
-    return payload['id']
+    return payload.get('id', None)
 
 
-def _get_expire(token):
+def get_expire_from_token(token):
     payload = _get_payload(token)
-    return payload['exp']
+    return payload.get('exp', None)
 
 
-def verify_token(identity, token) -> bool:
-    if identity is None or token is None:
+def verify_token(token) -> bool:
+    if (token is None) or (not _verify_signature(token)):
         return False
-    if not _verify_signature(token):
+    try:
+        if (_get_header(token) != HEADER) or (get_identity_from_token(token) is None):
+            return False
+        exp = get_expire_from_token(token)
+    except Exception as e:
+        print(e)
         return False
-    if _get_header(token) != HEADER:
+    if exp is None:
         return False
-    return _get_identity(token) == identity and _get_expire(token) > time.time()
+    return exp > time.time()
 
 
 def generate_password(password) -> str:
