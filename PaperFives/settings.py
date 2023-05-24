@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "papers.apps.PapersConfig",
     "users.apps.UsersConfig",
     "msgs.apps.MsgsConfig"
+    "haystack"
 ]
 
 MIDDLEWARE = [
