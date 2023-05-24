@@ -9,13 +9,17 @@
 #
 from django.core.handlers.wsgi import WSGIRequest
 
+from shared.exceptions.json import JsonDeserializeException
 from shared.utils.json_util import deserialize
 
 
 def _parse_POST_param(request: WSGIRequest) -> dict:
     content_type: str = str(request.headers.get('Content-Type'))
     if content_type == 'application/json':
-        return deserialize(request.body)
+        try:
+            return deserialize(request.body)
+        except JsonDeserializeException:
+            return {}
     elif content_type == 'application/x-www-form-urlencoded':
         return request.POST.dict()
     elif content_type.startswith('multipart/form-data'):
