@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Register As User{% endblock %}
 {% block body %}
-    <form method="post" action="/api/v1/users/register/">
+    <form method="post" action="/api/v1/users/register">
         {% csrf_token %}
         <table>
             <tr class="field">

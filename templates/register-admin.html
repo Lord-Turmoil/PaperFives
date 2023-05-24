@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Register As Admin{% endblock %}
 {% block body %}
-    <form method="post" action="/api/v1/users/register-admin/">
+    <form method="post" action="/api/v1/users/register-admin">
         {% csrf_token %}
         <table>
             <tr class="field">

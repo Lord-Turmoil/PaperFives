@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Profile{% endblock %}
 {% block body %}
-    <form method="post" action="/api/v1/users/profile/profile/">
+    <form method="post" action="/api/v1/users/profile/profile">
         {% csrf_token %}
         <table>
             <tr class="field">
@@ -44,7 +44,7 @@
             </div>
         </div>
         <div class="right">
-            <form method="post" enctype="multipart/form-data" action="/api/v1/users/profile/avatar/">
+            <form method="post" enctype="multipart/form-data" action="/api/v1/users/profile/avatar">
                 {% csrf_token %}
                 <table>
                     <tr class="field">
