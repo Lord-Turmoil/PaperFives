@@ -1,8 +1,6 @@
 from django.db import models
 from django.utils import timezone
 
-from PaperFives.settings import CONFIG
-
 """
   When user edits paper, all changes will be saved to DraftPaper table,
 and can be modified many times before really publishes.
@@ -58,17 +56,18 @@ class PaperStatistics(models.Model):
 class Paper(models.Model):
     class Status(models.IntegerChoices):
         # Only used in DraftPaper
-        DRAFT = 0, "Draft"
+        INCOMPLETE = 0, "Incomplete"
+        DRAFT = 1, "Draft"
 
         # When paper is published, it will first be set to Pending
-        PENDING = 1, "Pending"
-        REVIEWING = 2, "Reviewing"
-        PASSED = 3, "Passed"
+        PENDING = 2, "Pending"
+        REVIEWING = 3, "Reviewing"
+        PASSED = 4, "Passed"
 
     pid = models.BigAutoField(primary_key=True)
     path = models.CharField(max_length=127, default="")
 
-    status = models.PositiveSmallIntegerField(choices=Status.choices, default=Status.DRAFT)
+    status = models.PositiveSmallIntegerField(choices=Status.choices, default=Status.INCOMPLETE)
 
     # attribute & statistics
     attr = models.OneToOneField(PaperAttribute, related_name="paper", on_delete=models.CASCADE)
@@ -80,6 +79,7 @@ class Paper(models.Model):
             _path = ""
         if _stat is None:
             _stat = PaperStatistics.create()
+            _stat.save()
         return cls(path=_path, attr=_attr, stat=_stat)
 
     class Meta:
@@ -88,11 +88,13 @@ class Paper(models.Model):
 
 
 class Area(models.Model):
+    aid = models.BigAutoField(primary_key=True)
     primary = models.IntegerField()
     secondary = models.IntegerField()
     name = models.CharField(max_length=63)
 
     papers = models.ManyToManyField(Paper, related_name="areas")
+
     @classmethod
     def create(cls, _primary, _secondary, _name):
         return cls(primary=_primary, secondary=_secondary, name=_name)
@@ -109,7 +111,7 @@ class Author(models.Model):
     paper = models.ForeignKey(Paper, related_name="authors", on_delete=models.CASCADE)
 
     @classmethod
-    def create(cls, _email, _name, _order, _paper):
+    def create(cls, _paper, _email, _name, _order):
         """
         Please verify parameters before you call this function!
         _order is the display order in the author list
@@ -149,7 +151,28 @@ class FavoritePaper(models.Model):
         verbose_name = 'fav_paper'
 
 
-class PublishedPaper(models.Model):
+class PublishRecord(models.Model):
     uid = models.BigIntegerField()
     pid = models.BigIntegerField()
     lead = models.BooleanField()  # whether is lead-author or not
+
+    @classmethod
+    def create(cls, _uid, _pid, _lead):
+        return cls(uid=_uid, pid=_pid, lead=_lead)
+
+    class Meta:
+        verbose_name = 'publish_record'
+
+
+class PaperUpdateRecord(models.Model):
+    pid = models.BigIntegerField(primary_key=True)
+    update_time = models.DateTimeField()
+
+    @classmethod
+    def create(cls, _pid, _update_time=None):
+        if _update_time is None:
+            _update_time = timezone.now()
+        return cls(pid=_pid, update_time=_update_time)
+
+    class Meta:
+        verbose_name = 'update_record'
