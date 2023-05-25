@@ -19,6 +19,10 @@ def validate_image_name(filename: str) -> bool:
     return False
 
 
+def validate_pdf_name(filename: str) -> bool:
+    return filename.endswith('.pdf')
+
+
 def validate_email(email: str) -> bool:
     if re.match('^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$', email):
         return True

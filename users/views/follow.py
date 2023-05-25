@@ -54,7 +54,7 @@ def unfollow_user(request):
         return GoodResponse(NotLoggedInDto())
 
     params = parse_param(request)
-    target = params.get('uid')
+    target = parse_value(params.get('uid'), int)
     if target is None:
         return BadRequestResponse(BadRequestDto("Whom are you going to unfollow?"))
     if target == user.uid:
