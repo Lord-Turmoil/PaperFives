@@ -3,7 +3,7 @@ AVATAR_PATH: /static/avatar/
 DEFAULT_AVATAR: /static/avatar/default.png
 IMG_MSG_PATH: /static/img_msg/
 DEFAULT_IMG_MSG: /static/img_msg/default.png
-PAPER_PATH: /static/img_msg/
+PAPER_PATH: ./static/paper/
 DEFAULT_PAPER_PATH: /static/img_msg/default.pdf
 
 INVALID_NAME_LIST:

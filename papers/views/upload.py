@@ -5,23 +5,25 @@
 # @File    : upload.py
 #
 #
-from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
-from papers.models import PaperAttribute, Paper, Author, Area, Reference, PublishRecord, PaperUpdateRecord
+from papers.models import PaperAttribute, Paper, Author, Area, Reference, PublishRecord
+from papers.views.utils.papers import save_paper_file, update_paper_update_record
 from papers.views.utils.serialize import get_paper_post_dto, get_paper_get_dto
-from shared.dtos.models.papers import PaperPostDto, PaperGetDto
+from shared.dtos.models.papers import PaperPostDto
 from shared.dtos.response.base import GoodResponseDto
-from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
+from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto, ServerErrorDto
 from shared.dtos.response.papers import NotYourPaperErrorDto, NotLeadAuthorErrorDto, NoSuchPaperErrorDto
 from shared.dtos.response.users import NotLoggedInDto
 from shared.exceptions.json import JsonDeserializeException
-from shared.response.basic import BadRequestResponse, GoodResponse
+from shared.response.basic import BadRequestResponse, GoodResponse, ServerErrorResponse
 from shared.utils.json_util import deserialize
 from shared.utils.papers.papers import get_publish_record, get_paper_by_pid
 from shared.utils.parameter import parse_param
+from shared.utils.parser import parse_value
 from shared.utils.str_util import is_no_content
 from shared.utils.users.users import get_user_from_request, get_user_by_email
+from shared.utils.validator import validate_pdf_name
 from users.models import User
 
 
@@ -102,19 +104,9 @@ def _update_paper(user: User, paper: Paper, dto: PaperPostDto):
     # save paper
     paper.save()
 
-    # update paper update time
-    papers = PaperUpdateRecord.objects.filter(pid=paper.pid)
-    if papers.exists():
-        p: PaperUpdateRecord = papers.first()
-        p.update_time = timezone.now()
-        p.save()
-    else:
-        p: PaperUpdateRecord = PaperUpdateRecord.create(paper.pid)
-        p.save()
-
 
 @csrf_exempt
-def upload_info(request):
+def upload_paper_info(request):
     """
     Login status should be checked by middleware.
     """
@@ -147,5 +139,60 @@ def upload_info(request):
 
     # update paper
     _update_paper(user, paper, dto)
+    update_paper_update_record(paper)
 
     return GoodResponse(GoodResponseDto(data=get_paper_get_dto(paper)))
+
+
+@csrf_exempt
+def upload_paper_file(request):
+    """
+    Login status should be checked by middleware.
+    """
+    if request.method != 'POST':
+        return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
+    params = parse_param(request)
+
+    pid = parse_value(params.get('pid'), int)
+    if pid is None:
+        return BadRequestResponse(BadRequestDto("Missing pid"))
+    file = request.FILES.get('file')
+    if file is None:
+        return BadRequestResponse(BadRequestDto("Missing image file"))
+    if not validate_pdf_name(file.name):
+        return BadRequestResponse(BadRequestDto("Invalid image type!"))
+
+    user: User = get_user_from_request(request)
+    if user is None:
+        return GoodResponse(NotLoggedInDto())
+
+    record: PublishRecord = get_publish_record(user.uid, pid)
+    if record is None:
+        return GoodResponse(NotYourPaperErrorDto())
+    if not record.lead:
+        return GoodResponse(NotLeadAuthorErrorDto("Contact Lead-Author to upload the paper"))
+
+    # save paper file
+    paper: Paper = get_paper_by_pid(pid)
+    if paper is None:
+        return GoodResponse(NoSuchPaperErrorDto())
+
+    if is_no_content(paper.path):
+        is_new = True
+    else:
+        is_new = False
+
+    if not save_paper_file(paper, file):
+        return ServerErrorResponse(ServerErrorDto("Failed to save paper!"))
+
+    # change paper status
+    if get_paper_post_dto(paper).is_complete():
+        paper.status = Paper.Status.DRAFT
+        paper.save()
+
+    update_paper_update_record(paper)
+
+    if is_new:
+        return GoodResponse(GoodResponseDto("Every word counts!"))
+    else:
+        return GoodResponse(GoodResponseDto("Paper updated"))
