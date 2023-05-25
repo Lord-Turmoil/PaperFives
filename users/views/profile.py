@@ -19,7 +19,7 @@ from shared.utils.parameter import parse_param
 from shared.utils.parser import parse_value
 from shared.utils.str_util import is_no_content
 from shared.utils.token import verify_password, generate_password
-from shared.utils.users.roles import is_user_admin, get_role
+from shared.utils.users.roles import get_role
 from shared.utils.users.users import get_user_from_request, get_user_by_uid, get_user_by_email
 from shared.utils.validator import validate_image_name, validate_password
 from users.models import User, UserAttribute
@@ -99,7 +99,7 @@ def edit_user_profile(request):
 
     params = parse_param(request)
     username = params.get('username')
-    sex = int(params.get('sex', -1))
+    sex = parse_value(params.get('sex', 5), int)
     institute = params.get('institute')
     motto = params.get('motto')
 
@@ -174,7 +174,7 @@ def edit_user_password(request):
     old_pwd = params.get('old')
     new_pwd = params.get('new')
     if old_pwd is None or new_pwd is None:
-        return BadRequestResponse(BadRequestDto("missing parameters"))
+        return BadRequestResponse(BadRequestDto("Missing parameters"))
     if not verify_password(old_pwd, user.password):
         return GoodResponse(WrongPasswordDto())
     if not validate_password(new_pwd):
