@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
+    'haystack',
     "papers.apps.PapersConfig",
     "users.apps.UsersConfig",
     "msgs.apps.MsgsConfig"
@@ -131,8 +132,6 @@ USE_L10N = True
 
 USE_TZ = False
 
-
-
 ################################################################################
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -161,7 +160,6 @@ EMAIL_HOST_PASSWORD = EMAIL_CONFIG['EMAIL_HOST_PASSWORD']
 EMAIL_USE_TLS = EMAIL_CONFIG['EMAIL_USE_TLS']
 EMAIL_FROM = EMAIL_CONFIG['EMAIL_FROM']
 
-
 ################################################################################
 # CORS - Headers
 #
@@ -175,3 +173,15 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_RESULT_BACKEND = "redis://localhost:6379"
+
+################################################################################
+# Haystack settings
+#
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'haystack',
+    },
+}
