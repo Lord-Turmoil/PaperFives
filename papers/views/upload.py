@@ -8,7 +8,7 @@
 from django.views.decorators.csrf import csrf_exempt
 
 from papers.models import PaperAttribute, Paper, Author, Area, Reference, PublishRecord
-from papers.views.utils.papers import save_paper_file, update_paper_update_record
+from papers.views.utils.papers import save_paper_file, update_paper_update_record, is_paper_complete
 from papers.views.utils.serialize import get_paper_post_dto, get_paper_get_dto
 from shared.dtos.models.papers import PaperPostDto
 from shared.dtos.response.base import GoodResponseDto
@@ -96,10 +96,11 @@ def _update_paper(user: User, paper: Paper, dto: PaperPostDto):
         paper.areas.add(v)
 
     # update status
-    if not get_paper_post_dto(paper).is_complete() or is_no_content(paper.path):
+    if is_paper_complete(paper):
+        paper.status = paper.Status.DRAFT
         paper.status = paper.Status.INCOMPLETE
     else:
-        paper.status = paper.Status.DRAFT
+        pass
 
     # save paper
     paper.save()

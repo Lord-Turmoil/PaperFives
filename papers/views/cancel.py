@@ -7,12 +7,10 @@
 # Description:
 #   Cancel paper. Remove all information about a paper.
 #
-import os
 
 from django.views.decorators.csrf import csrf_exempt
 
-from PaperFives.settings import CONFIG
-from papers.models import Paper, PublishRecord, PaperUpdateRecord
+from papers.models import Paper, PublishRecord, PaperUpdateRecord, FavoritePaper
 from papers.views.utils.papers import remove_paper_file, update_paper_update_record
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
@@ -24,7 +22,7 @@ from shared.utils.parameter import parse_param
 from shared.utils.parser import parse_value
 from shared.utils.str_util import is_no_content
 from shared.utils.users.roles import is_user_admin
-from shared.utils.users.users import get_user_from_request, get_user_by_email
+from shared.utils.users.users import get_user_from_request
 from users.models import User
 
 
@@ -40,6 +38,7 @@ def _delete_paper(paper: Paper):
 
     PublishRecord.objects.filter(pid=paper.pid).delete()
     PaperUpdateRecord.objects.filter(pid=paper.pid).delete()
+    FavoritePaper.objects.filter(pid=paper.pid).delete()
 
     paper.delete()
 
@@ -56,13 +55,15 @@ def cancel_paper(request):
     pid = parse_value(params.get('pid'), int)
     if pid is None:
         return BadRequestResponse(BadRequestDto("Invalid pid"))
-    paper: Paper = get_paper_by_pid(pid)
-    if paper is None:
-        return GoodResponse(NoSuchPaperErrorDto())
 
     user: User = get_user_from_request(request)
     if user is None:
         return NotAuthorizedResponse(NotLoggedInDto())
+
+    paper: Paper = get_paper_by_pid(pid)
+    if paper is None:
+        return GoodResponse(NoSuchPaperErrorDto())
+
     if not is_user_admin(user):
         r: PublishRecord = get_publish_record(user.uid, paper.pid)
         if r is None:

@@ -13,6 +13,8 @@ from django.utils import timezone
 
 from PaperFives.settings import CONFIG
 from papers.models import PaperUpdateRecord
+from papers.views.utils.serialize import get_paper_post_dto
+from shared.utils.str_util import is_no_content
 
 
 def remove_paper_file(paper) -> bool:
@@ -49,3 +51,13 @@ def update_paper_update_record(paper):
     else:
         record = PaperUpdateRecord.create(paper.pid)
     record.save()
+
+
+def is_paper_complete(paper) -> bool:
+    if paper is None:
+        return False
+    if not get_paper_post_dto(paper):
+        return False
+    if is_no_content(paper.path):
+        return False
+    return True
