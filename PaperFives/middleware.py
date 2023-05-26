@@ -20,6 +20,7 @@ API_WHITELIST = ["/api/v1/user/login/", "/api/v1/user/register/"]
 
 API_BLACKLIST = [
     f"{BASE_URL}users/profile/profile",
+
     f"{BASE_URL}users/favorite/follow",
     f"{BASE_URL}users/favorite/unfollow",
     f"{BASE_URL}users/favorite/isfollower",
@@ -27,10 +28,14 @@ API_BLACKLIST = [
 
     f"{BASE_URL}papers/upload/info",
     f"{BASE_URL}papers/upload/file",
+
     f"{BASE_URL}papers/cancel",
-    f"{BASE_URL}papers/favorite",
     f"{BASE_URL}papers/publish",
     f"{BASE_URL}papers/favorite",
+
+    f"{BASE_URL}papers/areas/add",
+    f"{BASE_URL}papers/areas/del",
+    f"{BASE_URL}papers/areas/get",
 
     f"{BASE_URL}msgs/send",
     f"{BASE_URL}msgs/get",
