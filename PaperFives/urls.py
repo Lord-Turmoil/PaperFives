@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import urls
+from zeta.views import page_not_found
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,3 +25,6 @@ urlpatterns = [
     path('api/v1/papers/', include(('papers.urls', 'papers'))),
     path('api/v1/msgs/', include(('msgs.urls', 'msgs')))
 ]
+
+# only be used when Debug is false
+urls.handler404 = page_not_found

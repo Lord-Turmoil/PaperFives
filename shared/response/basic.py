@@ -30,3 +30,8 @@ class NotAuthorizedResponse(BaseResponse):
 class ServerErrorResponse(BaseResponse):
     def __init__(self, dto):
         super().__init__(dto, HTTPStatus.INTERNAL_SERVER_ERROR)
+
+
+class PageNotFoundResponse(BaseResponse):
+    def __init__(self, dto):
+        super().__init__(dto, HTTPStatus.NOT_FOUND)
