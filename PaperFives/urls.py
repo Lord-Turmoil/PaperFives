@@ -13,9 +13,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
 from django.conf import urls
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.template.defaulttags import url
+from django.urls import path, include
+from django.views.static import serve
+
+from PaperFives.settings import MEDIA_ROOT, MEDIA_URL
 from zeta.views import page_not_found
 
 urlpatterns = [
@@ -23,8 +28,8 @@ urlpatterns = [
     path('pseudo/', include(('pseudo.urls', 'pseudo'))),
     path('api/v1/users/', include(('users.urls', 'users'))),
     path('api/v1/papers/', include(('papers.urls', 'papers'))),
-    path('api/v1/msgs/', include(('msgs.urls', 'msgs')))
-]
+    path('api/v1/msgs/', include(('msgs.urls', 'msgs'))),
+] + static(MEDIA_URL, document_root=MEDIA_ROOT)
 
 # only be used when Debug is false
 urls.handler404 = page_not_found

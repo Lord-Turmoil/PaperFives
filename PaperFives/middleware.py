@@ -29,6 +29,8 @@ API_BLACKLIST = [
     f"{BASE_URL}papers/upload/info",
     f"{BASE_URL}papers/upload/file",
 
+    f"{BASE_URL}papers/download/file",
+
     f"{BASE_URL}papers/cancel",
     f"{BASE_URL}papers/publish",
     f"{BASE_URL}papers/favorite",
