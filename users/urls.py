@@ -33,4 +33,6 @@ urlpatterns = [
     path('favorite/unfollow', follow.unfollow_user),
     path('favorite/followers', follow.get_followers),
     path('favorite/followees', follow.get_followees),
+    path('favorite/isfollower', follow.is_follower),
+    path('favorite/isfollowee', follow.is_followee),
 ]
