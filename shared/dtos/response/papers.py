@@ -12,10 +12,17 @@ class NotYourPaperErrorDto(BaseResponseDto):
     def __init__(self):
         super().__init__(ERROR_CODE['NOT_YOUR_PAPER'], "This is not your paper.")
 
+
 class NotLeadAuthorErrorDto(BaseResponseDto):
     def __init__(self, msg="You are not the lead author"):
         super().__init__(ERROR_CODE['NOT_LEAD'], msg)
 
+
 class NoSuchPaperErrorDto(BaseResponseDto):
     def __init__(self):
         super().__init__(ERROR_CODE['NO_SUCH_PAPER'], "No such paper")
+
+
+class PaperNotCompleteErrorDto(BaseResponseDto):
+    def __init__(self):
+        super().__init__(ERROR_CODE['NOT_COMPLETE'], "Paper not complete yet")

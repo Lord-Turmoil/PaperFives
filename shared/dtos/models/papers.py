@@ -14,7 +14,7 @@
 from datetime import datetime
 from typing import List
 
-from papers.models import Paper, PaperAttribute, Author, Reference, PaperStatistics, PaperUpdateRecord
+from papers.models import Paper, PaperAttribute, Author, Reference, PaperStatistics
 from shared.dtos.models.base import BaseDto
 from shared.utils.parser import parse_value
 from shared.utils.str_util import is_no_content
@@ -147,13 +147,18 @@ class PaperStatData(BasePaperDto):
 class PaperGetDto(PaperPostDto):
     def __init__(self):
         super().__init__()
+        self.areas: List[str] = [""]  # override parent areas
         self.status: int = 0
         self.stat: PaperStatData = PaperStatData()
-        self.update: str = ""
+        self.update: str = ""  # last update time
 
     def init(self, paper, update=""):
         super().init(paper)
+        # still override parent areas, but take one extra step
+        self.areas = [area.name for area in paper.areas.all()]
+
         self.status = paper.status
         self.stat = PaperStatData().init(paper.stat)
         self.update = update
+
         return self
