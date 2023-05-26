@@ -7,7 +7,7 @@
 
 from django.urls import path
 
-from .views import search, upload, cancel, publish, areas
+from .views import search, upload, cancel, publish, areas, download
 
 urlpatterns = [
     path('search/', search.brief_search),
@@ -15,8 +15,8 @@ urlpatterns = [
     path('upload/info', upload.upload_paper_info),
     path('upload/file', upload.upload_paper_file),
 
-    # path('download/info', download.get_info),
-    # path('download/file', download.get_file),
+    path('download/info', download.download_info),
+    path('download/file', download.download_paper),
 
     path('cancel/paper', cancel.cancel_paper),
     path('cancel/file', cancel.cancel_paper_file),
