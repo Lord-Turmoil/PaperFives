@@ -32,3 +32,8 @@ class BadRequestDto(BaseResponseDto):
 class ServerErrorDto(BaseResponseDto):
     def __init__(self, msg):
         super().__init__(ERROR_CODE['SERVER_ERROR'], msg)
+
+
+class PageNotFoundErrorDto(BaseResponseDto):
+    def __init__(self, msg="Invalid API"):
+        super().__init__(ERROR_CODE['PAGE_NOT_FOUND'], msg)
