@@ -7,15 +7,23 @@
 
 from django.urls import path
 
-from .views import search, upload, cancel, publish
+from .views import search, upload, cancel, publish, areas
 
 urlpatterns = [
     path('search/', search.brief_search),
+
     path('upload/info', upload.upload_paper_info),
     path('upload/file', upload.upload_paper_file),
-    path('cancel/paper', cancel.cancel_paper),
-    path('cancel/file', cancel.cancel_paper_file),
-    path('publish', publish.publish_paper),
+
     # path('download/info', download.get_info),
     # path('download/file', download.get_file),
+
+    path('cancel/paper', cancel.cancel_paper),
+    path('cancel/file', cancel.cancel_paper_file),
+
+    path('publish', publish.publish_paper),
+
+    path('areas/add', areas.add_areas),
+    path('areas/del', areas.remove_areas),
+    path('areas/get', areas.get_areas),
 ]
