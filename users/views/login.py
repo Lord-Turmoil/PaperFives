@@ -16,6 +16,7 @@ from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.json_util import deserialize
 from shared.utils.parameter import parse_param
 from shared.utils.token import verify_password, generate_token
+from shared.utils.users.users import get_user_by_email
 from users.models import User
 from users.serializer import UserSerializer
 
@@ -26,21 +27,19 @@ def login(request):
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
     params = parse_param(request)
 
-    dto: LoginDto = LoginDto()
     try:
         params.pop('csrfmiddlewaretoken', None)
-        dto = deserialize(params, LoginDto)
+        dto: LoginDto = deserialize(params, LoginDto)
     except JsonDeserializeException as e:
         return BadRequestResponse(BadRequestDto(e))
     if not dto.is_valid():
-        return BadRequestResponse(BadRequestDto("invalid data value"))
+        return BadRequestResponse(BadRequestDto("Invalid data value"))
 
-    users = User.objects.filter(email=dto.email)
-    if not users.exists():
-        return BaseResponse(NoSuchUserDto())
-    user = users.first()
+    user = get_user_by_email(dto.email)
+    if user is None:
+        return GoodResponse(NoSuchUserDto())
     if not verify_password(dto.password, user.password):
-        return BaseResponse(WrongPasswordDto())
+        return GoodResponse(WrongPasswordDto())
 
     # add user session
     # request.session['uid'] = user.uid
