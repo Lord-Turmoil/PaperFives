@@ -13,14 +13,17 @@ from shared.dtos.response.users import NotLoggedInDto, NoSuchUserDto, FollowSelf
 from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.parameter import parse_param
 from shared.utils.parser import parse_value
-from shared.utils.users.users import get_user_from_request
+from shared.utils.users.users import get_user_from_request, get_user_by_uid
 from users.models import User, FavoriteUser
 from users.serializer import UserSimpleSerializer
-from users.views.utils.users import get_users_from_uid_list
+from users.views.utils.users import get_users_from_uid_list, is_follower_by_id
 
 
 @csrf_exempt
 def follow_user(request):
+    """
+    Require login.
+    """
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
     user: User = get_user_from_request(request)
@@ -47,6 +50,9 @@ def follow_user(request):
 
 @csrf_exempt
 def unfollow_user(request):
+    """
+    Require login.
+    """
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
     user = get_user_from_request(request)
@@ -83,10 +89,9 @@ def get_followers(request):
     if uid is None:
         return BadRequestResponse(BadRequestDto("Missing 'uid'"))
 
-    users = User.objects.filter(uid=uid)
-    if not users.exists():
+    user = get_user_by_uid(uid)
+    if user is None:
         return GoodResponse(NoSuchUserDto())
-    user = users.first()
 
     # get all followers
     followers = FavoriteUser.objects.filter(dst_uid=user.uid)
@@ -109,10 +114,9 @@ def get_followees(request):
     if uid is None:
         return BadRequestResponse(BadRequestDto("Missing 'uid'"))
 
-    users = User.objects.filter(uid=uid)
-    if not users.exists():
+    user = get_user_by_uid(uid)
+    if user is None:
         return GoodResponse(NoSuchUserDto())
-    user = users.first()
 
     # get all followees
     followees = FavoriteUser.objects.filter(src_uid=user.uid)
@@ -121,3 +125,49 @@ def get_followees(request):
         UserSimpleSerializer)
 
     return GoodResponse(UserListDto(followee_list))
+
+
+@csrf_exempt
+def is_follower(request):
+    """
+    Require login. Is given user a follower of current user or not.
+    'given user' follows 'current user'
+    """
+    if request.method != 'GET':
+        return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
+
+    user: User = get_user_from_request(request)
+    if user is None:
+        return GoodResponse(NotLoggedInDto())
+
+    params = parse_param(request)
+    uid = parse_value(params.get('uid'), int)
+    if uid is None:
+        return BadRequestResponse(BadRequestDto("Missing 'uid'"))
+
+    data = {'value': is_follower_by_id(uid, user.uid)}
+
+    return GoodResponse(GoodResponseDto(data=data))
+
+
+@csrf_exempt
+def is_followee(request):
+    """
+    Require login. Is current user a follower of given user or not.
+    'current user' follows 'given user'
+    """
+    if request.method != 'GET':
+        return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
+
+    user: User = get_user_from_request(request)
+    if user is None:
+        return GoodResponse(NotLoggedInDto())
+
+    params = parse_param(request)
+    uid = parse_value(params.get('uid'), int)
+    if uid is None:
+        return BadRequestResponse(BadRequestDto("Missing 'uid'"))
+
+    data = {'value': is_follower_by_id(user.uid, uid)}
+
+    return GoodResponse(GoodResponseDto(data=data))

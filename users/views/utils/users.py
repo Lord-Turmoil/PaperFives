@@ -4,7 +4,7 @@
 # @Author  : Tony Skywalker
 # @File    : users.py
 #
-from users.models import User
+from users.models import User, FavoriteUser
 
 
 def get_users_from_uid_list(uid_list, serializer):
@@ -22,3 +22,10 @@ def get_users_from_user_list(user_list, serializer):
     for user in user_list:
         users.append(serializer(user).data)
     return users
+
+
+def is_follower_by_id(src, dst):
+    favorites = FavoriteUser.objects.filter(src_uid=src, dst_uid=dst)
+    if favorites.exists():
+        return True
+    return False
