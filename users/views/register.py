@@ -5,8 +5,6 @@
 # @File    : register.py
 #
 
-import datetime
-
 from celery import shared_task
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
@@ -29,7 +27,7 @@ from shared.utils.token import generate_password
 from shared.utils.users.roles import is_user_admin
 from shared.utils.users.users import get_user_from_request
 from shared.utils.validator import validate_email
-from users.models import User, Role, FavoriteUser
+from users.models import User, Role, FavoriteUser, PublishStatistics
 
 EMAIL_WHITE_LIST = [
     "111@111.com",
@@ -164,6 +162,7 @@ def _erase_user(uid):
     FavoriteUser.objects.filter(dst_uid=uid).delete()
     FavoritePaper.objects.filter(uid=uid).delete()
     PublishRecord.objects.filter(uid=uid).delete()
+    PublishStatistics.objects.filter(uid=uid).delete()
 
 
 @csrf_exempt

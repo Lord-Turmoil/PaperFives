@@ -106,3 +106,20 @@ class FavoriteUser(models.Model):
 
     class Meta:
         verbose_name = 'fav_user'
+
+
+class PublishStatistics(models.Model):
+    """
+    Record user publish count annually.
+    """
+    uid = models.BigIntegerField(primary_key=True)
+    year = models.IntegerField()
+    lead_cnt = models.IntegerField(default=0)  # as lead-author
+    co_cnt = models.IntegerField(default=0)  # as co-author
+
+    @classmethod
+    def create(cls, _uid, _year):
+        return cls(uid=_uid, year=_year)
+
+    class Meta:
+        verbose_name = 'publish_stat'

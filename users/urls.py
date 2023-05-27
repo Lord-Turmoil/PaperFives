@@ -7,7 +7,7 @@
 
 from django.urls import path
 
-from .views import register, login, profile, follow, users
+from .views import register, login, profile, follow, users, tasks
 
 urlpatterns = [
     # basic register and login
@@ -35,4 +35,7 @@ urlpatterns = [
     path('favorite/followees', follow.get_followees),
     path('favorite/isfollower', follow.is_follower),
     path('favorite/isfollowee', follow.is_followee),
+
+    # tasks
+    path('task/update_stat', tasks.update_user_statistics),
 ]
