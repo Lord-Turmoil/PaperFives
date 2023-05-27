@@ -31,4 +31,5 @@ urlpatterns = [
     path('review/review', review.review_paper),
 
     path('search/temp/all', search.temp_get_pid_list),
+    path('search/query', search.query_paper),
 ]
