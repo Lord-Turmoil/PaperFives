@@ -15,7 +15,8 @@ from papers.views.utils.papers import is_paper_complete
 from papers.views.utils.serialize import get_paper_get_dto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto
-from shared.dtos.response.papers import NotYourPaperErrorDto, NotLeadAuthorErrorDto, PaperNotCompleteErrorDto
+from shared.dtos.response.papers import NotYourPaperErrorDto, NotLeadAuthorErrorDto, PaperNotCompleteErrorDto, \
+    NotPublishableErrorDto
 from shared.dtos.response.users import NotLoggedInDto
 from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.papers.papers import get_publish_record, get_paper_by_pid
@@ -23,6 +24,10 @@ from shared.utils.parameter import parse_param
 from shared.utils.parser import parse_value
 from shared.utils.users.users import get_user_from_request
 from users.models import User
+
+PUBLISHABLE_STATUS = [
+    Paper.Status.DRAFT,
+]
 
 
 @csrf_exempt
@@ -48,8 +53,10 @@ def publish_paper(request):
     paper: Paper = get_paper_by_pid(pid)
     if not is_paper_complete(paper):
         return GoodResponse(PaperNotCompleteErrorDto())
+    if paper.status not in PUBLISHABLE_STATUS:
+        return GoodResponse(NotPublishableErrorDto())
 
     paper.status = Paper.Status.PENDING
     paper.save()
 
-    return GoodResponse(GoodResponseDto(data=get_paper_get_dto(paper)))
+    return GoodResponse(GoodResponseDto("We have received your paper!"))

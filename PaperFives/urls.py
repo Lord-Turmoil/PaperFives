@@ -16,9 +16,7 @@ Including another URLconf
 from django.conf import urls
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.template.defaulttags import url
-from django.urls import path, include
-from django.views.static import serve
+from django.urls import path, include, re_path
 
 from PaperFives.settings import MEDIA_ROOT, MEDIA_URL
 from zeta.views import page_not_found
@@ -29,6 +27,7 @@ urlpatterns = [
     path('api/v1/users/', include(('users.urls', 'users'))),
     path('api/v1/papers/', include(('papers.urls', 'papers'))),
     path('api/v1/msgs/', include(('msgs.urls', 'msgs'))),
+    re_path(r'^search/', include('haystack.urls')),
 ] + static(MEDIA_URL, document_root=MEDIA_ROOT)
 
 # only be used when Debug is false

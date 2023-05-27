@@ -88,6 +88,6 @@ class UserListDto(GoodResponseDto):
         super().__init__(data={'list': user_list})
 
 
-class PermissionDeniedDto(NotAuthorizedDto):
+class PermissionDeniedDto(BaseResponseDto):
     def __init__(self, msg="Permission denied"):
         super().__init__(ERROR_CODE['PERM_DENIED'], msg)

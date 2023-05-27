@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from PaperFives.settings import ERROR_CODE
 from msgs.models import EmailRecord
+from papers.models import FavoritePaper, PublishRecord
 from shared.dtos.models.users import RegisterDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto, GeneralErrorDto
@@ -28,7 +29,7 @@ from shared.utils.token import generate_password
 from shared.utils.users.roles import is_user_admin
 from shared.utils.users.users import get_user_from_request
 from shared.utils.validator import validate_email
-from users.models import User, Role
+from users.models import User, Role, FavoriteUser
 
 EMAIL_WHITE_LIST = [
     "111@111.com",
@@ -38,19 +39,12 @@ EMAIL_WHITE_LIST = [
 
 
 @shared_task()
-def _send_code_email_task(email):
-    code = generate_code()
+def _send_code_email_task(email, code):
     try:
         send_code_email(email, code)
     except EmailException as e:
         # return BaseResponse(GeneralErrorDto(ERROR_CODE['SEND_EMAIL'], "Failed to send email"))
         return
-
-    # add email into
-    EmailRecord.objects.filter(email=email, usage="reg").delete()  # delete previous
-    expire = timezone.now() + datetime.timedelta(minutes=10)
-    email = EmailRecord.create(email, code, expire, "reg")
-    email.save()
 
 
 @csrf_exempt
@@ -72,7 +66,14 @@ def get_verification_code(request):
         return BaseResponse(GeneralErrorDto(ERROR_CODE['DUPLICATE_USER'], "User already registered"))
 
     # async task will return immediately
-    _send_code_email_task.delay(email)
+    code = generate_code()
+    _send_code_email_task.delay(email, code)
+
+    # add email into record
+    EmailRecord.objects.filter(email=email, usage="reg").delete()  # delete previous
+    expire = timezone.now() + timezone.timedelta(minutes=10)
+    email = EmailRecord.create(email, code, expire, "reg")
+    email.save()
 
     return GoodResponse(GoodResponseDto("Verification code sent"))
 
@@ -158,6 +159,13 @@ def register_as_admin(request):
     return GoodResponse(GoodResponseDto("Welcome to PaperFives! We've been waiting for you."))
 
 
+def _erase_user(uid):
+    FavoriteUser.objects.filter(src_uid=uid).delete()
+    FavoriteUser.objects.filter(dst_uid=uid).delete()
+    FavoritePaper.objects.filter(uid=uid).delete()
+    PublishRecord.objects.filter(uid=uid).delete()
+
+
 @csrf_exempt
 def cancel_account(request):
     if request.method != 'POST':
@@ -177,6 +185,9 @@ def cancel_account(request):
     if not is_user_admin(profile):
         if profile.email != user.email:
             return NotAuthorizedResponse(NotAuthorizedDto("You cannot cancel other people!"))
+
+    _erase_user(user.uid)
+
     user.attr.delete()
     user.stat.delete()
     user.delete()

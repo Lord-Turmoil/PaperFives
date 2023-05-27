@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Review Message</title>
+    <style>
+        body {
+            font-family: "Roboto", "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .wrapper {
+            margin: 20px;
+        }
+
+        .title {
+            text-align: center;
+        }
+
+        .name {
+            color: gold;
+            margin: 20px;
+            font-size: 2em;
+        }
+
+        .paper {
+            color: darkviolet;
+            margin: 20px;
+            font-size: 1.2em;
+        }
+
+        .footer {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<h1 class="title">Congratulations!</h1>
+<hr/>
+<div class="wrapper center">
+    <div class="name">{{ name }}</div>
+    <h2>Your paper</h2>
+    <div class="paper">{{ paper }}</div>
+    <span>has passed our review</span>
+</div>
+<hr/>
+{% if comment %}
+    <div class="wrapper">
+        <h2 class="center">Comment</h2>
+        <div class="comment">
+            <p>{{ comment }}</p>
+        </div>
+    </div>
+    <hr/>
+{% endif %}
+<div class="footer">
+    <p>PaperFives Official Email</p>
+</div>
+</body>
+</html>

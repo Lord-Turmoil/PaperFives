@@ -10,7 +10,6 @@
 
 from random import Random
 
-from celery import shared_task
 from django.core.mail import EmailMessage
 from django.template import loader
 
@@ -29,17 +28,9 @@ def generate_code(length=6) -> str:
     return code
 
 
-def send_code_email(email, code):
-    """
-    Send code email to target email
-    :param email: target email address
-    :param code: the code to send
-    :return:
-    """
-    title = "PaperFives Verification Email"
-
-    template = loader.get_template('email.html')
-    content = template.render({'code': code})
+def _send_email(title, template_name, email, dto: dict):
+    template = loader.get_template(template_name)
+    content = template.render(dto)
 
     msg = EmailMessage(title, content, EMAIL_FROM, [email])
     msg.content_subtype = 'html'
@@ -52,3 +43,25 @@ def send_code_email(email, code):
         raise e
     except Exception as e:
         raise EmailException(str(e))
+
+
+def send_code_email(email, code):
+    """
+    Send code email to target email
+    :param email: target email address
+    :param code: the code to send
+    :return:
+    """
+    _send_email("PaperFives Verification Email", 'code.html', email, {'code': code})
+
+
+def send_paper_passed_email(email, dto: dict):
+    _send_email('PaperFives: Paper passed', 'paper_passed.html', email, dto)
+
+
+def send_paper_rejected_email(email, dto: dict):
+    _send_email('PaperFives: Paper rejected', 'paper_rejected.html', email, dto)
+
+
+def send_promotion_email(email, dto: dict):
+    _send_email('PaperFives: Promoted', 'promotion.html', email, dto)

@@ -6,6 +6,7 @@
 #
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
+from haystack.query import SearchQuerySet
 
 from shared.dtos.models.users import GetUsersDto
 from shared.dtos.response.base import GoodResponseDto
@@ -14,8 +15,9 @@ from shared.exceptions.json import JsonDeserializeException
 from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.json_util import deserialize
 from shared.utils.parameter import parse_param
+from shared.utils.parser import parse_value
 from shared.utils.str_util import is_no_content
-from users.models import User
+from shared.utils.users.users import get_user_by_email
 from users.serializer import UserSerializer, UserSimpleSerializer, UserPrivateSerializer
 from users.views.utils.users import get_users_from_uid_list
 
@@ -39,29 +41,24 @@ def query_users(request):
     params = parse_param(request)
 
     # query settings
-    mode = params.get('mode', 'min')
-    page_size = 20
-    try:
-        ps = params.get('ps')
-        page_size = 20 if is_no_content(ps) else int(ps)
-        p = params.get('p')
-        page_num = 1 if is_no_content(p) else int(p)
-    except:
+    mode = parse_value(params.get('mode', 'min'), str)
+    page_size = parse_value(params.get('ps', 20), int)
+    page_num = parse_value(params.get('p', 1), int)
+    if (page_size is None) or (page_num is None) or (page_size < 1) or (page_num < 1):
         return BadRequestResponse(BadRequestDto("Invalid value for pagination"))
 
     # query parameters
-    email = params.get('email', None)
-    username = params.get('username', None)
-    institute = params.get('institute', None)
+    email = parse_value(params.get('email', None), str)
+    username = parse_value(params.get('username', None), str)
+    institute = parse_value(params.get('institute', None), str)
 
-    # get results
-    users = User.objects.all()
-    if email is not None:
-        users = users.filter(email__icontains=email)
-    if username is not None:
-        users = users.filter(username__icontains=username)
-    if institute is not None:
-        users = users.filter(attr__institute__icontains=institute)
+    users = SearchQuerySet().all()
+    if (email is not None) and (not is_no_content(email)):
+        users = users.filter_or(email__contains=email)
+    if (username is not None) and (not is_no_content(username)):
+        users = users.filter_or(username__fuzzy=username)
+    if (institute is not None) and (not is_no_content(institute)):
+        users = users.filter_or(institute__fuzzy=institute)
 
     # paginate
     paginator = Paginator(users, page_size)
@@ -75,13 +72,14 @@ def query_users(request):
         'next': paginator.num_pages > page.number,
         'users': []
     }
-    serializer = None
     if mode == 'all':
         serializer = UserSerializer
     else:
         serializer = UserSimpleSerializer
+
+    # the result in search is not complete
     for user in page.object_list:
-        data['users'].append(serializer(user).data)
+        data['users'].append(serializer(get_user_by_email(user.email)).data)
 
     return GoodResponse(GoodResponseDto(data=data))
 

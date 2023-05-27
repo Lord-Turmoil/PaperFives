@@ -39,6 +39,11 @@ API_BLACKLIST = [
     f"{BASE_URL}papers/areas/del",
     f"{BASE_URL}papers/areas/get",
 
+    f"{BASE_URL}papers/review/pending",
+    f"{BASE_URL}papers/review/get",
+    f"{BASE_URL}papers/review/release",
+    f"{BASE_URL}papers/review/review",
+
     f"{BASE_URL}msgs/send",
     f"{BASE_URL}msgs/get",
     f"{BASE_URL}msgs/unread",
