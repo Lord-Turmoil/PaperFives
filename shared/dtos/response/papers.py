@@ -24,8 +24,8 @@ class NoSuchPaperErrorDto(BaseResponseDto):
 
 
 class PaperNotCompleteErrorDto(BaseResponseDto):
-    def __init__(self):
-        super().__init__(ERROR_CODE['NOT_COMPLETE'], "Paper not complete yet")
+    def __init__(self, msg="Paper not complete yet"):
+        super().__init__(ERROR_CODE['NOT_COMPLETE'], msg)
 
 
 class PaperFileMissingErrorDto(BaseResponseDto):

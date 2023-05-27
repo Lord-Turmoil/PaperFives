@@ -13,7 +13,8 @@ from papers.views.utils.serialize import get_paper_post_dto, get_paper_get_dto
 from shared.dtos.models.papers import PaperPostDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto, ServerErrorDto
-from shared.dtos.response.papers import NotYourPaperErrorDto, NotLeadAuthorErrorDto, NoSuchPaperErrorDto
+from shared.dtos.response.papers import NotYourPaperErrorDto, NotLeadAuthorErrorDto, NoSuchPaperErrorDto, \
+    PaperNotCompleteErrorDto
 from shared.dtos.response.users import NotLoggedInDto
 from shared.exceptions.json import JsonDeserializeException
 from shared.response.basic import BadRequestResponse, GoodResponse, ServerErrorResponse
@@ -182,6 +183,9 @@ def upload_paper_file(request):
         is_new = True
     else:
         is_new = False
+
+    if is_no_content(paper.attr.title):
+        return GoodResponse(PaperNotCompleteErrorDto("At least fill the title before you upload the file"))
 
     if not save_paper_file(paper, file):
         return ServerErrorResponse(ServerErrorDto("Failed to save paper!"))

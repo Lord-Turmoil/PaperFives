@@ -10,8 +10,8 @@
 
 from django.views.decorators.csrf import csrf_exempt
 
-from papers.models import Paper, PublishRecord, PaperUpdateRecord, FavoritePaper
-from papers.views.utils.papers import remove_paper_file, update_paper_update_record
+from papers.models import Paper, PublishRecord
+from papers.views.utils.papers import delete_paper_file, update_paper_update_record, delete_whole_paper
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
 from shared.dtos.response.papers import NoSuchPaperErrorDto, NotYourPaperErrorDto, NotLeadAuthorErrorDto
@@ -24,23 +24,6 @@ from shared.utils.str_util import is_no_content
 from shared.utils.users.roles import is_user_admin
 from shared.utils.users.users import get_user_from_request
 from users.models import User
-
-
-def _delete_paper(paper: Paper):
-    paper.attr.delete()
-    paper.stat.delete()
-    paper.authors.all().delete()
-    paper.references.all().delete()
-    paper.areas.clear()
-
-    if not is_no_content(paper.path):
-        remove_paper_file(paper)
-
-    PublishRecord.objects.filter(pid=paper.pid).delete()
-    PaperUpdateRecord.objects.filter(pid=paper.pid).delete()
-    FavoritePaper.objects.filter(pid=paper.pid).delete()
-
-    paper.delete()
 
 
 @csrf_exempt
@@ -72,7 +55,7 @@ def cancel_paper(request):
             return GoodResponse(NotLeadAuthorErrorDto("Contact Lead-Author to delete the paper."))
 
     # now, the paper can be deleted
-    _delete_paper(paper)
+    delete_whole_paper(paper)
 
     return GoodResponse(GoodResponseDto("Gone too soon~"))
 
@@ -105,7 +88,7 @@ def cancel_paper_file(request):
 
     # now, the paper can be deleted
     if not is_no_content(paper.path):
-        remove_paper_file(paper)
+        delete_paper_file(paper)
     else:
         return GoodResponse(GoodResponseDto("Paper already deleted"))
 

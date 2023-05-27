@@ -15,13 +15,14 @@ from datetime import datetime
 from typing import List
 
 from papers.models import Paper, PaperAttribute, Author, Reference, PaperStatistics
+from shared.dtos.models.areas import AreaGetDto
 from shared.dtos.models.base import BaseDto
 from shared.utils.parser import parse_value
 from shared.utils.str_util import is_no_content
 from shared.utils.validator import validate_email
 
 
-class BasePaperDto(BaseDto):
+class AbstractPaperDto(BaseDto):
     def is_valid(self) -> bool:
         return True
 
@@ -38,7 +39,7 @@ class BasePaperDto(BaseDto):
         return True
 
 
-class PaperAttrData(BasePaperDto):
+class PaperAttrData(AbstractPaperDto):
     def __init__(self):
         self.title: str = ""
         self.keywords: List[str] = [""]
@@ -53,7 +54,7 @@ class PaperAttrData(BasePaperDto):
         return self
 
 
-class PaperAuthorData(BasePaperDto):
+class PaperAuthorData(AbstractPaperDto):
     def __init__(self):
         self.email: str = ""
         self.name: str = ""
@@ -73,7 +74,7 @@ class PaperAuthorData(BasePaperDto):
         return True
 
 
-class PaperRefData(BasePaperDto):
+class PaperRefData(AbstractPaperDto):
     def __init__(self):
         self.text: str = ""
         self.link: str = ""
@@ -89,20 +90,29 @@ class PaperRefData(BasePaperDto):
         return not is_no_content(self.text)
 
 
-class PaperPostDto(BasePaperDto):
+class BasePaperDto(AbstractPaperDto):
     def __init__(self):
         self.pid: int = 0
         self.attr: PaperAttrData = PaperAttrData()
         self.authors: List[PaperAuthorData] = [PaperAuthorData()]
-        self.areas: List[int] = [0]
         self.refs: List[PaperRefData] = [PaperRefData()]
 
     def init(self, paper: Paper):
         self.pid = paper.pid
         self.attr = PaperAttrData().init(paper.attr)
         self.authors = [PaperAuthorData().init(author) for author in paper.authors.all()]
-        self.areas = [area.aid for area in paper.areas.all()]
         self.refs = [PaperRefData().init(ref) for ref in paper.references.all()]
+        return self
+
+
+class PaperPostDto(BasePaperDto):
+    def __init__(self):
+        super().__init__()
+        self.areas: List[int] = [0]
+
+    def init(self, paper: Paper):
+        super().init(paper)
+        self.areas = [area.aid for area in paper.areas.all()]
         return self
 
     def strip_content(self):
@@ -129,7 +139,7 @@ class PaperPostDto(BasePaperDto):
                 return False
 
 
-class PaperStatData(BasePaperDto):
+class PaperStatData(AbstractPaperDto):
     def __init__(self):
         self.cites: int = 0
         self.downloads: int = 0
@@ -144,21 +154,18 @@ class PaperStatData(BasePaperDto):
         return self
 
 
-class PaperGetDto(PaperPostDto):
+class PaperGetDto(BasePaperDto):
     def __init__(self):
         super().__init__()
-        self.areas: List[str] = [""]  # override parent areas
+        self.areas: List[AreaGetDto] = [AreaGetDto()]
         self.status: int = 0
         self.stat: PaperStatData = PaperStatData()
         self.update: str = ""  # last update time
 
     def init(self, paper, update=""):
         super().init(paper)
-        # still override parent areas, but take one extra step
-        self.areas = [area.name for area in paper.areas.all()]
-
+        self.areas = [AreaGetDto().init(area) for area in paper.areas.all()]
         self.status = paper.status
         self.stat = PaperStatData().init(paper.stat)
         self.update = update
-
         return self

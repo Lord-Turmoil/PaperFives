@@ -29,7 +29,7 @@ API_BLACKLIST = [
     f"{BASE_URL}papers/upload/info",
     f"{BASE_URL}papers/upload/file",
 
-    f"{BASE_URL}papers/download/file",
+    # f"{BASE_URL}papers/download/file",
 
     f"{BASE_URL}papers/cancel",
     f"{BASE_URL}papers/publish",
@@ -56,7 +56,7 @@ def _authorize_session(request):
 def _authorize_jwt(request):
     token = request.META.get('HTTP_AUTHORIZATION', None)
     if not verify_token(token):
-        return NotAuthorizedResponse(NotAuthorizedDto("Not Authorized!"))
+        return NotAuthorizedResponse(NotAuthorizedDto("Not Authorized! Please Login first!"))
     return None
 
 
