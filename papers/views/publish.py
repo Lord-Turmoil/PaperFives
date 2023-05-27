@@ -12,7 +12,6 @@ from django.views.decorators.csrf import csrf_exempt
 
 from papers.models import PublishRecord, Paper
 from papers.views.utils.papers import is_paper_complete
-from papers.views.utils.serialize import get_paper_get_dto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto
 from shared.dtos.response.papers import NotYourPaperErrorDto, NotLeadAuthorErrorDto, PaperNotCompleteErrorDto, \

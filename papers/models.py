@@ -192,3 +192,6 @@ class PaperReviewRecord(models.Model):
     @classmethod
     def create(cls, _pid, _uid, _status, _comment=""):
         return cls(pid=_pid, uid=_uid, status=_status, comment=_comment)
+
+    class Meta:
+        verbose_name = 'paper_review_record'
