@@ -9,6 +9,8 @@
 #
 
 def parse_value(val, _type):
+    if val is None:
+        return None
     try:
         return _type(val)
     except:
