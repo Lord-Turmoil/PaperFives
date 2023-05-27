@@ -62,7 +62,9 @@ class Paper(models.Model):
         # When paper is published, it will first be set to Pending
         PENDING = 2, "Pending"
         REVIEWING = 3, "Reviewing"
-        PASSED = 4, "Passed"
+
+        REJECTED = 4, "Rejected"
+        PASSED = 5, "Passed"
 
     pid = models.BigAutoField(primary_key=True)
     path = models.CharField(max_length=127, default="")
@@ -176,3 +178,13 @@ class PaperUpdateRecord(models.Model):
 
     class Meta:
         verbose_name = 'update_record'
+
+
+class PaperReviewRecord(models.Model):
+    """
+    This is merely a history record.
+    """
+    pid = models.BigIntegerField()  # paper id
+    uid = models.BigIntegerField()  # admin id
+    mid = models.BigIntegerField()  # message id, the comment
+    status = models.PositiveSmallIntegerField(choices=Paper.Status.choices, default=Paper.Status.REJECTED)

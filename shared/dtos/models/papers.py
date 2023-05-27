@@ -39,8 +39,12 @@ class AbstractPaperDto(BaseDto):
         return True
 
 
+######################################################################
+# Paper Data
+#
 class PaperAttrData(AbstractPaperDto):
     def __init__(self):
+        super().__init__()
         self.title: str = ""
         self.keywords: List[str] = [""]
         self.abstract: str = ""
@@ -56,6 +60,7 @@ class PaperAttrData(AbstractPaperDto):
 
 class PaperAuthorData(AbstractPaperDto):
     def __init__(self):
+        super().__init__()
         self.email: str = ""
         self.name: str = ""
         self.order: int = 0
@@ -76,6 +81,7 @@ class PaperAuthorData(AbstractPaperDto):
 
 class PaperRefData(AbstractPaperDto):
     def __init__(self):
+        super().__init__()
         self.text: str = ""
         self.link: str = ""
 
@@ -90,8 +96,12 @@ class PaperRefData(AbstractPaperDto):
         return not is_no_content(self.text)
 
 
+######################################################################
+# Paper Detailed Dto
+#
 class BasePaperDto(AbstractPaperDto):
     def __init__(self):
+        super().__init__()
         self.pid: int = 0
         self.attr: PaperAttrData = PaperAttrData()
         self.authors: List[PaperAuthorData] = [PaperAuthorData()]
@@ -166,6 +176,41 @@ class PaperGetDto(BasePaperDto):
         super().init(paper)
         self.areas = [AreaGetDto().init(area) for area in paper.areas.all()]
         self.status = paper.status
+        self.stat = PaperStatData().init(paper.stat)
+        self.update = update
+        return self
+
+
+######################################################################
+# Paper Simple Dto
+#
+class PaperAttrSimpleData(AbstractPaperDto):
+    def __init__(self):
+        super().__init__()
+        self.title: str = ""
+        self.keywords: List[str] = [""]
+        self.publish_date: datetime = datetime.today()
+
+    def init(self, attr: PaperAttribute):
+        self.title = attr.title
+        self.keywords = attr.keywords.split(', ')
+        self.publish_date = attr.publish_date
+        return self
+
+
+class PaperGetSimpleDto(AbstractPaperDto):
+    def __init__(self):
+        super().__init__()
+        self.pid: int = 0
+        self.attr: PaperAttrSimpleData = PaperAttrSimpleData()
+        self.authors: List[PaperAuthorData] = [PaperAuthorData()]
+        self.stat: PaperStatData = PaperStatData()
+        self.update: str = ""
+
+    def init(self, paper, update=""):
+        self.pid = paper.pid
+        self.attr = PaperAttrSimpleData().init(paper.attr)
+        self.authors = [PaperAuthorData().init(author) for author in paper.authors.all()]
         self.stat = PaperStatData().init(paper.stat)
         self.update = update
         return self

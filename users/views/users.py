@@ -14,7 +14,7 @@ from shared.exceptions.json import JsonDeserializeException
 from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.json_util import deserialize
 from shared.utils.parameter import parse_param
-from shared.utils.str_util import is_no_content
+from shared.utils.parser import parse_value
 from users.models import User
 from users.serializer import UserSerializer, UserSimpleSerializer, UserPrivateSerializer
 from users.views.utils.users import get_users_from_uid_list
@@ -39,20 +39,16 @@ def query_users(request):
     params = parse_param(request)
 
     # query settings
-    mode = params.get('mode', 'min')
-    page_size = 20
-    try:
-        ps = params.get('ps')
-        page_size = 20 if is_no_content(ps) else int(ps)
-        p = params.get('p')
-        page_num = 1 if is_no_content(p) else int(p)
-    except:
+    mode = parse_value(params.get('mode', 'min'), str)
+    page_size = parse_value(params.get('ps', 20), int)
+    page_num = parse_value(params.get('p', 1), int)
+    if (page_size is None) or (page_num is None) or (page_size < 1) or (page_num < 1):
         return BadRequestResponse(BadRequestDto("Invalid value for pagination"))
 
     # query parameters
-    email = params.get('email', None)
-    username = params.get('username', None)
-    institute = params.get('institute', None)
+    email = parse_value(params.get('email', None), str)
+    username = parse_value(params.get('username', None), str)
+    institute = parse_value(params.get('institute', None), str)
 
     # get results
     users = User.objects.all()

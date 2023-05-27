@@ -89,6 +89,8 @@ def cancel_paper_file(request):
     # now, the paper can be deleted
     if not is_no_content(paper.path):
         delete_paper_file(paper)
+        paper.path = ""
+        paper.save()
     else:
         return GoodResponse(GoodResponseDto("Paper already deleted"))
 

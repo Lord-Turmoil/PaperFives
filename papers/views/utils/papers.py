@@ -23,8 +23,7 @@ def delete_paper_file(paper) -> bool:
     except Exception as e:
         print(e)
         return False
-    paper.path = ""
-    paper.save()
+
     return True
 
 

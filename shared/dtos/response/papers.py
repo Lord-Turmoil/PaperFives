@@ -31,3 +31,18 @@ class PaperNotCompleteErrorDto(BaseResponseDto):
 class PaperFileMissingErrorDto(BaseResponseDto):
     def __init__(self):
         super().__init__(ERROR_CODE['FILE_MISSING'], "Paper file missing")
+
+
+class NotPublishableErrorDto(BaseResponseDto):
+    def __init__(self, msg="Paper not publishable"):
+        super().__init__(ERROR_CODE['NOT_PUBLISHABLE'], msg)
+
+
+class NotEditableErrorDto(BaseResponseDto):
+    def __init__(self, msg="Paper not editable"):
+        super().__init__(ERROR_CODE['NOT_EDITABLE'], msg)
+
+
+class NotReviewableErrorDto(BaseResponseDto):
+    def __init__(self, msg="Paper not reviewable"):
+        super().__init__(ERROR_CODE['NOT_REVIEWABLE'], msg)

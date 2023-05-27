@@ -14,7 +14,7 @@ from shared.dtos.models.papers import PaperPostDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto, ServerErrorDto
 from shared.dtos.response.papers import NotYourPaperErrorDto, NotLeadAuthorErrorDto, NoSuchPaperErrorDto, \
-    PaperNotCompleteErrorDto
+    PaperNotCompleteErrorDto, NotEditableErrorDto
 from shared.dtos.response.users import NotLoggedInDto
 from shared.exceptions.json import JsonDeserializeException
 from shared.response.basic import BadRequestResponse, GoodResponse, ServerErrorResponse
@@ -99,12 +99,19 @@ def _update_paper(user: User, paper: Paper, dto: PaperPostDto):
     # update status
     if is_paper_complete(paper):
         paper.status = paper.Status.DRAFT
-        paper.status = paper.Status.INCOMPLETE
     else:
-        pass
+        paper.status = paper.Status.INCOMPLETE
 
     # save paper
     paper.save()
+
+
+EDITABLE_STATUS = [
+    Paper.Status.INCOMPLETE,
+    Paper.Status.DRAFT,
+    Paper.Status.REJECTED,
+    Paper.Status.PASSED,
+]
 
 
 @csrf_exempt
@@ -138,6 +145,9 @@ def upload_paper_info(request):
         paper, response = _get_old_paper(user, dto)
     if response is not None:
         return response
+
+    if paper.status not in EDITABLE_STATUS:
+        return GoodResponse(NotEditableErrorDto("Hold your horse! Wait until review is over."))
 
     # update paper
     _update_paper(user, paper, dto)
@@ -178,6 +188,9 @@ def upload_paper_file(request):
     paper: Paper = get_paper_by_pid(pid)
     if paper is None:
         return GoodResponse(NoSuchPaperErrorDto())
+
+    if paper.status not in EDITABLE_STATUS:
+        return GoodResponse(NotEditableErrorDto("Hold your horse! Wait until review is over."))
 
     if is_no_content(paper.path):
         is_new = True

@@ -56,6 +56,9 @@ class User(models.Model):
     attr = models.OneToOneField(UserAttribute, related_name='user', on_delete=models.CASCADE)
     stat = models.OneToOneField(UserStatistics, related_name='user', on_delete=models.CASCADE)
 
+    # scholar tag
+    scholar = models.BooleanField(default=False)
+
     @classmethod
     def create(cls, _email, _username, _password, _avatar="", _attr=None, _stat=None):
         if is_no_content(_avatar):
