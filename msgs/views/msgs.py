@@ -18,7 +18,7 @@ from shared.dtos.response.users import NotLoggedInDto
 from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.parameter import parse_param
 from shared.utils.str_util import is_no_content
-from shared.utils.users.users import get_user_by_uid, get_user_from_request
+from shared.utils.users.users import get_user_from_request
 from users.models import User
 
 
@@ -104,7 +104,7 @@ def get_unread_msg(request):
         return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
     params = parse_param(request)
 
-    user:User = get_user_from_request(request)
+    user: User = get_user_from_request(request)
     if user is None:
         return GoodResponse(NotLoggedInDto())
 
