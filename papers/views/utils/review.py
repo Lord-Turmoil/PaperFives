@@ -68,10 +68,10 @@ def pass_paper(paper: Paper, comment=None):
         user: User = get_user_by_email(author.email)
         if user is not None:
             user_list.append(user)
-        if comment:
-            _send_pass_task.delay(author.email, {'name': author.name, 'paper': paper.attr.title})
-        else:
+        if comment is not None:
             _send_pass_task.delay(author.email, {'name': author.name, 'paper': paper.attr.title, 'comment': comment})
+        else:
+            _send_pass_task.delay(author.email, {'name': author.name, 'paper': paper.attr.title})
 
     for user in user_list:
         if user.scholar:
@@ -86,4 +86,4 @@ def reject_paper(paper: Paper, comment):
     paper.save()
 
     for author in paper.authors.all():
-        _send_pass_task.delay(author.email, {'name': author.name, 'paper': paper.attr.title, 'comment': comment})
+        _send_rejected_task.delay(author.email, {'name': author.name, 'paper': paper.attr.title, 'comment': comment})

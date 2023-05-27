@@ -46,3 +46,8 @@ class NotEditableErrorDto(BaseResponseDto):
 class NotReviewableErrorDto(BaseResponseDto):
     def __init__(self, msg="Paper not reviewable"):
         super().__init__(ERROR_CODE['NOT_REVIEWABLE'], msg)
+
+
+class NotConfirmableErrorDto(BaseResponseDto):
+    def __init__(self, msg="Cannot confirm paper"):
+        super().__init__(ERROR_CODE['NOT_CONFIRMABLE'], msg)

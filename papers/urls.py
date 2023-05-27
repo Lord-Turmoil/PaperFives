@@ -30,6 +30,5 @@ urlpatterns = [
     path('review/pending', review.get_pending_papers),
     path('review/get', review.get_review_paper),
     path('review/release', review.release_review_paper),
-    # path('review/', areas.get_areas),
-    # path('review/', areas.get_areas),
+    path('review/review', review.review_paper),
 ]

@@ -147,6 +147,7 @@ class PaperPostDto(BasePaperDto):
         for ref in self.refs:
             if not ref.is_complete():
                 return False
+        return True
 
 
 class PaperStatData(AbstractPaperDto):

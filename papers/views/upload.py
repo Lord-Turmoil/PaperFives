@@ -204,9 +204,11 @@ def upload_paper_file(request):
         return ServerErrorResponse(ServerErrorDto("Failed to save paper!"))
 
     # change paper status
-    if get_paper_post_dto(paper).is_complete():
-        paper.status = Paper.Status.DRAFT
-        paper.save()
+    if is_paper_complete(paper):
+        paper.status = paper.Status.DRAFT
+    else:
+        paper.status = paper.Status.INCOMPLETE
+    paper.save()
 
     update_paper_update_record(paper)
 

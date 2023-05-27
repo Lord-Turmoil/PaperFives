@@ -11,10 +11,12 @@
 from django.views.decorators.csrf import csrf_exempt
 
 from papers.models import Paper, PublishRecord
+from papers.views.upload import EDITABLE_STATUS
 from papers.views.utils.papers import delete_paper_file, update_paper_update_record, delete_whole_paper
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
-from shared.dtos.response.papers import NoSuchPaperErrorDto, NotYourPaperErrorDto, NotLeadAuthorErrorDto
+from shared.dtos.response.papers import NoSuchPaperErrorDto, NotYourPaperErrorDto, NotLeadAuthorErrorDto, \
+    NotEditableErrorDto
 from shared.dtos.response.users import NotLoggedInDto
 from shared.response.basic import BadRequestResponse, GoodResponse, NotAuthorizedResponse
 from shared.utils.papers.papers import get_paper_by_pid, get_publish_record
@@ -46,6 +48,9 @@ def cancel_paper(request):
     paper: Paper = get_paper_by_pid(pid)
     if paper is None:
         return GoodResponse(NoSuchPaperErrorDto())
+
+    if paper.status not in EDITABLE_STATUS:
+        return GoodResponse(NotEditableErrorDto("Hold your horse! Wait until review is over."))
 
     if not is_user_admin(user):
         r: PublishRecord = get_publish_record(user.uid, paper.pid)
@@ -85,6 +90,9 @@ def cancel_paper_file(request):
             return GoodResponse(NotYourPaperErrorDto())
         if not r.lead:
             return GoodResponse(NotLeadAuthorErrorDto("Contact Lead-Author to delete the paper."))
+
+    if paper.status not in EDITABLE_STATUS:
+        return GoodResponse(NotEditableErrorDto("Hold your horse! Wait until review is over."))
 
     # now, the paper can be deleted
     if not is_no_content(paper.path):

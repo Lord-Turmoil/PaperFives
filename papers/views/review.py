@@ -10,12 +10,12 @@
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 
-from papers.models import Paper
+from papers.models import Paper, PaperReviewRecord
 from papers.views.utils.review import pass_paper, reject_paper
 from papers.views.utils.serialize import get_paper_get_simple_dto, get_paper_get_dto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
-from shared.dtos.response.papers import NoSuchPaperErrorDto, NotReviewableErrorDto
+from shared.dtos.response.papers import NoSuchPaperErrorDto, NotReviewableErrorDto, NotConfirmableErrorDto
 from shared.dtos.response.users import NotLoggedInDto, PermissionDeniedDto
 from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.papers.papers import get_paper_by_pid
@@ -24,6 +24,7 @@ from shared.utils.parser import parse_value
 from shared.utils.str_util import is_no_content
 from shared.utils.users.roles import is_user_admin
 from shared.utils.users.users import get_user_from_request
+from users.models import User
 
 REVIEWABLE_STATUS = [
     Paper.Status.PENDING,
@@ -73,8 +74,8 @@ def get_review_paper(request):
     extra checks. Won't add paper clicks.
     If review action aborted, must call release review paper to set it back to PENDING.
     """
-    if request.method != 'GET':
-        return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
+    if request.method != 'POST':
+        return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
 
     user = get_user_from_request(request)
     if user is None:
@@ -91,6 +92,8 @@ def get_review_paper(request):
     if paper is None:
         return GoodResponse(NoSuchPaperErrorDto())
 
+    if paper.status == Paper.Status.REVIEWING:
+        return GoodResponse(NotReviewableErrorDto("Already reviewed by another administrator"))
     if paper.status not in REVIEWABLE_STATUS:
         return GoodResponse(NotReviewableErrorDto())
 
@@ -102,8 +105,8 @@ def get_review_paper(request):
 
 @csrf_exempt
 def release_review_paper(request):
-    if request.method != 'GET':
-        return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
+    if request.method != 'POST':
+        return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
 
     user = get_user_from_request(request)
     if user is None:
@@ -126,12 +129,17 @@ def release_review_paper(request):
     return GoodResponse(GoodResponseDto("Paper status reset to PENDING"))
 
 
+CONFIRMABLE_STATUS = [
+    Paper.Status.REVIEWING,
+]
+
+
 @csrf_exempt
 def review_paper(request):
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
 
-    user = get_user_from_request(request)
+    user: User = get_user_from_request(request)
     if user is None:
         return GoodResponse(NotLoggedInDto())
     if not is_user_admin(user):
@@ -153,13 +161,19 @@ def review_paper(request):
         if comment is None or is_no_content(comment):
             return BadRequestResponse(BadRequestDto("Comment is required to reject paper"))
 
-    paper = get_paper_by_pid(pid)
+    paper: Paper = get_paper_by_pid(pid)
     if paper is None:
         return GoodResponse(NoSuchPaperErrorDto())
+
+    if paper.status not in CONFIRMABLE_STATUS:
+        return GoodResponse(NotConfirmableErrorDto())
 
     if passed:
         pass_paper(paper, comment)
     else:
         reject_paper(paper, comment)
+
+    record = PaperReviewRecord.create(paper.pid, user.uid, passed, comment)
+    record.save()
 
     return GoodResponse(GoodResponseDto("Review complete"))

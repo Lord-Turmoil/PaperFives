@@ -74,7 +74,7 @@ def update_paper_update_record(paper):
 def is_paper_complete(paper) -> bool:
     if paper is None:
         return False
-    if not get_paper_post_dto(paper):
+    if not get_paper_post_dto(paper).is_complete():
         return False
     if is_no_content(paper.path):
         return False
