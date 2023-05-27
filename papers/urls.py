@@ -10,8 +10,6 @@ from django.urls import path
 from .views import search, upload, cancel, publish, areas, download, review
 
 urlpatterns = [
-    path('search/', search.brief_search),
-
     path('upload/info', upload.upload_paper_info),
     path('upload/file', upload.upload_paper_file),
 
@@ -31,4 +29,6 @@ urlpatterns = [
     path('review/get', review.get_review_paper),
     path('review/release', review.release_review_paper),
     path('review/review', review.review_paper),
+
+    path('search/temp/all', search.temp_get_pid_list),
 ]

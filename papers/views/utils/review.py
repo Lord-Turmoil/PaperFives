@@ -74,6 +74,8 @@ def pass_paper(paper: Paper, comment=None):
             _send_pass_task.delay(author.email, {'name': author.name, 'paper': paper.attr.title})
 
     for user in user_list:
+        user.stat.publish_cnt += 1
+        user.stat.save()
         if user.scholar:
             continue
         _send_promotion_task.delay(user.email, {'name': user.username})
