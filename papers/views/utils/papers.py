@@ -12,12 +12,12 @@ import os
 from django.utils import timezone
 
 from PaperFives.settings import CONFIG
-from papers.models import PaperUpdateRecord
+from papers.models import PaperUpdateRecord, Paper, PublishRecord, FavoritePaper
 from papers.views.utils.serialize import get_paper_post_dto
 from shared.utils.str_util import is_no_content
 
 
-def remove_paper_file(paper) -> bool:
+def delete_paper_file(paper) -> bool:
     try:
         os.remove(paper.path)  # remove old paper
     except Exception as e:
@@ -28,18 +28,37 @@ def remove_paper_file(paper) -> bool:
     return True
 
 
-def save_paper_file(paper, file) -> bool:
+def delete_whole_paper(paper: Paper):
+    paper.attr.delete()
+    paper.stat.delete()
+    paper.authors.all().delete()
+    paper.references.all().delete()
+    paper.areas.clear()
+
+    if not is_no_content(paper.path):
+        delete_paper_file(paper)
+
+    PublishRecord.objects.filter(pid=paper.pid).delete()
+    PaperUpdateRecord.objects.filter(pid=paper.pid).delete()
+    FavoritePaper.objects.filter(pid=paper.pid).delete()
+
+    paper.delete()
+
+
+def save_paper_file(paper: Paper, file) -> bool:
     path = f"{CONFIG['PAPER_PATH']}{paper.pid}.pdf"
     try:
-        f = open(path, "wb")
-        for chunk in file.chunks():
-            f.write(chunk)
-        f.close()
+        with open(path, "wb") as f:
+            for chunk in file.chunks():
+                f.write(chunk)
     except Exception as e:
         print(e)
         return False
-    paper.path = path
-    paper.save()
+
+    if paper.path != path:
+        paper.path = path
+        paper.save()
+
     return True
 
 

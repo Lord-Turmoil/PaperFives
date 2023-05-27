@@ -1,37 +1,39 @@
 # Copyright (C) 2023 - 2023 Tony Skywalker. All Rights Reserved 
 #
-# @Time    : 5/18/2023 11:14
+# @Time    : 5/27/2023 10:12
 # @Author  : Tony Skywalker
-# @File    : basic.py
+# @File    : strict.py
 #
 # Description:
-#   Basic responses.
+#   Response in this file will strictly return HTTP Status, with
+# 'Http' prefix.
 #
+
 from http import HTTPStatus
 
 from shared.response.base import BaseResponse
 
 
-class GoodResponse(BaseResponse):
+class HttpOKResponse(BaseResponse):
     def __init__(self, dto):
         super().__init__(dto, HTTPStatus.OK)
 
 
-class BadRequestResponse(BaseResponse):
+class HttpBadRequestResponse(BaseResponse):
     def __init__(self, dto):
         super().__init__(dto, HTTPStatus.BAD_REQUEST)
 
 
-class NotAuthorizedResponse(BaseResponse):
+class HttpNotAuthorizedResponse(BaseResponse):
     def __init__(self, dto):
         super().__init__(dto, HTTPStatus.UNAUTHORIZED)
 
 
-class ServerErrorResponse(BaseResponse):
+class HttpServerErrorResponse(BaseResponse):
     def __init__(self, dto):
         super().__init__(dto, HTTPStatus.INTERNAL_SERVER_ERROR)
 
 
-class PageNotFoundResponse(BaseResponse):
+class HttpPageNotFoundResponse(BaseResponse):
     def __init__(self, dto):
         super().__init__(dto, HTTPStatus.NOT_FOUND)
