@@ -41,8 +41,6 @@ class UserStatistics(models.Model):
 
 
 class User(models.Model):
-    UID_OFFSET = 1000000000
-
     # primary properties
     uid = models.BigAutoField(primary_key=True)
     email = models.EmailField(max_length=63)
@@ -70,18 +68,6 @@ class User(models.Model):
             _stat = UserStatistics.create()
             _stat.save()
         return cls(email=_email, username=_username, password=_password, avatar=_avatar, attr=_attr, stat=_stat)
-
-    @classmethod
-    def get_external_uid(cls, _uid):
-        if _uid < User.UID_OFFSET:
-            return _uid + User.UID_OFFSET
-        return _uid
-
-    @classmethod
-    def get_internal_uid(cls, _uid):
-        if _uid < User.UID_OFFSET:
-            return _uid
-        return _uid - User.UID_OFFSET
 
     class Meta:
         ordering = ['uid']
