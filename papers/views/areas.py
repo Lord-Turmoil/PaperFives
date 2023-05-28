@@ -6,7 +6,7 @@
 #
 from django.views.decorators.csrf import csrf_exempt
 
-from papers.models import Area
+from papers.models import Area, AreaStatistics
 from shared.dtos.models.areas import AreaPostDto, AreaPostListDto, AreaGetDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
@@ -46,6 +46,10 @@ def _remove_area(aid):
     areas = Area.objects.filter(aid=aid)
     if not areas.exists():
         return f"Area of id '{aid}' doesn't exist"
+
+    for area in areas:
+        AreaStatistics.objects.filter(area.aid).delete()
+
     areas.delete()
 
     return None
