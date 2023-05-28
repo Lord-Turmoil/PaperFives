@@ -8,10 +8,10 @@
 #   To parse values.
 #
 
-def parse_value(val, _type):
+def parse_value(val, _type, default=None):
     if val is None:
-        return None
+        return default
     try:
         return _type(val)
     except:
-        return None
+        return default

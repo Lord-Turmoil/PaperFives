@@ -7,8 +7,12 @@
 # Description:
 #   Paper statistics update.
 #
-from papers.models import Paper, AreaStatistics
+from papers.models import Paper, AreaStatistics, PaperRank, PaperStatistics
 
+
+######################################################################
+# Area Statistics
+#
 
 def _clear_area_statistics():
     areas = AreaStatistics.objects.all()
@@ -37,3 +41,24 @@ def update_all_area_statistics():
         areas = paper.areas.all()
         for area in areas:
             _create_or_update_area_statistics(area.aid, paper.attr.publish_date)
+
+
+######################################################################
+# Paper Rank
+
+def _evaluate_paper_rank(stat: PaperStatistics):
+    rank = 0
+    rank += stat.cites * 5
+    rank += stat.downloads * 3
+    rank += stat.favorites * 2
+    rank += stat.clicks * 1
+    return rank
+
+
+def update_all_paper_ranks():
+    PaperRank.objects.all().delete()
+
+    for paper in Paper.objects.filter(status=Paper.Status.PASSED):
+        val = _evaluate_paper_rank(paper.stat)
+        rank = PaperRank.create(paper.pid, val)
+        rank.save()

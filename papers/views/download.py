@@ -94,4 +94,7 @@ def download_paper(request):
     except:
         return HttpPageNotFoundResponse(PageNotFoundErrorDto("This is not the paper you're looking for"))
 
+    paper.stat.downloads += 1
+    paper.stat.save()
+
     return PdfFileResponse(file, f"{convert_to_url(paper.attr.title)}.pdf")

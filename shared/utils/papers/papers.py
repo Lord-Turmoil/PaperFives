@@ -4,7 +4,7 @@
 # @Author  : Tony Skywalker
 # @File    : papers.py
 #
-from papers.models import Paper, PublishRecord
+from papers.models import Paper, PublishRecord, Area
 
 
 def get_paper_by_pid(pid):
@@ -17,5 +17,12 @@ def get_paper_by_pid(pid):
 def get_publish_record(uid, pid):
     records = PublishRecord.objects.filter(uid=uid, pid=pid)
     if records.exists():
-       return records.first()
+        return records.first()
+    return None
+
+
+def get_area_by_aid(aid):
+    areas = Area.objects.filter(aid=aid)
+    if areas.exists():
+        return areas.first()
     return None

@@ -13,7 +13,7 @@ from shared.exceptions.json import JsonDeserializeException
 from shared.utils.json_util import deserialize
 
 
-def _parse_POST_param(request: WSGIRequest) -> dict:
+def _parse_post_param(request: WSGIRequest) -> dict:
     content_type: str = str(request.headers.get('Content-Type'))
     if content_type == 'application/json':
         try:
@@ -27,7 +27,7 @@ def _parse_POST_param(request: WSGIRequest) -> dict:
     return {}
 
 
-def _parse_GET_param(request: WSGIRequest) -> dict:
+def _parse_get_param(request: WSGIRequest) -> dict:
     return request.GET.dict()
 
 
@@ -37,7 +37,7 @@ def parse_param(request: WSGIRequest) -> dict:
     :return: all parameters in dictionary
     """
     if request.method == 'POST':
-        return _parse_POST_param(request)
+        return _parse_post_param(request)
     elif request.method == 'GET':
-        return _parse_GET_param(request)
+        return _parse_get_param(request)
     return {}

@@ -213,3 +213,15 @@ class AreaStatistics(models.Model):
 
     class Meta:
         verbose_name = 'area_stat'
+
+
+class PaperRank(models.Model):
+    pid = models.BigIntegerField(primary_key=True)
+    rank = models.IntegerField(default=0)
+
+    @classmethod
+    def create(cls, _pid, _rank=0):
+        return cls(pid=_pid, rank=_rank)
+
+    class Meta:
+        verbose_name = 'paper_rank'

@@ -7,7 +7,7 @@
 
 from django.urls import path
 
-from .views import search, upload, cancel, publish, areas, download, review, update
+from .views import search, upload, cancel, publish, areas, download, review, update, hot
 
 urlpatterns = [
     path('upload/info', upload.upload_paper_info),
@@ -21,6 +21,8 @@ urlpatterns = [
 
     path('publish', publish.publish_paper),
 
+    # path('action/cite', ),
+
     path('areas/add', areas.add_areas),
     path('areas/del', areas.remove_areas),
     path('areas/get', areas.get_areas),
@@ -32,6 +34,8 @@ urlpatterns = [
 
     path('search/temp/all', search.temp_get_pid_list),
     path('search/query', search.query_paper),
+
+    path('hot/areas', hot.get_hot_areas),
 
     path('task/update_stat', update.update_area_statistics),
 ]
