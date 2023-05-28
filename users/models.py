@@ -112,7 +112,7 @@ class PublishStatistics(models.Model):
     """
     Record user publish count annually.
     """
-    uid = models.BigIntegerField(primary_key=True)
+    uid = models.BigIntegerField()
     year = models.IntegerField()
     lead_cnt = models.IntegerField(default=0)  # as lead-author
     co_cnt = models.IntegerField(default=0)  # as co-author

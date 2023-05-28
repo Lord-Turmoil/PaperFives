@@ -23,6 +23,11 @@ app.conf.update(
                 'task': 'users.tasks.update_user_statistics_task',
                 'schedule': crontab(minute=0, hour=4),  # 4 a.m.
                 'args': (),
+            },
+            'update_area_statistics': {
+                'task': 'papers.tasks.update_area_statistics_task',
+                'schedule': crontab(minute=30, hour=4),  # 4:30 a.m.
+                'args': (),
             }
         }
 )

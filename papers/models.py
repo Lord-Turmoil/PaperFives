@@ -195,3 +195,21 @@ class PaperReviewRecord(models.Model):
 
     class Meta:
         verbose_name = 'paper_review_record'
+
+
+######################################################################
+# Hot Statistics
+#
+
+class AreaStatistics(models.Model):
+    aid = models.BigIntegerField()
+    year = models.IntegerField()
+    month = models.IntegerField()
+    cnt = models.IntegerField(default=0)
+
+    @classmethod
+    def create(cls, _aid, _year, _month):
+        return cls(aid=_aid, year=_year, month=_month)
+
+    class Meta:
+        verbose_name = 'area_stat'
