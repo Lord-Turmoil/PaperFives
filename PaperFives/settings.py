@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     'haystack',
+    'django_celery_beat',
     "papers.apps.PapersConfig",
     "users.apps.UsersConfig",
     "msgs.apps.MsgsConfig"
@@ -178,6 +179,7 @@ CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_RESULT_BACKEND = "redis://localhost:6379"
 CELERY_TIMEZONE = 'Asia/Shanghai'
 CELERY_ENABLE_UTC = False
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 ################################################################################
 # Haystack settings
