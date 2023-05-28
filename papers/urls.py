@@ -38,6 +38,7 @@ urlpatterns = [
     path('search/query', search.query_paper),
 
     path('hot/areas', hot.get_hot_areas),
+    path('hot/papers', hot.get_hot_papers),
 
     path('get/papers', papers.get_papers_of_user),
 

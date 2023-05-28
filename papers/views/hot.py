@@ -11,12 +11,14 @@ from django.core.paginator import Paginator
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
+from papers.models import PaperRank
 from papers.views.utils.hot_util import get_hot_areas_aux
+from papers.views.utils.serializer import get_paper_get_dto
 from shared.dtos.models.areas import AreaGetDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto
 from shared.response.basic import BadRequestResponse, GoodResponse
-from shared.utils.papers.papers import get_area_by_aid, get_are_cnt_by_aid
+from shared.utils.papers.papers import get_area_by_aid, get_are_cnt_by_aid, get_paper_by_pid
 from shared.utils.parameter import parse_param
 from shared.utils.parser import parse_value
 
@@ -51,5 +53,35 @@ def get_hot_areas(request):
             continue
         cnt = get_are_cnt_by_aid(area.aid)
         data['areas'].append({'area': AreaGetDto().init(db_area), 'cnt': cnt})
+
+    return GoodResponse(GoodResponseDto(data=data))
+
+
+@csrf_exempt
+def get_hot_papers(request):
+    if request.method != 'GET':
+        return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
+    params = parse_param(request)
+
+    page_size = parse_value(params.get('ps'), int, 20)
+    page_num = parse_value(params.get('p'), int, 1)
+
+    paper_ranks = PaperRank.objects.all().order_by('-rank')
+    paginator = Paginator(paper_ranks, page_size)
+    page = paginator.get_page(page_num)
+
+    data = {
+        'ps': page_size,
+        'p': page.number,
+        'total': paper_ranks.count(),
+        'next': paginator.num_pages > page.number,
+        'papers': []
+    }
+
+    for paper_rank in paper_ranks:
+        paper = get_paper_by_pid(paper_rank.pid)
+        if paper is None:
+            continue
+        data['papers'].append({'paper': get_paper_get_dto(paper), 'rank': paper_rank.rank})
 
     return GoodResponse(GoodResponseDto(data=data))
