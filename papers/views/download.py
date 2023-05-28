@@ -10,7 +10,7 @@
 from django.views.decorators.csrf import csrf_exempt
 
 from papers.models import Paper
-from papers.views.utils.serialize import get_paper_get_dto
+from papers.views.utils.serializer import get_paper_get_dto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto, PageNotFoundErrorDto
 from shared.dtos.response.papers import NoSuchPaperErrorDto, PaperFileMissingErrorDto

@@ -12,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from papers.models import Paper, PaperReviewRecord
 from papers.views.utils.review import pass_paper, reject_paper
-from papers.views.utils.serialize import get_paper_get_simple_dto, get_paper_get_dto
+from papers.views.utils.serializer import get_paper_get_simple_dto, get_paper_get_dto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
 from shared.dtos.response.papers import NoSuchPaperErrorDto, NotReviewableErrorDto, NotConfirmableErrorDto

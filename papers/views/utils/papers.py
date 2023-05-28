@@ -13,7 +13,7 @@ from django.utils import timezone
 
 from PaperFives.settings import CONFIG
 from papers.models import PaperUpdateRecord, Paper, PublishRecord, FavoritePaper
-from papers.views.utils.serialize import get_paper_post_dto
+from papers.views.utils.serializer import get_paper_post_dto
 from shared.utils.str_util import is_no_content
 
 

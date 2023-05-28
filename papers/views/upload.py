@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from papers.models import PaperAttribute, Paper, Author, Area, Reference, PublishRecord
 from papers.views.utils.papers import save_paper_file, update_paper_update_record, is_paper_complete
-from papers.views.utils.serialize import get_paper_post_dto, get_paper_get_dto
+from papers.views.utils.serializer import get_paper_post_dto, get_paper_get_dto
 from shared.dtos.models.papers import PaperPostDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto, ServerErrorDto
