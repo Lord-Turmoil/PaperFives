@@ -5,7 +5,7 @@
 # @File    : serialize.py
 #
 from papers.models import Paper, PaperUpdateRecord
-from shared.dtos.models.papers import PaperPostDto, PaperGetDto, PaperGetSimpleDto
+from shared.dtos.models.papers import PaperPostDto, PaperGetDto, PaperGetSimpleDto, PaperGetUserDto
 
 
 def get_paper_post_dto(paper: Paper):
@@ -26,3 +26,11 @@ def get_paper_get_simple_dto(paper: Paper):
         return PaperGetSimpleDto().init(paper, records.first().update_time)
     else:
         return PaperGetSimpleDto().init(paper)
+
+
+def get_paper_get_user_dto(paper: Paper, lead):
+    records = PaperUpdateRecord.objects.filter(pid=paper.pid)
+    if records.exists():
+        return PaperGetUserDto().init(paper, records.first().update_time, lead)
+    else:
+        return PaperGetUserDto().init(paper, "", lead)

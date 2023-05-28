@@ -45,7 +45,7 @@ def favorite_paper(request):
 
     favorites = FavoritePaper.objects.filter(uid=user.uid, pid=paper.pid)
     if favorites.exists():
-        return GoodResponse(GoodResponseDto("Already in your favorites."))
+        return GoodResponse(GoodResponseDto("Already in your favorites"))
     favorite = FavoritePaper.create(user.uid, paper.pid)
     favorite.save()
 
@@ -56,9 +56,9 @@ def favorite_paper(request):
 
 
 @csrf_exempt
-def cite_paper(request):
+def unfavorite_paper(request):
     """
-    No need to login.
+    Login should be checked in middleware.
     """
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
@@ -71,6 +71,41 @@ def cite_paper(request):
     user: User = get_user_from_request(request)
     if user is None:
         return NotAuthorizedResponse(NotLoggedInDto())
+
+    paper: Paper = get_paper_by_pid(pid)
+    if paper is None:
+        return GoodResponse(NoSuchPaperErrorDto())
+
+    favorites = FavoritePaper.objects.filter(uid=user.uid, pid=paper.pid)
+    if not favorites.exists():
+        return GoodResponse(GoodResponseDto("Already out of your favorites"))
+    favorites.delete()
+
+    paper.stat.favorites -= 1
+    if paper.stat.favorites < 0:
+        paper.stat.favorites = 0
+    paper.stat.save()
+
+    return GoodResponse(GoodResponseDto("Paper out of your pocket!"))
+
+
+@csrf_exempt
+def cite_paper(request):
+    """
+    No need to login.
+    """
+    if request.method != 'GET':
+        return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
+    params = parse_param(request)
+
+    pid = parse_value(params.get('pid'), int)
+    if pid is None:
+        return BadRequestResponse(BadRequestDto("Missing pid"))
+
+    # anyone can cite
+    # user: User = get_user_from_request(request)
+    # if user is None:
+    #     return NotAuthorizedResponse(NotLoggedInDto())
 
     paper: Paper = get_paper_by_pid(pid)
     if paper is None:

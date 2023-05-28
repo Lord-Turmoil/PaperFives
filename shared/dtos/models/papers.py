@@ -215,3 +215,16 @@ class PaperGetSimpleDto(AbstractPaperDto):
         self.stat = PaperStatData().init(paper.stat)
         self.update = update
         return self
+
+
+class PaperGetUserDto(PaperGetSimpleDto):
+    def __init__(self):
+        super().__init__()
+        self.status: int = 0
+        self.lead: bool = False
+
+    def init(self, paper, update="", lead=False):
+        super().init(paper, update)
+        self.status = paper.status
+        self.lead = lead
+        return self

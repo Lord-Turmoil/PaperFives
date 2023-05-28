@@ -29,11 +29,13 @@ API_BLACKLIST = [
     f"{BASE_URL}papers/upload/info",
     f"{BASE_URL}papers/upload/file",
 
-    # f"{BASE_URL}papers/download/file",
+    f"{BASE_URL}papers/download/file",
 
     f"{BASE_URL}papers/cancel",
     f"{BASE_URL}papers/publish",
-    f"{BASE_URL}papers/favorite",
+
+    f"{BASE_URL}papers/action/favorite",
+    f"{BASE_URL}papers/action/unfavorite",
 
     f"{BASE_URL}papers/areas/add",
     f"{BASE_URL}papers/areas/del",
