@@ -37,12 +37,21 @@ EMAIL_WHITE_LIST = [
 
 
 @shared_task()
-def _send_code_email_task(email, code):
+def _send_code_email_task(email):
+    # async task will return immediately
+    code = generate_code()
+
     try:
         send_code_email(email, code)
     except EmailException as e:
         # return BaseResponse(GeneralErrorDto(ERROR_CODE['SEND_EMAIL'], "Failed to send email"))
         return
+
+    # add email into record
+    EmailRecord.objects.filter(email=email, usage="reg").delete()  # delete previous
+    expire = timezone.now() + timezone.timedelta(minutes=10)
+    email = EmailRecord.create(email, code, expire, "reg")
+    email.save()
 
 
 @csrf_exempt
@@ -63,15 +72,7 @@ def get_verification_code(request):
     if users.exists():
         return BaseResponse(GeneralErrorDto(ERROR_CODE['DUPLICATE_USER'], "User already registered"))
 
-    # async task will return immediately
-    code = generate_code()
-    _send_code_email_task.delay(email, code)
-
-    # add email into record
-    EmailRecord.objects.filter(email=email, usage="reg").delete()  # delete previous
-    expire = timezone.now() + timezone.timedelta(minutes=10)
-    email = EmailRecord.create(email, code, expire, "reg")
-    email.save()
+    _send_code_email_task.delay(email)
 
     return GoodResponse(GoodResponseDto("Verification code sent"))
 

@@ -1,13 +1,9 @@
 # Copyright (C) 2023 - 2023 Tony Skywalker. All Rights Reserved 
 #
-# @Time    : 5/27/2023 23:36
+# @Time    : 5/28/2023 12:21
 # @Author  : Tony Skywalker
-# @File    : tasks.py
+# @File    : update.py
 #
-# Description:
-#   For user update tasks.
-#
-from celery import shared_task
 from django.views.decorators.csrf import csrf_exempt
 
 from shared.dtos.response.base import GoodResponseDto
@@ -17,12 +13,7 @@ from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.users.roles import is_user_admin
 from shared.utils.users.users import get_user_from_request
 from users.models import User
-from users.views.utils.stat import update_all_user_statistics
-
-
-@shared_task
-def update_user_statistics_task():
-    update_all_user_statistics()
+from users.tasks import update_user_statistics_task
 
 
 @csrf_exempt
