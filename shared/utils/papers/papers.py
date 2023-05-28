@@ -4,7 +4,7 @@
 # @Author  : Tony Skywalker
 # @File    : papers.py
 #
-from papers.models import Paper, PublishRecord, Area
+from papers.models import Paper, PublishRecord, Area, PaperRank, AreaStatistics
 
 
 def get_paper_by_pid(pid):
@@ -26,3 +26,11 @@ def get_area_by_aid(aid):
     if areas.exists():
         return areas.first()
     return None
+
+
+def get_are_cnt_by_aid(aid):
+    stats = AreaStatistics.objects.filter(aid=aid)
+    if stats.exists():
+        return stats.first().cnt
+    else:
+        return 0
