@@ -42,9 +42,9 @@ def query_users(request):
 
     # query settings
     mode = parse_value(params.get('mode', 'min'), str)
-    page_size = parse_value(params.get('ps', 20), int)
-    page_num = parse_value(params.get('p', 1), int)
-    if (page_size is None) or (page_num is None) or (page_size < 1) or (page_num < 1):
+    page_size = parse_value(params.get('ps'), int, 20)
+    page_num = parse_value(params.get('p'), int, 1)
+    if (page_size < 1) or (page_num < 1):
         return BadRequestResponse(BadRequestDto("Invalid value for pagination"))
 
     # query parameters

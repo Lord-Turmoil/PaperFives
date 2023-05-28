@@ -47,11 +47,11 @@ def update_all_area_statistics():
 # Paper Rank
 
 def _evaluate_paper_rank(stat: PaperStatistics):
-    rank = 0
-    rank += stat.cites * 5
-    rank += stat.downloads * 3
-    rank += stat.favorites * 2
-    rank += stat.clicks * 1
+    rank = 0.0
+    rank += stat.cites * 2.5
+    rank += stat.downloads * 1.0
+    rank += stat.favorites * 0.5
+    rank += stat.clicks * 0.2
     return rank
 
 
@@ -62,3 +62,14 @@ def update_all_paper_ranks():
         val = _evaluate_paper_rank(paper.stat)
         rank = PaperRank.create(paper.pid, val)
         rank.save()
+
+
+######################################################################
+# Paper Statistics Auxiliary
+#
+
+def get_paper_rank_by_pid(pid):
+    ranks = PaperRank.objects.filter(pid=pid)
+    if ranks.exists():
+        return ranks.first().rank
+    return 0.0

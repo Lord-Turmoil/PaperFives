@@ -44,8 +44,8 @@ def get_pending_papers(request):
         return GoodResponse(PermissionDeniedDto("Not a administrator, you are"))
 
     params = parse_param(request)
-    page_size = parse_value(params.get('ps', 20), int)
-    page_num = parse_value(params.get('p', 1), int)
+    page_size = parse_value(params.get('ps'), int, 20)
+    page_num = parse_value(params.get('p'), int, 1)
     if (page_size is None) or (page_num is None) or (page_size < 1) or (page_num < 1):
         return BadRequestResponse(BadRequestDto("Invalid value for pagination"))
 

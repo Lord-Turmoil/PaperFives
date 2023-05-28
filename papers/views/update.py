@@ -17,7 +17,7 @@ from users.models import User
 
 
 @csrf_exempt
-def update_area_statistics(request):
+def update_paper_statistics(request):
     """
     This is for debug purpose.
     """
@@ -32,4 +32,4 @@ def update_area_statistics(request):
 
     update_paper_statistics_task.delay()
 
-    return GoodResponse(GoodResponseDto("'update_area_statistics_task' started!"))
+    return GoodResponse(GoodResponseDto("'update_paper_statistics_task' started!"))

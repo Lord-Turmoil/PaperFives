@@ -42,5 +42,5 @@ urlpatterns = [
 
     path('get/papers', papers.get_papers_of_user),
 
-    path('task/update_stat', update.update_area_statistics),
+    path('task/update_stat', update.update_paper_statistics),
 ]

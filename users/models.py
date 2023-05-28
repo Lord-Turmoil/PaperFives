@@ -108,6 +108,10 @@ class FavoriteUser(models.Model):
         verbose_name = 'fav_user'
 
 
+######################################################################
+# Hot Statistics
+#
+
 class PublishStatistics(models.Model):
     """
     Record user publish count annually.
@@ -123,3 +127,15 @@ class PublishStatistics(models.Model):
 
     class Meta:
         verbose_name = 'publish_stat'
+
+
+class UserRank(models.Model):
+    uid = models.BigIntegerField(primary_key=True)
+    rank = models.FloatField(default=0.0)
+
+    @classmethod
+    def create(cls, _uid, _rank=0.0):
+        return cls(uid=_uid, rank=_rank)
+
+    class Meta:
+        verbose_name = 'user_rank'

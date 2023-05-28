@@ -17,7 +17,7 @@ from shared.dtos.response.msgs import TextMessageResponseData, LinkMessageRespon
 from shared.dtos.response.users import NotLoggedInDto
 from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.parameter import parse_param
-from shared.utils.str_util import is_no_content
+from shared.utils.parser import parse_value
 from shared.utils.users.users import get_user_from_request
 from users.models import User
 
@@ -60,12 +60,9 @@ def get_messages(request):
         return GoodResponse(NotLoggedInDto())
 
     # query settings
-    try:
-        ps = params.get('ps')
-        page_size = 20 if is_no_content(ps) else int(ps)
-        p = params.get('p')
-        page_num = 1 if is_no_content(p) else int(p)
-    except:
+    page_size = parse_value(params.get('ps'), int, 20)
+    page_num = parse_value(params.get('p'), int, 1)
+    if (page_size < 1) or (page_num < 1):
         return BadRequestResponse(BadRequestDto("Invalid value for pagination"))
 
     messages = Message.objects.filter(dst_uid=user.uid).order_by('-timestamp')
