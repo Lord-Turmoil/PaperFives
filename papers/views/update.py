@@ -6,7 +6,7 @@
 #
 from django.views.decorators.csrf import csrf_exempt
 
-from papers.tasks import update_paper_statistics
+from papers.tasks import update_paper_statistics_task
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto
 from shared.dtos.response.users import NotLoggedInDto, PermissionDeniedDto
@@ -30,6 +30,6 @@ def update_area_statistics(request):
     if not is_user_admin(user):
         return GoodResponse(PermissionDeniedDto("Not a administrator, you are"))
 
-    update_paper_statistics.delay()
+    update_paper_statistics_task.delay()
 
     return GoodResponse(GoodResponseDto("'update_area_statistics_task' started!"))
