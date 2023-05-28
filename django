@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# dj serv [-a] [(ip port)]
+#   -a: python manage.py makemigration
+#   python manage.py migrate
+#   python manage.py runserver "${ip}:${port}"
+#
+# dj mak
+#   python manage.py makemigration
+#
+# dj mig [-a]
+#   -a: python manage.py makemigration
+#   python manage.py migrate
+#
+
+function usage() {
+  echo ' django serv [-a] [(ip port)]'
+  echo '  -a: python manage.py makemigrations'
+  echo '   python manage.py migrate'
+  echo '   python manage.py runserver "${ip}:${port}"'
+  echo ''
+  echo ' django mak'
+  echo '   python manage.py makemigrations'
+  echo ''
+  echo ' django mig [-a]'
+  echo '   -a: python manage.py makemigrations'
+  echo '   python manage.py migrate'
+}
+
+if [ -z "$1" ]; then
+  usage
+  exit 1
+fi
+
+if [ "$1" == "mak" ]; then
+  python manage.py makemigrations
+elif [ "$1" == "mig" ]; then
+  if [ "$2" == "-a" ]; then
+    python manage.py makemigrations
+  fi
+  python manage.py migrate
+elif [ "$1" == "serv" ]; then
+  if [ "$2" == "-a" ]; then
+    python manage.py makemigrations
+    shift
+  fi
+  ip=$2
+  port=$3
+  ip=${ip:-'0.0.0.0'}
+  port=${port:-'5000'}
+  python manage.py migrate
+  python manage.py runserver "${ip}:${port}"
+else
+  usage
+  exit 1
+fi
