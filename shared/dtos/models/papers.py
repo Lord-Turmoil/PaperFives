@@ -19,6 +19,7 @@ from shared.dtos.models.areas import AreaGetDto
 from shared.dtos.models.base import BaseDto
 from shared.utils.parser import parse_value
 from shared.utils.str_util import is_no_content
+from shared.utils.users.users import get_user_by_email
 from shared.utils.validator import validate_email
 
 
@@ -61,6 +62,7 @@ class PaperAttrData(AbstractPaperDto):
 class PaperAuthorData(AbstractPaperDto):
     def __init__(self):
         super().__init__()
+        self.uid: int = 0
         self.email: str = ""
         self.name: str = ""
         self.order: int = 0
@@ -69,6 +71,8 @@ class PaperAuthorData(AbstractPaperDto):
         self.email = author.email
         self.name = author.name
         self.order = author.order
+        user = get_user_by_email(self.email)
+        self.uid = 0 if user is None else user.uid
         return self
 
     def is_complete(self) -> bool:
