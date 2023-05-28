@@ -21,7 +21,7 @@ app.conf.update(
         CELERYBEAT_SCHEDULE={
             'update_user_statistics': {
                 'task': 'users.tasks.update_user_statistics_task',
-                'schedule': crontab(minute=0, hour=4),  # 4 a.m.
+                'schedule': crontab(minute=0, hour=12),  # 4 a.m.
                 'args': (),
             }
         }

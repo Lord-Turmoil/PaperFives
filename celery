@@ -1,7 +1,6 @@
 #!/bin/bash
 
 echo "use 'celery info' to show info message"
-echo "use 'celery beat' to start beat service"
 
 if [ "$1" == "beat" ]; then
   if [ "$2" == "info" ]; then
