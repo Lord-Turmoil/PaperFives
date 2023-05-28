@@ -9,20 +9,21 @@
 #
 from django.views.decorators.csrf import csrf_exempt
 
-from papers.models import Paper
+from papers.models import Paper, PublishRecord
 from papers.views.utils.serializer import get_paper_get_dto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto, PageNotFoundErrorDto
-from shared.dtos.response.papers import NoSuchPaperErrorDto, PaperFileMissingErrorDto
-from shared.dtos.response.users import NotLoggedInDto
+from shared.dtos.response.papers import NoSuchPaperErrorDto, PaperFileMissingErrorDto, NotLeadAuthorErrorDto
+from shared.dtos.response.users import NotLoggedInDto, PermissionDeniedDto
 from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.response.papers import PdfFileResponse
 from shared.response.strict import HttpBadRequestResponse, HttpNotAuthorizedResponse, HttpPageNotFoundResponse
-from shared.utils.papers.papers import get_paper_by_pid
+from shared.utils.papers.papers import get_paper_by_pid, get_publish_record
 from shared.utils.parameter import parse_param
 from shared.utils.parser import parse_value
 from shared.utils.str_util import is_no_content
 from shared.utils.url_encoder import convert_to_url
+from shared.utils.users.roles import is_user_admin
 from shared.utils.users.users import get_user_from_request
 from users.models import User
 
@@ -44,7 +45,18 @@ def download_info(request):
     if paper is None:
         return GoodResponse(NoSuchPaperErrorDto())
 
-    if (mode is not None) and (mode is True):
+    if paper.status != Paper.Status.PASSED:
+        user = get_user_from_request(request)
+        if user is None:
+            return GoodResponse(NotLoggedInDto())
+        if not is_user_admin(user):
+            record: PublishRecord = get_publish_record(user.uid, paper.pid)
+            if record is None:
+                return GoodResponse(PermissionDeniedDto("You're not supposed to see this"))
+            if not record.lead:
+                return GoodResponse(NotLeadAuthorErrorDto("Contact Lead-Author to finish your paper"))
+
+    if (mode is not None) and (mode is True) and (paper.status == Paper.Status.PASSED):
         paper.stat.clicks += 1
         paper.stat.save()
 
