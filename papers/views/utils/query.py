@@ -8,6 +8,7 @@
 #   Query utility functions. All these functions will return two values,
 # the first is result, the second is error hint. One and only one of them
 # is None.
+from haystack.inputs import AutoQuery
 from haystack.query import SearchQuerySet
 
 from papers.models import Paper
@@ -27,17 +28,15 @@ def _construct_all(key) -> dict:
         if field == 'all':
             continue
         ret[f"{field}__fuzzy"] = key
-    print(ret)
     return ret
 
 
 def _search_and(search_set: SearchQuerySet, field, key):
     if field != 'all':
         args = {f"{field}__fuzzy": f"{key}"}
-        print(args)
         return search_set.filter_and(**args)
     else:
-        return search_set.filter_and(content__fuzzy=f"\\b{key}\\b")
+        return search_set.filter(content=f"{key}")
 
 
 def _search_or(search_set: SearchQuerySet, field, key):
@@ -45,7 +44,7 @@ def _search_or(search_set: SearchQuerySet, field, key):
         args = {f"{field}__fuzzy": f"{key}"}
         return search_set.filter_or(**args)
     else:
-        return search_set.filter_or(cnontet__fuzzy=f"\\b{key}\\b")
+        return search_set.filter(cnontet=f"{key}")
 
 
 def _search_not(search_set: SearchQuerySet, field, key):

@@ -17,13 +17,16 @@ class PaperIndex(indexes.SearchIndex, indexes.Indexable):
     pid = indexes.IntegerField(model_attr='pid')
 
     status = indexes.IntegerField(model_attr='status')
-    title = indexes.CharField(model_attr='attr__title')
-    keywords = indexes.CharField(model_attr='attr__keywords')
-    abstract = indexes.CharField(model_attr='attr__abstract')
+
+    # 2023/05/30
+    # Field that wants to support fuzzy search must be EdgeNgramField!!!
+    title = indexes.EdgeNgramField(model_attr='attr__title')
+    keywords = indexes.EdgeNgramField(model_attr='attr__keywords')
+    abstract = indexes.EdgeNgramField(model_attr='attr__abstract')
 
     # special fields
-    authors = indexes.CharField()
-    areas = indexes.CharField()
+    authors = indexes.EdgeNgramField()
+    areas = indexes.EdgeNgramField()
 
     def prepare_authors(self, obj):
         return ' '.join(author.name for author in obj.authors.all())

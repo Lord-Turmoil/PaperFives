@@ -17,9 +17,9 @@ class UserIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.EdgeNgramField(document=True, use_template=True)
 
     # fields to search
-    email = indexes.CharField(model_attr='email')
-    username = indexes.CharField(model_attr='username')
-    institute = indexes.CharField(model_attr='attr__institute')
+    email = indexes.EdgeNgramField(model_attr='email')
+    username = indexes.EdgeNgramField(model_attr='username')
+    institute = indexes.EdgeNgramField(model_attr='attr__institute')
 
     # accompany fields, it doesn't seem to work?
     # uid = indexes.IntegerField(model_attr='uid', index_fieldname=None)
