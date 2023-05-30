@@ -26,10 +26,10 @@ class PaperIndex(indexes.SearchIndex, indexes.Indexable):
     areas = indexes.CharField()
 
     def prepare_authors(self, obj):
-        return ', '.join(author.name for author in obj.authors.all())
+        return ' '.join(author.name for author in obj.authors.all())
 
-    def prepare_areas(self, obj: Paper):
-        return ', '.join(area.name for area in obj.areas.all())
+    def prepare_areas(self, obj):
+        return ' '.join(area.name for area in obj.areas.all())
 
     def get_model(self):
         return Paper

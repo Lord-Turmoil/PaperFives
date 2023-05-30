@@ -48,7 +48,7 @@ def _remove_area(aid):
         return f"Area of id '{aid}' doesn't exist"
 
     for area in areas:
-        AreaStatistics.objects.filter(area.aid).delete()
+        AreaStatistics.objects.filter(aid=area.aid).delete()
 
     areas.delete()
 

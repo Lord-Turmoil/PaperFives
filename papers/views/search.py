@@ -9,12 +9,15 @@
 #
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
-from haystack.query import SearchQuerySet
 
 from papers.models import Paper
-from papers.views.utils.serializer import get_paper_get_simple_dto
+from papers.views.utils.query import advanced_search, ordinary_search
+from shared.dtos.models.papers import PaperGetDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
+from shared.dtos.response.papers import SearchErrorDto
+from shared.exceptions.json import JsonDeserializeException
+from shared.exceptions.search import SearchErrorException
 from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.papers.papers import get_paper_by_pid
 from shared.utils.parameter import parse_param
@@ -36,16 +39,33 @@ def temp_get_pid_list(request):
 
 @csrf_exempt
 def query_paper(request):
-    if request.method != 'GET':
-        return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
+    if request.method != 'POST':
+        return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
 
     params = parse_param(request)
     page_size = parse_value(params.get('ps'), int, 20)
     page_num = parse_value(params.get('p'), int, 1)
     if (page_size < 1) or (page_num < 1):
         return BadRequestResponse(BadRequestDto("Invalid value for pagination"))
+    advanced = parse_value(params.get('advanced'), bool, None)
+    if advanced is None:
+        return BadRequestResponse(BadRequestDto("Must specify query mode"))
 
-    papers = SearchQuerySet().models(Paper).all()
+    cond = params.get('cond')
+    if cond is None:
+        return BadRequestResponse(BadRequestDto("What to look for?"))
+
+    if advanced:
+        searcher = advanced_search
+    else:
+        searcher = ordinary_search
+
+    try:
+        papers = searcher({'cond': cond})
+    except JsonDeserializeException as e:
+        return BadRequestResponse(BadRequestDto(e))
+    except SearchErrorException as e:
+        return GoodResponse(SearchErrorDto(e))
 
     paginator = Paginator(papers, page_size)
     page = paginator.get_page(page_num)
@@ -63,6 +83,6 @@ def query_paper(request):
     for paper in page.object_list:
         db_paper = get_paper_by_pid(paper.pid)
         if db_paper is not None:
-            data['papers'].append(get_paper_get_simple_dto(db_paper))
+            data['papers'].append(PaperGetDto().init(db_paper))
 
     return GoodResponse(GoodResponseDto(data=data))

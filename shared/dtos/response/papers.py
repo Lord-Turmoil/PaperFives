@@ -51,3 +51,8 @@ class NotReviewableErrorDto(BaseResponseDto):
 class NotConfirmableErrorDto(BaseResponseDto):
     def __init__(self, msg="Cannot confirm paper"):
         super().__init__(ERROR_CODE['NOT_CONFIRMABLE'], msg)
+
+
+class SearchErrorDto(BaseResponseDto):
+    def __init__(self, msg="Failed to perform search"):
+        super().__init__(ERROR_CODE['SEARCH_ERROR'], msg)

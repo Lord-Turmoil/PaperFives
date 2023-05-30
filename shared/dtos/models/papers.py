@@ -21,6 +21,7 @@ from shared.utils.parser import parse_value
 from shared.utils.str_util import is_no_content
 from shared.utils.users.users import get_user_by_email
 from shared.utils.validator import validate_email
+from users.models import User
 
 
 class AbstractPaperDto(BaseDto):
@@ -59,10 +60,9 @@ class PaperAttrData(AbstractPaperDto):
         return self
 
 
-class PaperAuthorData(AbstractPaperDto):
+class BasePaperAuthorData(AbstractPaperDto):
     def __init__(self):
         super().__init__()
-        self.uid: int = 0
         self.email: str = ""
         self.name: str = ""
         self.order: int = 0
@@ -71,8 +71,41 @@ class PaperAuthorData(AbstractPaperDto):
         self.email = author.email
         self.name = author.name
         self.order = author.order
-        user = get_user_by_email(self.email)
-        self.uid = 0 if user is None else user.uid
+        return self
+
+    def is_complete(self) -> bool:
+        if not validate_email(self.email):
+            return False
+        if is_no_content(self.name):
+            return False
+        return True
+
+
+class PaperAuthorPostData(BasePaperAuthorData):
+    def __init__(self):
+        super().__init__()
+
+    def init(self, author: Author):
+        super().init(author)
+        return self
+
+    def is_complete(self) -> bool:
+        if not validate_email(self.email):
+            return False
+        if is_no_content(self.name):
+            return False
+        return True
+
+
+class PaperAuthorGetData(BasePaperAuthorData):
+    def __init__(self):
+        super().__init__()
+        self.uid: int = 0
+
+    def init(self, author: Author):
+        super().init(author)
+        user: User = get_user_by_email(self.email)
+        self.uid = user.uid if user is not None else 0
         return self
 
     def is_complete(self) -> bool:
@@ -108,13 +141,11 @@ class BasePaperDto(AbstractPaperDto):
         super().__init__()
         self.pid: int = 0
         self.attr: PaperAttrData = PaperAttrData()
-        self.authors: List[PaperAuthorData] = [PaperAuthorData()]
         self.refs: List[PaperRefData] = [PaperRefData()]
 
     def init(self, paper: Paper):
         self.pid = paper.pid
         self.attr = PaperAttrData().init(paper.attr)
-        self.authors = [PaperAuthorData().init(author) for author in paper.authors.all()]
         self.refs = [PaperRefData().init(ref) for ref in paper.references.all()]
         return self
 
@@ -122,11 +153,13 @@ class BasePaperDto(AbstractPaperDto):
 class PaperPostDto(BasePaperDto):
     def __init__(self):
         super().__init__()
+        self.authors: List[PaperAuthorPostData] = [PaperAuthorPostData()]
         self.areas: List[int] = [0]
 
     def init(self, paper: Paper):
         super().init(paper)
         self.areas = [area.aid for area in paper.areas.all()]
+        self.authors = [PaperAuthorPostData().init(author) for author in paper.authors.all()]
         return self
 
     def strip_content(self):
@@ -173,15 +206,17 @@ class PaperGetDto(BasePaperDto):
     def __init__(self):
         super().__init__()
         self.areas: List[AreaGetDto] = [AreaGetDto()]
-        self.status: int = 0
+        self.authors: List[PaperAuthorGetData] = [PaperAuthorGetData()]
         self.stat: PaperStatData = PaperStatData()
+        self.status: int = 0
         self.update: str = ""  # last update time
 
     def init(self, paper, update=""):
         super().init(paper)
         self.areas = [AreaGetDto().init(area) for area in paper.areas.all()]
-        self.status = paper.status
+        self.authors = [PaperAuthorGetData().init(author) for author in paper.authors.all()]
         self.stat = PaperStatData().init(paper.stat)
+        self.status = paper.status
         self.update = update
         return self
 
@@ -208,15 +243,17 @@ class PaperGetSimpleDto(AbstractPaperDto):
         super().__init__()
         self.pid: int = 0
         self.attr: PaperAttrSimpleData = PaperAttrSimpleData()
-        self.authors: List[PaperAuthorData] = [PaperAuthorData()]
+        self.authors: List[PaperAuthorGetData] = [PaperAuthorGetData()]
         self.stat: PaperStatData = PaperStatData()
+        self.areas: List[AreaGetDto] = [AreaGetDto()]
         self.update: str = ""
 
     def init(self, paper, update=""):
         self.pid = paper.pid
         self.attr = PaperAttrSimpleData().init(paper.attr)
-        self.authors = [PaperAuthorData().init(author) for author in paper.authors.all()]
+        self.authors = [PaperAuthorGetData().init(author) for author in paper.authors.all()]
         self.stat = PaperStatData().init(paper.stat)
+        self.areas = [AreaGetDto().init(area) for area in paper.areas.all()]
         self.update = update
         return self
 

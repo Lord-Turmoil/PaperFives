@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 
 from PaperFives.settings import MEDIA_ROOT, MEDIA_URL
-from zeta.views import page_not_found
+from zeta.views.not_found import page_not_found
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +27,7 @@ urlpatterns = [
     path('api/v1/users/', include(('users.urls', 'users'))),
     path('api/v1/papers/', include(('papers.urls', 'papers'))),
     path('api/v1/msgs/', include(('msgs.urls', 'msgs'))),
+    path('api/v1/zeta/', include(('zeta.urls', 'zeta'))),
     re_path(r'^search/', include('haystack.urls')),
 ] + static(MEDIA_URL, document_root=MEDIA_ROOT)
 

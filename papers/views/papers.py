@@ -74,7 +74,8 @@ def get_papers_of_user(request):
     uid = parse_value(params.get('uid'), int)
     if uid is None:
         return BadRequestResponse(BadRequestDto("Missing 'uid'"))
-
+    mode = parse_value(params.get('mode'), str, "min")
+    
     user: User = get_user_by_uid(uid)
     if user is None:
         return GoodResponse(NoSuchUserDto())

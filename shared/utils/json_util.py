@@ -67,6 +67,11 @@ def serialize_as_dict(obj) -> dict:
 
 
 def _check_type(dict_obj, cls_obj) -> bool:
+    if _is_basic(type(cls_obj)):
+        if not isinstance(dict_obj, type(cls_obj)):
+            raise AttributeError(f"{dict_obj} is not {type(cls_obj)}")
+        return
+
     if not dict_obj.keys() == cls_obj.__dict__.keys():
         hint = "Attribute set does not match:\n\t"
         hint += f"Expected: {cls_obj.__dict__.keys()}\n\t"
@@ -76,6 +81,13 @@ def _check_type(dict_obj, cls_obj) -> bool:
     for key in cls_obj.__dict__.keys():
         cls_type = type(cls_obj.__dict__[key])
         if isinstance(dict_obj[key], cls_type):
+            if issubclass(cls_type, list):
+                try:
+                    model = cls_obj.__dict__[key][0]
+                except IndexError:
+                    raise AttributeError("Missing default value")
+                for v in dict_obj[key]:
+                    _check_type(v, model)
             continue
 
         try:

@@ -54,7 +54,7 @@ def query_users(request):
 
     users = SearchQuerySet().all()
     if (email is not None) and (not is_no_content(email)):
-        users = users.filter_or(email__contains=email)
+        users = users.filter_or(email__fuzzy=email)
     if (username is not None) and (not is_no_content(username)):
         users = users.filter_or(username__fuzzy=username)
     if (institute is not None) and (not is_no_content(institute)):

@@ -5,8 +5,10 @@
 # @File    : users.py
 #
 from django.core.handlers.wsgi import WSGIRequest
+from django.db.models import QuerySet
 
 from shared.utils.token import get_identity_from_token, verify_token
+from shared.utils.users.roles import is_user_admin
 from users.models import User
 
 
@@ -37,6 +39,15 @@ def get_user_from_request(request: WSGIRequest):
     return _get_user_from_jwt(request)
 
 
+def get_admin_from_request(request: WSGIRequest):
+    user = get_user_from_request(request)
+    if user is None:
+        return None
+    if is_user_admin(user):
+        return user
+    return None
+
+
 def get_user_by_uid(uid):
     users = User.objects.filter(uid=uid)
     if users.exists():
@@ -49,3 +60,8 @@ def get_user_by_email(email):
     if users.exists():
         return users.first()
     return None
+
+
+def get_users_by_username(username: str) -> QuerySet:
+    users = User.objects.filter(username=username)
+    return users
