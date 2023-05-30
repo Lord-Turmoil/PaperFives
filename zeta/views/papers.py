@@ -12,7 +12,8 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
 from PaperFives.settings import CONFIG
-from papers.models import PaperAttribute, Paper, PaperStatistics, Author, PublishRecord
+from papers.models import PaperAttribute, Paper, PaperStatistics, Author, PublishRecord, PaperUpdateRecord, \
+    FavoritePaper
 from papers.views.utils.papers import delete_whole_paper, update_paper_update_record
 from shared.dtos.models.base import BaseDto
 from shared.dtos.response.base import GoodResponseDto
@@ -105,13 +106,13 @@ def _create_paper(data: ImportPaperDto):
         # Create or Get Users
         user = import_user(author)
         user.stat.publish_cnt += 1
-        user.save()
+        user.stat.save()
 
         # Create Author
         Author.create(paper, user.email, user.username, i).save()
 
         # Create Publish Record
-        PublishRecord.create(_uid=user.uid, _pid=paper.pid, _lead=(i == 0))
+        PublishRecord.create(_uid=user.uid, _pid=paper.pid, _lead=(i == 0)).save()
 
         i += 1
 
@@ -147,6 +148,20 @@ def import_paper(request):
     return GoodResponse(GoodResponseDto(f"Paper '{data.title}' imported"))
 
 
+def _delete_whole_paper(paper):
+    paper.attr.delete()
+    paper.stat.delete()
+    paper.authors.all().delete()
+    paper.references.all().delete()
+    paper.areas.clear()
+
+    PublishRecord.objects.filter(pid=paper.pid).delete()
+    PaperUpdateRecord.objects.filter(pid=paper.pid).delete()
+    FavoritePaper.objects.filter(pid=paper.pid).delete()
+
+    paper.delete()
+
+
 @csrf_exempt
 def clear_papers(request):
     if request.method != 'POST':
@@ -156,6 +171,6 @@ def clear_papers(request):
     for pid in pid_list:
         paper = get_paper_by_pid(pid)
         if paper:
-            delete_whole_paper(paper)
+            _delete_whole_paper(paper)
 
     return GoodResponse(GoodResponseDto(f"All papers deleted!"))

@@ -7,7 +7,7 @@
 from papers.models import PublishRecord, Paper
 from papers.views.utils.stat import get_paper_rank_by_pid
 from shared.utils.papers.papers import get_paper_by_pid
-from users.models import User, PublishStatistics, UserRank
+from users.models import User, PublishStatistics, UserRank, Top20User
 
 
 ######################################################################
@@ -79,11 +79,14 @@ def update_all_user_ranks():
     Depends on 'update_all_user_statistics'
     """
     UserRank.objects.all().delete()
-
-    for user in User.objects.filter(scholar=True):
+    for user in User.objects.filter(scholar=1):
         val = _evaluate_user_rank(user)
-        rank = UserRank.create(user.uid, val)
-        rank.save()
+        rank = UserRank.create(user.uid, val).save()
+
+    Top20User.objects.all().delete()
+    ranks = UserRank.objects.all().order_by('-rank')[:20]
+    for rank in ranks:
+        Top20User.create(rank.uid, rank.rank).save()
 
 
 ######################################################################

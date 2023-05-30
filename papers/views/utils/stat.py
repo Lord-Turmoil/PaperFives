@@ -7,7 +7,7 @@
 # Description:
 #   Paper statistics update.
 #
-from papers.models import Paper, AreaStatistics, PaperRank, PaperStatistics
+from papers.models import Paper, AreaStatistics, PaperRank, PaperStatistics, Top20Paper
 
 
 ######################################################################
@@ -60,8 +60,12 @@ def update_all_paper_ranks():
 
     for paper in Paper.objects.filter(status=Paper.Status.PASSED):
         val = _evaluate_paper_rank(paper.stat)
-        rank = PaperRank.create(paper.pid, val)
-        rank.save()
+        rank = PaperRank.create(paper.pid, val).save()
+
+    Top20Paper.objects.all().delete()
+    ranks = PaperRank.objects.all().order_by('-rank')[:20]
+    for rank in ranks:
+        Top20Paper.create(rank.pid, rank.rank).save()
 
 
 ######################################################################

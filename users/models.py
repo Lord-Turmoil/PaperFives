@@ -138,4 +138,18 @@ class UserRank(models.Model):
         return cls(uid=_uid, rank=_rank)
 
     class Meta:
+        ordering = ['rank']
         verbose_name = 'user_rank'
+
+
+class Top20User(models.Model):
+    uid = models.BigIntegerField(primary_key=True)
+    rank = models.FloatField(default=0.0)
+
+    @classmethod
+    def create(cls, _uid, _rank=0.0):
+        return cls(uid=_uid, rank=_rank)
+
+    class Meta:
+        ordering = ['rank']
+        verbose_name = 'top_20_user'

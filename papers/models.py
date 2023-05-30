@@ -224,4 +224,18 @@ class PaperRank(models.Model):
         return cls(pid=_pid, rank=_rank)
 
     class Meta:
+        ordering = ['rank']
         verbose_name = 'paper_rank'
+
+
+class Top20Paper(models.Model):
+    pid = models.BigIntegerField(primary_key=True)
+    rank = models.FloatField(default=0.0)
+
+    @classmethod
+    def create(cls, _pid, _rank=0.0):
+        return cls(pid=_pid, rank=_rank)
+
+    class Meta:
+        ordering = ['rank']
+        verbose_name = 'top_20_paper'

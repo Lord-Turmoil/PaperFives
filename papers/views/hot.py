@@ -11,9 +11,9 @@ from django.core.paginator import Paginator
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
-from papers.models import PaperRank
+from papers.models import PaperRank, Top20Paper
 from papers.views.utils.hot_util import get_hot_areas_aux
-from papers.views.utils.serializer import get_paper_get_dto
+from papers.views.utils.serializer import get_paper_get_simple_dto, get_paper_get_dto
 from shared.dtos.models.areas import AreaGetDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto
@@ -61,23 +61,9 @@ def get_hot_areas(request):
 def get_hot_papers(request):
     if request.method != 'GET':
         return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
-    params = parse_param(request)
 
-    page_size = parse_value(params.get('ps'), int, 20)
-    page_num = parse_value(params.get('p'), int, 1)
-
-    paper_ranks = PaperRank.objects.all().order_by('-rank')
-    paginator = Paginator(paper_ranks, page_size)
-    page = paginator.get_page(page_num)
-
-    data = {
-        'ps': page_size,
-        'p': page.number,
-        'total': paper_ranks.count(),
-        'next': paginator.num_pages > page.number,
-        'papers': []
-    }
-
+    data = {'papers': []}
+    paper_ranks = Top20Paper.objects.all().order_by('-rank')
     for paper_rank in paper_ranks:
         paper = get_paper_by_pid(paper_rank.pid)
         if paper is None:

@@ -34,7 +34,7 @@ class UserPrivateStatisticsSerializer(serializers.ModelSerializer):
 class UserSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('uid', 'email', 'username', 'avatar')
+        fields = ('uid', 'email', 'username', 'avatar', 'scholar')
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -47,7 +47,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('uid', 'email', 'username', 'avatar', 'attr', 'stat')
+        fields = ('uid', 'email', 'username', 'avatar', 'attr', 'stat', 'scholar')
 
 
 class UserPrivateSerializer(serializers.ModelSerializer):
@@ -60,4 +60,4 @@ class UserPrivateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('uid', 'email', 'username', 'avatar', 'attr', 'stat')
+        fields = ('uid', 'email', 'username', 'avatar', 'attr', 'stat', 'scholar')

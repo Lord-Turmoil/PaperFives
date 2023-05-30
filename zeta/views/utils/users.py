@@ -5,14 +5,17 @@
 # @File    : users.py
 #
 from random import Random
+from essential_generators import DocumentGenerator
 
 from shared.utils.token import generate_password
 from shared.utils.users.users import get_users_by_username, get_user_by_email
-from users.models import User
+from users.models import User, Role, UserAttribute
 
 EMAIL_CHARACTER_SET = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789_-'
 DEFAULT_PASSWORD = '123456'
 
+gen = DocumentGenerator()
+engine = Random()
 
 def _generate_random_email() -> str:
     email = ""
@@ -35,14 +38,23 @@ def import_user(username: str):
 
     # generate a new email for him
     while True:
-        email = _generate_random_email()
+        email = gen.email()
         if get_user_by_email(email) is not None:
             continue
         else:
             break
 
-    user = User.create(email, username, generate_password(DEFAULT_PASSWORD))
+    attr = UserAttribute.create(
+            engine.randint(UserAttribute.Sex.UNKNOWN, UserAttribute.Sex.FEMALE),
+            gen.slug(),
+            gen.sentence())
+    attr.save()
+    user = User.create(email, username, generate_password(DEFAULT_PASSWORD), "", attr)
+    user.scholar = True
     user.save()
+
+    role = Role.create(Role.RoleName.USER, user)
+    role.save()
 
     return user
 
