@@ -6,8 +6,12 @@
 
 from django.urls import path
 
-from .views import areas
+from .views import areas, papers, users
 
 urlpatterns = [
-    path('area', areas.init_areas),
+    path('area/upload', areas.import_areas),
+    path('area/clear', areas.clear_areas),
+    path('paper/upload', papers.import_paper),
+    path('paper/clear', papers.clear_papers),
+    path('user/cancel', users.cancel_users),
 ]

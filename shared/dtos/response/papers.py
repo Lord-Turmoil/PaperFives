@@ -56,3 +56,8 @@ class NotConfirmableErrorDto(BaseResponseDto):
 class SearchErrorDto(BaseResponseDto):
     def __init__(self, msg="Failed to perform search"):
         super().__init__(ERROR_CODE['SEARCH_ERROR'], msg)
+
+
+class PaperExistsErrorDto(BaseResponseDto):
+    def __init__(self, title):
+        super().__init__(ERROR_CODE['PAPER_EXISTS'], f"Paper '{title}' already exists!")

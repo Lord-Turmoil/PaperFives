@@ -10,14 +10,13 @@ from papers.models import Area
 from shared.dtos.models.areas import AreaPostListDto, AreaPostDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
-from shared.dtos.response.users import NotLoggedInDto, PermissionDeniedDto
+from shared.dtos.response.users import PermissionDeniedDto
 from shared.exceptions.json import JsonDeserializeException
 from shared.response.basic import GoodResponse, BadRequestResponse
 from shared.utils.json_util import deserialize
 from shared.utils.parameter import parse_param
 from shared.utils.str_util import is_no_content
-from shared.utils.users.roles import is_user_admin
-from shared.utils.users.users import get_user_from_request, get_admin_from_request
+from shared.utils.users.users import get_admin_from_request
 
 
 def _init_area(dto: AreaPostDto):
@@ -39,19 +38,15 @@ def _init_area(dto: AreaPostDto):
 
 
 @csrf_exempt
-def init_areas(request):
+def import_areas(request):
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
-    params = parse_param(request)
 
+    params = parse_param(request)
     try:
         dto: AreaPostListDto = deserialize(params, AreaPostListDto)
     except JsonDeserializeException as e:
         return BadRequestResponse(BadRequestDto(e))
-
-    user = get_admin_from_request(request)
-    if user is None:
-        return GoodResponse(PermissionDeniedDto())
 
     # continue on error
     error_list = []
@@ -64,3 +59,13 @@ def init_areas(request):
     data = {'errors': error_list}
 
     return GoodResponse(GoodResponseDto("Areas imported", data=data))
+
+
+@csrf_exempt
+def clear_areas(request):
+    if request.method != 'POST':
+        return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
+
+    Area.objects.all().delete()
+
+    return GoodResponse(GoodResponseDto("All areas removed!"))

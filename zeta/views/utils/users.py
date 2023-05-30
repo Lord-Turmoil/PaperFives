@@ -4,17 +4,56 @@
 # @Author  : Tony Skywalker
 # @File    : users.py
 #
+from random import Random
+
+from shared.utils.token import generate_password
+from shared.utils.users.users import get_users_by_username, get_user_by_email
+from users.models import User
+
+EMAIL_CHARACTER_SET = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789_-'
+DEFAULT_PASSWORD = '123456'
+
+
+def _generate_random_email() -> str:
+    email = ""
+    max_idx = len(EMAIL_CHARACTER_SET) - 1
+    engine = Random()
+    length = engine.randint(6, 10)
+    for i in range(length):
+        email += EMAIL_CHARACTER_SET[engine.randint(0, max_idx)]
+    email += '@no.such.email'
+    return email
 
 
 def import_user(username: str):
     """
     Create a pseudo user.
     """
-    pass
+    users = get_users_by_username(username)
+    if users.exists():
+        return users.first()
+
+    # generate a new email for him
+    while True:
+        email = _generate_random_email()
+        if get_user_by_email(email) is not None:
+            continue
+        else:
+            break
+
+    user = User.create(email, username, generate_password(DEFAULT_PASSWORD))
+    user.save()
+
+    return user
 
 
 def increase_publish_cnt(username: str):
     """
-    Increse publish cnt of the given user. Do nothing if the
+    Increase publish cnt of the given user. Do nothing if the
     user does not exist.
     """
+    users = get_users_by_username(username)
+    if users.exists():
+        user: User = users.first()
+        user.stat.publish_cnt += 1
+        user.stat.save()

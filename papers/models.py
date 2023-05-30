@@ -19,8 +19,8 @@ searched.
 # Create your models here.
 
 class PaperAttribute(models.Model):
-    title = models.CharField(max_length=127)
-    keywords = models.CharField(max_length=127)
+    title = models.CharField(max_length=255)
+    keywords = models.CharField(max_length=255)
     abstract = models.TextField()
 
     publish_date = models.DateField()

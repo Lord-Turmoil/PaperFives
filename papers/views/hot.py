@@ -18,7 +18,7 @@ from shared.dtos.models.areas import AreaGetDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto
 from shared.response.basic import BadRequestResponse, GoodResponse
-from shared.utils.papers.papers import get_area_by_aid, get_are_cnt_by_aid, get_paper_by_pid
+from shared.utils.papers.papers import get_area_by_aid, get_area_cnt_by_aid, get_paper_by_pid
 from shared.utils.parameter import parse_param
 from shared.utils.parser import parse_value
 
@@ -51,7 +51,7 @@ def get_hot_areas(request):
         db_area = get_area_by_aid(area.aid)
         if db_area is None:
             continue
-        cnt = get_are_cnt_by_aid(area.aid)
+        cnt = get_area_cnt_by_aid(area.aid)
         data['areas'].append({'area': AreaGetDto().init(db_area), 'cnt': cnt})
 
     return GoodResponse(GoodResponseDto(data=data))
