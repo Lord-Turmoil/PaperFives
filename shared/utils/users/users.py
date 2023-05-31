@@ -65,3 +65,10 @@ def get_user_by_email(email):
 def get_users_by_username(username: str) -> QuerySet:
     users = User.objects.filter(username=username)
     return users
+
+
+def get_user_by_username(username: str):
+    users = User.objects.filter(username=username)
+    if users.exists():
+        return users.first()
+    return None
