@@ -239,3 +239,29 @@ class Top20Paper(models.Model):
     class Meta:
         ordering = ['rank']
         verbose_name = 'top_20_paper'
+
+
+class AreaRank(models.Model):
+    aid = models.BigIntegerField(primary_key=True)
+    rank = models.FloatField(default=0.0)
+
+    @classmethod
+    def create(cls, _aid, _rank=0.0):
+        return cls(aid=_aid, rank=_rank)
+
+    class Meta:
+        ordering = ['rank']
+        verbose_name = 'area_rank'
+
+
+class Top20Area(models.Model):
+    aid = models.BigIntegerField(primary_key=True)
+    rank = models.FloatField(default=0.0)
+
+    @classmethod
+    def create(cls, _aid, _rank=0.0):
+        return cls(aid=_aid, rank=_rank)
+
+    class Meta:
+        ordering = ['rank']
+        verbose_name = 'top_20_area'

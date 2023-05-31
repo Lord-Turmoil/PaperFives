@@ -1,0 +1,7 @@
+{{object.pid}}
+{{object.status}}
+{{object.title}}
+{{object.keywords}}
+{{object.abstract}}
+{{object.authors}}
+{{object.areas}}

@@ -9,10 +9,11 @@
 #
 from celery import shared_task
 
-from papers.views.utils.stat import update_all_area_statistics, update_all_paper_ranks
+from papers.views.utils.stat import update_all_area_statistics, update_all_paper_ranks, update_all_area_ranks
 
 
 @shared_task
 def update_paper_statistics_task():
     update_all_area_statistics()
     update_all_paper_ranks()
+    update_all_area_ranks()

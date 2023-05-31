@@ -7,7 +7,9 @@
 # Description:
 #   Paper statistics update.
 #
-from papers.models import Paper, AreaStatistics, PaperRank, PaperStatistics, Top20Paper
+from django.utils import timezone
+
+from papers.models import Paper, AreaStatistics, PaperRank, PaperStatistics, Top20Paper, AreaRank, Area, Top20Area
 
 
 ######################################################################
@@ -66,6 +68,45 @@ def update_all_paper_ranks():
     ranks = PaperRank.objects.all().order_by('-rank')[:20]
     for rank in ranks:
         Top20Paper.create(rank.pid, rank.rank).save()
+
+
+######################################################################
+# Area Rank
+#
+
+def _get_date_diff(src_year, src_month, dst_year, dst_month):
+    return dst_month - src_month + (dst_year - src_year) * 12
+
+
+def _get_date_ratio(src_year, src_month, dst_year, dst_month):
+    """
+    The nearer, the better. Ratio > 1.0 if in 1 year.
+    """
+    diff = float(_get_date_diff(src_year, src_month, dst_year, dst_month)) + 1.0
+    return float(12.0 / diff)
+
+
+def _evaluate_area_rank(aid, current):
+    rank = 0.0
+    stats = AreaStatistics.objects.filter(aid=aid)
+    for stat in stats:
+        ratio = _get_date_ratio(stat.year, stat.month, current.year, current.month)
+        rank += ratio * float(stat.cnt)
+    return rank
+
+
+def update_all_area_ranks():
+    AreaRank.objects.all().delete()
+    current = timezone.now()
+
+    for area in Area.objects.all():
+        val = _evaluate_area_rank(area.aid, current)
+        AreaRank.create(area.aid, val).save()
+
+    Top20Area.objects.all().delete()
+    ranks = AreaRank.objects.all().order_by('-rank')[:20]
+    for rank in ranks:
+        Top20Area.create(rank.aid, rank.rank).save()
 
 
 ######################################################################
