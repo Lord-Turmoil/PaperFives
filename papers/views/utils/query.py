@@ -8,19 +8,30 @@
 #   Query utility functions. All these functions will return two values,
 # the first is result, the second is error hint. One and only one of them
 # is None.
-from haystack.inputs import AutoQuery
 from haystack.query import SearchQuerySet
 
 from papers.models import Paper
-from shared.dtos.models.query import OrdinaryCondList, AdvancedCondList, AdvancedCond
+from shared.dtos.models.query import OrdinaryCondList, AdvancedCondList, AdvancedCond, CondAttr
 from shared.exceptions.json import JsonDeserializeException
 from shared.exceptions.search import SearchErrorException
-from shared.utils.json_util import deserialize
+from shared.utils.json_util import deserialize, deserialize_weak
 
 SEARCH_MODE = ['and', 'or', 'not']
 SEARCH_FIELD = ['all', 'title', 'keywords', 'abstract', 'areas', 'authors']
+ORDER_FIELD = {
+    'default': 'default',
+    'cites': 'cites',
+    '-cites': '-cites',
+    'downloads': 'downloads',
+    '-downloads': '-downloads',
+    'clicks': 'clicks',
+    '-clicks': '-clicks',
+    'date': 'publish_date',
+    '-date': '-publish_date'
+}
 
 DEFAULT_FUZZY = "1"
+
 
 def _construct_all(key) -> dict:
     ret = {}
@@ -31,28 +42,48 @@ def _construct_all(key) -> dict:
     return ret
 
 
-def _search_and(search_set: SearchQuerySet, field, key):
+def _construct_search_args(field, key, attr: CondAttr) -> dict:
+    args = {}
+    if attr is not None:
+        if (attr.time_from is not None) and (attr.time_to is not None):
+            args['publish_date__range'] = [attr.time_from, attr.time_to]
+
     if field != 'all':
-        args = {f"{field}__fuzzy": f"{key}"}
-        return search_set.filter_and(**args)
+        args[f"{field}__fuzzy"] = f"{key}"
     else:
-        return search_set.filter(content=f"{key}")
+        args['content'] = f"{key}~"
+
+    return args
 
 
-def _search_or(search_set: SearchQuerySet, field, key):
-    if field != 'all':
-        args = {f"{field}__fuzzy": f"{key}"}
-        return search_set.filter_or(**args)
-    else:
-        return search_set.filter(cnontet=f"{key}")
+def _search_and(search_set: SearchQuerySet, field, key, attr: CondAttr):
+    args = _construct_search_args(field, key, attr)
+    results = search_set.filter_and(**args)
+
+    if (attr is not None) and (attr.order != 'default'):
+        results = results.order_by(ORDER_FIELD[attr.order])
+
+    return results
 
 
-def _search_not(search_set: SearchQuerySet, field, key):
-    if field != 'all':
-        args = {f"{field}": key}
-        return search_set.exclude(**args)
-    else:
-        return search_set.exclude(content__all=key)
+def _search_or(search_set: SearchQuerySet, field, key, attr: CondAttr):
+    args = _construct_search_args(field, key, attr)
+    results = search_set.filter_or(**args)
+
+    if (attr is not None) and (attr.order != 'default'):
+        results = results.order_by(ORDER_FIELD[attr.order])
+
+    return results
+
+
+def _search_not(search_set: SearchQuerySet, field, key, attr: CondAttr):
+    args = _construct_search_args(field, key, attr)
+    results = search_set.exclude(**args)
+
+    if (attr is not None) and (attr.order != 'default'):
+        results = results.order_by(ORDER_FIELD[attr.order])
+
+    return results
 
 
 SEARCHER = {
@@ -62,25 +93,30 @@ SEARCHER = {
 }
 
 
-def _search(search_set: SearchQuerySet, mode, field, key):
+def _search(search_set: SearchQuerySet, mode, field, key, attr: CondAttr):
     if mode not in SEARCH_MODE:
-        return None, f"'{mode}' is invalid"
+        return None, f"'{mode}' is not a valid search mode"
     if field not in SEARCH_FIELD:
-        return None, f"'{field}' is invalid"
+        return None, f"'{field}' is not a valid search field"
+    if attr is not None:
+        if attr.order not in ORDER_FIELD.keys():
+            return None, f"'{attr.order}' is not a valid order option"
 
     searcher = SEARCHER.get(mode)
     if searcher is None:
         return None, f"Missing searcher for '{mode}'"
 
-    return searcher(search_set, field, key), None
+    return searcher(search_set, field, key, attr), None
 
 
 """
 Ordinary Search:
 {
-    "ps": 20,
-    "p": 1,
-    "advanced": false,
+    "attr": {
+        "order": "click",
+        "time_from": "2022-01-01",
+        "time_to": "2023-01-01"
+    },
     "cond": {
         "field": "all",
         "key": "algo"
@@ -89,18 +125,29 @@ Ordinary Search:
 """
 
 
-def _ordinary_search(search_set, field, key):
-    return _search(search_set, 'and', field, key)
+def _ordinary_search(search_set, field, key, attr: CondAttr):
+    return _search(search_set, 'and', field, key, attr)
 
 
 def ordinary_search(dto: dict):
     try:
-        cond_list: OrdinaryCondList = deserialize(dto, OrdinaryCondList)
+        cond_list: OrdinaryCondList = deserialize({'cond': dto.get('cond')}, OrdinaryCondList)
     except JsonDeserializeException as e:
-        return None, str(e)
+        raise e
+
+    try:
+        attr = deserialize_weak(dto.get('attr'), CondAttr)
+    except JsonDeserializeException as e:
+        print(e)
+        attr = None
+
     cond = cond_list.cond
+
     papers = SearchQuerySet().models(Paper).all()
-    papers, hint = _ordinary_search(papers, cond.field, cond.key)
+    if (attr is not None) and (attr.order != 'default'):
+        papers.order_by(attr.order)
+
+    papers, hint = _ordinary_search(papers, cond.field, cond.key, attr)
     if hint is not None:
         raise SearchErrorException(hint)
     return papers
@@ -109,9 +156,11 @@ def ordinary_search(dto: dict):
 """
 Advanced Search:
 {
-    "ps": 20,
-    "p": 1,
-    "advanced": true,
+    "attr": {
+        "order": "click",
+        "time_from": "2022-01-01",
+        "time_to": "2023-01-01"
+    },
     "cond": [
         {
             "mode": "and",
@@ -130,14 +179,22 @@ Advanced Search:
 
 def advanced_search(dto: dict):
     try:
-        cond_list: AdvancedCondList = deserialize(dto, AdvancedCondList)
+        cond_list: AdvancedCondList = deserialize({'cond': dto.get('cond')}, AdvancedCondList)
     except JsonDeserializeException as e:
         raise e
 
+    try:
+        attr = deserialize(dto.get('attr'), CondAttr)
+    except JsonDeserializeException:
+        attr = None
+
     papers = SearchQuerySet().models(Paper).all()
+    if (attr is not None) and (attr.order != 'default'):
+        papers.order_by(attr.order)
+
     cond: AdvancedCond
     for cond in cond_list.cond:
-        papers, hint = _search(papers, cond.mode, cond.field, cond.key)
+        papers, hint = _search(papers, cond.mode, cond.field, cond.key, attr)
         if hint is not None:
             raise SearchErrorException(hint)
 

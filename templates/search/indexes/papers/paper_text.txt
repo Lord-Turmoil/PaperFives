@@ -5,3 +5,8 @@
 {{object.abstract}}
 {{object.authors}}
 {{object.areas}}
+{{object.publish_date}}
+{{object.cites}}
+{{object.downloads}}
+{{object.favorites}}
+{{object.clicks}}

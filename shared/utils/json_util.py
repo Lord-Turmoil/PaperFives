@@ -70,7 +70,7 @@ def _check_type(dict_obj, cls_obj) -> bool:
     if _is_basic(type(cls_obj)):
         if not isinstance(dict_obj, type(cls_obj)):
             raise AttributeError(f"{dict_obj} is not {type(cls_obj)}")
-        return
+        return True
 
     if not dict_obj.keys() == cls_obj.__dict__.keys():
         hint = "Attribute set does not match:\n\t"
@@ -117,8 +117,11 @@ def _construct_cls(dict_obj, cls):
             raise AttributeError("Not basic type!")
         return obj
 
-    model = cls()
-    obj = cls()
+    try:
+        model = cls()
+        obj = cls()
+    except TypeError as e:
+        raise AttributeError(e)
 
     for key in model.__dict__.keys():
         t = type(model.__dict__[key])
@@ -138,7 +141,38 @@ def _construct_cls(dict_obj, cls):
     return obj
 
 
-def deserialize(obj, cls=None):
+def _construct_cls_weak(dict_obj, cls):
+    if _is_basic(cls):
+        obj = parse_value(dict_obj, cls)
+        if obj is None:
+            return None
+        return obj
+
+    try:
+        model = cls()
+        obj = cls()
+    except:
+        return None
+
+    for key in model.__dict__.keys():
+        t = type(model.__dict__[key])
+        if isinstance(dict_obj[key], t):
+            if issubclass(t, list):
+                try:
+                    k = type(model.__dict__[key][0])
+                except IndexError:
+                    raise AttributeError("Missing default value")
+                obj.__dict__[key].clear()  # clear default value
+                for v in dict_obj[key]:
+                    obj.__dict__[key].append(_construct_cls(v, k))
+                continue
+            obj.__dict__[key] = dict_obj[key]
+            continue
+        obj.__dict__[key] = _construct_cls_weak(dict_obj[key], type(model.__dict__[key]))
+    return obj
+
+
+def _deserialize(obj, cls, checker, constructor):
     if isinstance(obj, dict):
         pass
     else:
@@ -151,13 +185,22 @@ def deserialize(obj, cls=None):
         return obj
 
     try:
-        _check_type(obj, cls())
-        obj = _construct_cls(obj, cls)
+        if checker is not None:
+            checker(obj, cls())
+        obj = constructor(obj, cls)
     except AttributeError as e:
         print(e)
         raise JsonDeserializeException(f"Type mismatch, should be {cls.__name__}", obj)
 
     return obj
+
+
+def deserialize(obj, cls=None):
+    return _deserialize(obj, cls, _check_type, _construct_cls)
+
+
+def deserialize_weak(obj, cls=None):
+    return _deserialize(obj, cls, None, _construct_cls_weak)
 
 
 def deserialize_dict(dict_obj, cls):

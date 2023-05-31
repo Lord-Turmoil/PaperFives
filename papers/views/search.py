@@ -12,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from papers.models import Paper
 from papers.views.utils.query import advanced_search, ordinary_search
-from shared.dtos.models.papers import PaperGetDto
+from papers.views.utils.serializer import get_paper_get_simple_dto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
 from shared.dtos.response.papers import SearchErrorDto
@@ -39,6 +39,9 @@ def temp_get_pid_list(request):
 
 @csrf_exempt
 def query_paper(request):
+    """
+    All trivial parameters will be popped out, make 'params' a cond list.
+    """
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
 
@@ -47,13 +50,14 @@ def query_paper(request):
     page_num = parse_value(params.get('p'), int, 1)
     if (page_size < 1) or (page_num < 1):
         return BadRequestResponse(BadRequestDto("Invalid value for pagination"))
-    advanced = parse_value(params.get('advanced'), bool, None)
+    advanced = parse_value(params.pop('advanced', None), bool, None)
     if advanced is None:
         return BadRequestResponse(BadRequestDto("Must specify query mode"))
 
     cond = params.get('cond')
     if cond is None:
         return BadRequestResponse(BadRequestDto("What to look for?"))
+    attr = params.get('attr')   # can be None
 
     if advanced:
         searcher = advanced_search
@@ -61,7 +65,7 @@ def query_paper(request):
         searcher = ordinary_search
 
     try:
-        papers = searcher({'cond': cond})
+        papers = searcher({'attr': attr, 'cond': cond})
     except JsonDeserializeException as e:
         return BadRequestResponse(BadRequestDto(e))
     except SearchErrorException as e:
@@ -83,6 +87,6 @@ def query_paper(request):
     for paper in page.object_list:
         db_paper = get_paper_by_pid(paper.pid)
         if db_paper is not None:
-            data['papers'].append(PaperGetDto().init(db_paper))
+            data['papers'].append(get_paper_get_simple_dto(db_paper))
 
     return GoodResponse(GoodResponseDto(data=data))

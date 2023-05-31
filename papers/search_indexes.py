@@ -24,6 +24,13 @@ class PaperIndex(indexes.SearchIndex, indexes.Indexable):
     keywords = indexes.EdgeNgramField(model_attr='attr__keywords')
     abstract = indexes.EdgeNgramField(model_attr='attr__abstract')
 
+    # order fields
+    publish_date = indexes.DateField(model_attr='attr__publish_date')
+    cites = indexes.IntegerField(model_attr='stat__cites', indexed=True)
+    downloads = indexes.IntegerField(model_attr='stat__downloads', indexed=True)
+    favorites = indexes.IntegerField(model_attr='stat__favorites', indexed=True)
+    clicks = indexes.IntegerField(model_attr='stat__clicks', indexed=True)
+
     # special fields
     authors = indexes.EdgeNgramField()
     areas = indexes.EdgeNgramField()

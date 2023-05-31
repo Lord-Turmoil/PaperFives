@@ -229,14 +229,18 @@ class PaperAttrSimpleData(AbstractPaperDto):
         super().__init__()
         self.title: str = ""
         self.keywords: List[str] = [""]
+        self.abstract: str = ""  # cut
         self.publish_date: datetime = datetime.today()
 
     def init(self, attr: PaperAttribute):
         self.title = attr.title
         self.keywords = attr.keywords.split(', ')
+        self.abstract = attr.abstract[:255]
+        while self.abstract[-1] != ' ':
+            self.abstract = self.abstract.rstrip(self.abstract[-1])
+        self.abstract += "..."
         self.publish_date = attr.publish_date
         return self
-
 
 class PaperGetSimpleDto(AbstractPaperDto):
     def __init__(self):
