@@ -11,12 +11,17 @@
 #   These functions has passed basic tests, and is guaranteed to
 # support datetime and date type, which is used in Django models. :)
 #
+
 import datetime
 import json
+from json import JSONDecodeError
 
 from shared.exceptions.json import JsonSerializeException, JsonDeserializeException
-from shared.utils.parser import parse_value
 
+
+######################################################################
+# Serializer Fundamental
+#
 
 class AdvancedEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -50,169 +55,95 @@ class AdvancedDecoder(json.JSONDecoder):
         super().__init__(object_hook=object_hook)
 
 
+######################################################################
+# Serializer
+#
+
 def serialize(obj) -> str:
     try:
         return json.dumps(obj, cls=AdvancedEncoder)
-    except Exception:
+    except TypeError:
         raise JsonSerializeException("Failed to serialize", obj)
 
 
-def serialize_as_dict(obj) -> dict:
-    if not hasattr(obj, '__dict__'):
-        return obj
-    ret = obj.__dict__
-    for key in obj.__dict__.keys():
-        ret[key] = serialize_as_dict(obj.__dict__[key])
-    return ret
+def serialize_as_dict(obj):
+    return deserialize(serialize(obj))
 
 
-def _check_type(dict_obj, cls_obj) -> bool:
-    if _is_basic(type(cls_obj)):
-        if not isinstance(dict_obj, type(cls_obj)):
-            raise AttributeError(f"{dict_obj} is not {type(cls_obj)}")
-        return True
+######################################################################
+# Deserializer
+#
 
-    if not dict_obj.keys() == cls_obj.__dict__.keys():
-        hint = "Attribute set does not match:\n\t"
-        hint += f"Expected: {cls_obj.__dict__.keys()}\n\t"
-        hint += f"     Got: {dict_obj.keys()}"
+# Utility functions
+
+def __check_type_dict(src, model):
+    if not isinstance(src, dict):
+        hint = f"Type mismatch, '{src}' should be 'dict'"
         raise AttributeError(hint)
 
-    for key in cls_obj.__dict__.keys():
-        cls_type = type(cls_obj.__dict__[key])
-        if isinstance(dict_obj[key], cls_type):
-            if issubclass(cls_type, list):
-                try:
-                    model = cls_obj.__dict__[key][0]
-                except IndexError:
-                    raise AttributeError("Missing default value")
-                for v in dict_obj[key]:
-                    _check_type(v, model)
-            continue
+    if not src.keys() == model.keys():
+        hint = "Attribute set does not match:\n\t"
+        hint += f"Expected: {model.keys()}\n\t"
+        hint += f"     Got: {src.keys()}"
+        raise AttributeError(hint)
 
-        try:
-            if not isinstance(dict_obj[key], dict):
-                hint = "Attribute type mismatch:\n\t"
-                hint += f"Expected: Attribute '{key}' should be '{type(cls_obj.__dict__[key])}'\n\t"
-                hint += f"     Got: '{dict_obj[key]}' of type {type(dict_obj[key])}"
-                raise AttributeError(hint)
-
-            _check_type(dict_obj[key], cls_obj.__dict__[key])
-        except AttributeError as e:
-            raise e
-    return True
+    for key in model.keys():
+        __check_type(src[key], model[key])
 
 
-BASIC_TYPE_LIST = [int, float, str]
-
-
-def _is_basic(_type):
-    return _type in BASIC_TYPE_LIST
-
-
-def _construct_cls(dict_obj, cls):
-    if _is_basic(cls):
-        obj = parse_value(dict_obj, cls)
-        if obj is None:
-            raise AttributeError("Not basic type!")
-        return obj
-
+def __check_type_list(src, model):
+    if not isinstance(src, list):
+        hint = f"Type mismatch, '{src}' should be 'list'"
+        raise AttributeError(hint)
     try:
-        model = cls()
-        obj = cls()
-    except TypeError as e:
-        raise AttributeError(e)
-
-    for key in model.__dict__.keys():
-        t = type(model.__dict__[key])
-        if isinstance(dict_obj[key], t):
-            if issubclass(t, list):
-                try:
-                    k = type(model.__dict__[key][0])
-                except IndexError:
-                    raise AttributeError("Missing default value")
-                obj.__dict__[key].clear()  # clear default value
-                for v in dict_obj[key]:
-                    obj.__dict__[key].append(_construct_cls(v, k))
-                continue
-            obj.__dict__[key] = dict_obj[key]
-            continue
-        obj.__dict__[key] = _construct_cls(dict_obj[key], type(model.__dict__[key]))
-    return obj
+        m = model[0]
+    except IndexError:
+        raise AttributeError(f"Missing default value for '{src}'")
+    for v in src:
+        __check_type(v, m)
 
 
-def _construct_cls_weak(dict_obj, cls):
-    if _is_basic(cls):
-        obj = parse_value(dict_obj, cls)
-        if obj is None:
-            return None
-        return obj
-
-    try:
-        model = cls()
-        obj = cls()
-    except:
-        return None
-
-    for key in model.__dict__.keys():
-        t = type(model.__dict__[key])
-        if isinstance(dict_obj[key], t):
-            if issubclass(t, list):
-                try:
-                    k = type(model.__dict__[key][0])
-                except IndexError:
-                    raise AttributeError("Missing default value")
-                obj.__dict__[key].clear()  # clear default value
-                for v in dict_obj[key]:
-                    obj.__dict__[key].append(_construct_cls(v, k))
-                continue
-            obj.__dict__[key] = dict_obj[key]
-            continue
-        obj.__dict__[key] = _construct_cls_weak(dict_obj[key], type(model.__dict__[key]))
-    return obj
-
-
-def _deserialize(obj, cls, checker, constructor):
-    if isinstance(obj, dict):
-        pass
+def __check_type(src, model):
+    t = type(model)
+    if issubclass(t, dict):
+        __check_type_dict(src, model)
+    elif issubclass(t, list):
+        __check_type_list(src, model)
     else:
-        try:
-            obj = json.loads(obj, cls=AdvancedDecoder)
-        except:
-            raise JsonDeserializeException("Failed to deserialize", obj)
+        if not isinstance(src, t):
+            hint = f"Value '{src}' type mismatch:\n\t"
+            hint += f"Expected: {type(model)}\n\t"
+            hint += f"     Got: {type(src)}"
+            raise AttributeError(hint)
 
-    if cls is None:
-        return obj
 
-    try:
-        if checker is not None:
-            checker(obj, cls())
-        obj = constructor(obj, cls)
-    except AttributeError as e:
-        print(e)
-        raise JsonDeserializeException(f"Type mismatch, should be {cls.__name__}", obj)
+def _check_type(src, cls):
+    __check_type(src, serialize_as_dict(cls()))
+
+
+def _construct_cls(src, cls):
+    obj = cls()
+    obj.__dict__ = src
 
     return obj
 
 
 def deserialize(obj, cls=None):
-    return _deserialize(obj, cls, _check_type, _construct_cls)
+    if isinstance(obj, dict):
+        dict_obj = obj
+    else:
+        try:
+            dict_obj = json.loads(obj, cls=AdvancedDecoder)
+        except JSONDecodeError as e:
+            raise JsonDeserializeException(f"Failed to deserialize!\n\t{e}", obj)
 
+    if cls is None:
+        return dict_obj
 
-def deserialize_weak(obj, cls=None):
-    return _deserialize(obj, cls, None, _construct_cls_weak)
-
-
-def deserialize_dict(dict_obj, cls):
-    """
-    Deserialize dict object to object of specific class
-    """
-    dict_obj.pop('csrfmiddlewaretoken', None)
-    obj = None
     try:
-        _check_type(dict_obj, cls())
+        _check_type(dict_obj, cls)
         obj = _construct_cls(dict_obj, cls)
-    except AttributeError:
-        raise JsonDeserializeException(f"Type mismatch, should be {cls.__name__}", dict_obj)
+    except AttributeError as e:
+        raise JsonDeserializeException(f"Type mismatch, should be {cls.__name__}\n\t{e}", obj)
 
     return obj
