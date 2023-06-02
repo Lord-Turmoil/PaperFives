@@ -8,13 +8,16 @@
 #   Query utility functions. All these functions will return two values,
 # the first is result, the second is error hint. One and only one of them
 # is None.
+import datetime
+
 from haystack.query import SearchQuerySet
 
 from papers.models import Paper
 from shared.dtos.models.query import OrdinaryCondList, AdvancedCondList, AdvancedCond, CondAttr
 from shared.exceptions.json import JsonDeserializeException
 from shared.exceptions.search import SearchErrorException
-from shared.utils.json_util import deserialize, deserialize_weak
+from shared.utils.json_util import deserialize
+from shared.utils.parser import parse_value
 
 SEARCH_MODE = ['and', 'or', 'not']
 SEARCH_FIELD = ['all', 'title', 'keywords', 'abstract', 'areas', 'authors']
@@ -109,6 +112,25 @@ def _search(search_set: SearchQuerySet, mode, field, key, attr: CondAttr):
     return searcher(search_set, field, key, attr), None
 
 
+def _get_attr(dto: dict):
+    """
+    This is not a strict parse, so we don't use json deserializer.
+    """
+    data: dict = dto.get('attr')
+    if data is None:
+        return None
+
+    if not isinstance(data, dict):
+        return None
+
+    attr = CondAttr()
+    attr.order = parse_value(data.get('order'), str, 'default')
+    attr.time_from = parse_value(data.get('from'), datetime.date)
+    attr.time_to = parse_value(data.get('to'), datetime.date)
+
+    return attr
+
+
 """
 Ordinary Search:
 {
@@ -135,17 +157,9 @@ def ordinary_search(dto: dict):
     except JsonDeserializeException as e:
         raise e
 
-    try:
-        attr = deserialize_weak(dto.get('attr'), CondAttr)
-    except JsonDeserializeException as e:
-        print(e)
-        attr = None
-
-    cond = cond_list.cond
-
     papers = SearchQuerySet().models(Paper).all()
-    if (attr is not None) and (attr.order != 'default'):
-        papers.order_by(attr.order)
+    attr = _get_attr(dto)
+    cond = cond_list.cond
 
     papers, hint = _ordinary_search(papers, cond.field, cond.key, attr)
     if hint is not None:
@@ -183,14 +197,8 @@ def advanced_search(dto: dict):
     except JsonDeserializeException as e:
         raise e
 
-    try:
-        attr = deserialize(dto.get('attr'), CondAttr)
-    except JsonDeserializeException:
-        attr = None
-
     papers = SearchQuerySet().models(Paper).all()
-    if (attr is not None) and (attr.order != 'default'):
-        papers.order_by(attr.order)
+    attr = _get_attr(dto)
 
     cond: AdvancedCond
     for cond in cond_list.cond:

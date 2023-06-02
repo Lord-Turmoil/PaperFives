@@ -17,6 +17,7 @@ import json
 from json import JSONDecodeError
 
 from shared.exceptions.json import JsonSerializeException, JsonDeserializeException
+from shared.utils.parser import parse_value
 
 
 ######################################################################
@@ -121,10 +122,40 @@ def _check_type(src, cls):
     __check_type(src, serialize_as_dict(cls()))
 
 
-def _construct_cls(src, cls):
-    obj = cls()
-    obj.__dict__ = src
+BASIC_TYPE_LIST = [int, float, str]
 
+
+def _is_basic(_type):
+    return _type in BASIC_TYPE_LIST
+
+def _construct_cls(src, cls):
+    if _is_basic(cls):
+        obj = parse_value(src, cls)
+        if obj is None:
+            raise AttributeError("Not basic type!")
+        return obj
+
+    try:
+        model = cls()
+        obj = cls()
+    except TypeError as e:
+        raise AttributeError(e)
+
+    for key in model.__dict__.keys():
+        t = type(model.__dict__[key])
+        if isinstance(src[key], t):
+            if issubclass(t, list):
+                try:
+                    k = type(model.__dict__[key][0])
+                except IndexError:
+                    raise AttributeError("Missing default value")
+                obj.__dict__[key].clear()  # clear default value
+                for v in src[key]:
+                    obj.__dict__[key].append(_construct_cls(v, k))
+                continue
+            obj.__dict__[key] = src[key]
+            continue
+        obj.__dict__[key] = _construct_cls(src[key], type(model.__dict__[key]))
     return obj
 
 

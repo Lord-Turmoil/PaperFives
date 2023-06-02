@@ -7,11 +7,24 @@
 # Description:
 #   To parse values.
 #
+import datetime
+
 
 def parse_value(val, _type, default=None):
     if val is None:
         return default
     try:
-        return _type(val)
-    except:
+        if issubclass(_type, datetime.datetime):
+            if isinstance(val, str):
+                return datetime.datetime.strptime(val, '%Y-%m-%d %H:%M:%S')
+            else:
+                return default
+        elif issubclass(_type, datetime.date):
+            if isinstance(val, str):
+                return datetime.datetime.strptime(val, '%Y-%m-%d')
+            else:
+                return default
+        else:
+            return _type(val)
+    except ValueError:
         return default
