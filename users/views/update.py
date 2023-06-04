@@ -13,7 +13,7 @@ from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.users.roles import is_user_admin
 from shared.utils.users.users import get_user_from_request
 from users.models import User
-from users.tasks import update_user_statistics_task
+from users.tasks import update_user_statistics_task, remove_stupid_users_task
 
 
 @csrf_exempt
@@ -33,3 +33,13 @@ def update_user_statistics(request):
     update_user_statistics_task.delay()
 
     return GoodResponse(GoodResponseDto("'update_user_statistics_task' started!"))
+
+
+@csrf_exempt
+def remove_stupid_users(request):
+    if request.method != 'POST':
+        return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
+
+    remove_stupid_users_task.delay()
+
+    return GoodResponse(GoodResponseDto("'remove_stupid_users_task' started!"))

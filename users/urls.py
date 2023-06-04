@@ -28,6 +28,9 @@ urlpatterns = [
     path('query/query', users.query_users),
     path('query/get', users.get_users),
 
+    path('query/stat/bar', users.get_user_statistics_bar),
+    path('query/stat/pie', users.get_user_statistics_pie),
+
     # follow
     path('favorite/follow', follow.follow_user),
     path('favorite/unfollow', follow.unfollow_user),
@@ -41,4 +44,5 @@ urlpatterns = [
 
     # tasks
     path('task/update_stat', update.update_user_statistics),
+    path('task/remove_stupid', update.remove_stupid_users),
 ]

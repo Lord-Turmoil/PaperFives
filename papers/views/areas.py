@@ -19,6 +19,7 @@ from shared.utils.parser import parse_value
 from shared.utils.str_util import is_no_content
 from shared.utils.users.roles import is_user_admin
 from shared.utils.users.users import get_user_from_request
+from users.models import AreaPublishStatistics
 
 
 def _add_area(dto: AreaPostDto):
@@ -49,6 +50,7 @@ def _remove_area(aid):
 
     for area in areas:
         AreaStatistics.objects.filter(aid=area.aid).delete()
+        AreaPublishStatistics.objects.filter(aid=area.aid).delete()
 
     areas.delete()
 

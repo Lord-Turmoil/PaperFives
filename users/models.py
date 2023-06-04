@@ -129,6 +129,22 @@ class PublishStatistics(models.Model):
         verbose_name = 'publish_stat'
 
 
+class AreaPublishStatistics(models.Model):
+    """
+    Record areas user publishes paper in.
+    """
+    uid = models.BigIntegerField()
+    aid = models.BigIntegerField()
+    cnt = models.IntegerField(default=0)
+
+    @classmethod
+    def create(cls, _uid, _aid):
+        return cls(uid=_uid, aid=_aid)
+
+    class Meta:
+        verbose_name = 'area_pub_stat'
+
+
 class UserRank(models.Model):
     uid = models.BigIntegerField(primary_key=True)
     rank = models.FloatField(default=0.0)

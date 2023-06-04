@@ -27,7 +27,7 @@ from shared.utils.token import generate_password
 from shared.utils.users.roles import is_user_admin
 from shared.utils.users.users import get_user_from_request
 from shared.utils.validator import validate_email
-from users.models import User, Role, FavoriteUser, PublishStatistics
+from users.models import User, Role, FavoriteUser, PublishStatistics, AreaPublishStatistics
 
 EMAIL_WHITE_LIST = [
     "111@111.com",
@@ -164,6 +164,7 @@ def _erase_user(uid):
     FavoritePaper.objects.filter(uid=uid).delete()
     PublishRecord.objects.filter(uid=uid).delete()
     PublishStatistics.objects.filter(uid=uid).delete()
+    AreaPublishStatistics.objects.filter(uid=uid).delete()
 
 
 @csrf_exempt

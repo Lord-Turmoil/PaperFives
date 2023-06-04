@@ -13,7 +13,7 @@ from papers.models import Paper
 from shared.exceptions.email import EmailException
 from shared.utils.email_util import send_paper_passed_email, send_paper_rejected_email, send_promotion_email
 from shared.utils.users.users import get_user_by_email
-from users.models import User
+from users.models import User, Role
 
 
 @shared_task
@@ -81,6 +81,9 @@ def pass_paper(paper: Paper, comment=None):
         _send_promotion_task.delay(user.email, {'name': user.username})
         user.scholar = True
         user.save()
+
+        role = Role.create(Role.RoleName.SCHOLAR, user)
+        role.save()
 
 
 def reject_paper(paper: Paper, comment):

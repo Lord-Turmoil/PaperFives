@@ -11,13 +11,16 @@ from haystack.query import SearchQuerySet
 from shared.dtos.models.users import GetUsersDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
+from shared.dtos.response.publish_stat import UserPubStatBarDto, UserPubStatPieDto
+from shared.dtos.response.users import NoSuchUserDto
 from shared.exceptions.json import JsonDeserializeException
 from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.json_util import deserialize
 from shared.utils.parameter import parse_param
 from shared.utils.parser import parse_value
 from shared.utils.str_util import is_no_content
-from shared.utils.users.users import get_user_by_email
+from shared.utils.users.users import get_user_by_email, get_user_by_uid
+from users.models import PublishStatistics, AreaPublishStatistics
 from users.serializer import UserSerializer, UserSimpleSerializer, UserPrivateSerializer
 from users.views.utils.users import get_users_from_uid_list
 
@@ -88,6 +91,7 @@ def query_users(request):
 def get_users(request):
     if request.method != 'POST':
         return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
+
     params = parse_param(request)
     try:
         params.pop('csrfmiddlewaretoken', None)
@@ -105,3 +109,41 @@ def get_users(request):
     payload['total'] = len(payload['users'])
 
     return GoodResponse(GoodResponseDto(data=payload))
+
+
+@csrf_exempt
+def get_user_statistics_bar(request):
+    if request.method != 'GET':
+        return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
+
+    params = parse_param(request)
+    uid = parse_value(params.get('uid'), int, None)
+    if uid is None:
+        return BadRequestResponse(BadRequestDto("Missing 'uid'"))
+
+    if get_user_by_uid(uid) is None:
+        return GoodResponse(NoSuchUserDto())
+
+    stats = PublishStatistics.objects.filter(uid=uid)
+    dto = UserPubStatBarDto().init(uid, stats)
+
+    return GoodResponse(GoodResponseDto(data=dto))
+
+
+@csrf_exempt
+def get_user_statistics_pie(request):
+    if request.method != 'GET':
+        return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
+
+    params = parse_param(request)
+    uid = parse_value(params.get('uid'), int, None)
+    if uid is None:
+        return BadRequestResponse(BadRequestDto("Missing 'uid'"))
+
+    if get_user_by_uid(uid) is None:
+        return GoodResponse(NoSuchUserDto())
+
+    stats = AreaPublishStatistics.objects.filter(uid=uid)
+    dto = UserPubStatPieDto().init(uid, stats)
+
+    return GoodResponse(GoodResponseDto(data=dto))

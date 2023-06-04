@@ -7,7 +7,7 @@
 from papers.models import PublishRecord, Paper
 from papers.views.utils.stat import get_paper_rank_by_pid
 from shared.utils.papers.papers import get_paper_by_pid
-from users.models import User, PublishStatistics, UserRank, Top20User
+from users.models import User, PublishStatistics, UserRank, Top20User, AreaPublishStatistics
 
 
 ######################################################################
@@ -28,6 +28,16 @@ def _get_or_create_publish_statistics(uid, year):
         return stats.first()
     else:
         stat = PublishStatistics.create(uid, year)
+        stat.save()
+        return stat
+
+
+def _get_or_create_area_publish_statistics(uid, aid):
+    stats = AreaPublishStatistics.objects.filter(uid=uid, aid=aid)
+    if stats.exists():
+        return stats.first()
+    else:
+        stat = AreaPublishStatistics.create(uid, aid)
         stat.save()
         return stat
 
@@ -55,6 +65,23 @@ def update_all_user_statistics():
         records = PublishRecord.objects.filter(uid=user.uid)
         for record in records:
             _create_or_update_publish_statistics(user.uid, record.pid, record.lead)
+
+
+def update_all_user_area_statistics():
+    AreaPublishStatistics.objects.all().delete()
+
+    users = User.objects.all()
+
+    for user in users:
+        records = PublishRecord.objects.filter(uid=user.uid)
+        for record in records:
+            paper: Paper = get_paper_by_pid(record.pid)
+            if paper is None:
+                continue
+            for area in paper.areas.all():
+                stat: AreaPublishStatistics = _get_or_create_area_publish_statistics(user.uid, area.aid)
+                stat.cnt += 1
+                stat.save()
 
 
 ######################################################################

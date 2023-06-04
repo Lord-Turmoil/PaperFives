@@ -62,3 +62,14 @@ class GetUsersDto(BaseDto):
     def __init__(self):
         self.mode: str = ""
         self.users: List[int] = []
+
+
+######################################################################
+# User statistics dto
+#
+
+class UserStatDto(BaseDto):
+    def __init__(self):
+        self.year: int = 0
+        self.lead_cnt: int = 0
+        self.co_cnt: int = 0
