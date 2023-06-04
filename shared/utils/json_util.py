@@ -17,7 +17,6 @@ import json
 from json import JSONDecodeError
 
 from shared.exceptions.json import JsonSerializeException, JsonDeserializeException
-from shared.utils.parser import parse_value
 
 
 ######################################################################
@@ -122,41 +121,34 @@ def _check_type(src, cls):
     __check_type(src, serialize_as_dict(cls()))
 
 
-BASIC_TYPE_LIST = [int, float, str]
+def __construct_cls(src, cls, model):
+    if issubclass(cls, list):
+        if not isinstance(src, list):
+            return None
+        obj = []
+        try:
+            _type = type(model[0])
+        except IndexError:
+            raise AttributeError(f"Missing default value for '{cls}'")
+        for v in src:
+            obj.append(__construct_cls(v, _type, model[0]))
+    elif isinstance(src, cls):
+        obj = src
+    else:
+        if not isinstance(src, dict):
+            return None
+        obj = cls()
+        for (k, v) in model.__dict__.items():
+            obj.__dict__[k] = __construct_cls(src.get(k), type(v), v)
 
+    return obj
 
-def _is_basic(_type):
-    return _type in BASIC_TYPE_LIST
 
 def _construct_cls(src, cls):
-    if _is_basic(cls):
-        obj = parse_value(src, cls)
-        if obj is None:
-            raise AttributeError("Not basic type!")
-        return obj
-
     try:
-        model = cls()
-        obj = cls()
-    except TypeError as e:
-        raise AttributeError(e)
-
-    for key in model.__dict__.keys():
-        t = type(model.__dict__[key])
-        if isinstance(src[key], t):
-            if issubclass(t, list):
-                try:
-                    k = type(model.__dict__[key][0])
-                except IndexError:
-                    raise AttributeError("Missing default value")
-                obj.__dict__[key].clear()  # clear default value
-                for v in src[key]:
-                    obj.__dict__[key].append(_construct_cls(v, k))
-                continue
-            obj.__dict__[key] = src[key]
-            continue
-        obj.__dict__[key] = _construct_cls(src[key], type(model.__dict__[key]))
-    return obj
+        return __construct_cls(src, cls, cls())
+    except Exception as e:
+        raise AttributeError(f"Unexpected error: '{e}'")
 
 
 def deserialize(obj, cls=None):
