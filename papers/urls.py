@@ -36,6 +36,7 @@ urlpatterns = [
 
     path('search/temp/all', search.temp_get_pid_list),
     path('search/query', search.query_paper),
+    path('search/areas', search.query_area),
 
     path('hot/areas', hot.get_hot_areas),
     path('hot/papers', hot.get_hot_papers),

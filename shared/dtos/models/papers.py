@@ -14,6 +14,7 @@
 from datetime import datetime
 from typing import List
 
+from PaperFives.settings import CONFIG
 from papers.models import Paper, PaperAttribute, Author, Reference, PaperStatistics
 from shared.dtos.models.areas import AreaGetDto
 from shared.dtos.models.base import BaseDto
@@ -202,11 +203,10 @@ class PaperStatData(AbstractPaperDto):
         return self
 
 
-class PaperGetDto(BasePaperDto):
+class BasePaperGetDto(BasePaperDto):
     def __init__(self):
         super().__init__()
         self.areas: List[AreaGetDto] = [AreaGetDto()]
-        self.authors: List[PaperAuthorGetData] = [PaperAuthorGetData()]
         self.stat: PaperStatData = PaperStatData()
         self.status: int = 0
         self.update: str = ""  # last update time
@@ -214,10 +214,20 @@ class PaperGetDto(BasePaperDto):
     def init(self, paper, update=""):
         super().init(paper)
         self.areas = [AreaGetDto().init(area) for area in paper.areas.all()]
-        self.authors = [PaperAuthorGetData().init(author) for author in paper.authors.all()]
         self.stat = PaperStatData().init(paper.stat)
         self.status = paper.status
         self.update = update
+        return self
+
+
+class PaperGetDto(BasePaperGetDto):
+    def __init__(self):
+        super().__init__()
+        self.authors: List[PaperAuthorGetData] = [PaperAuthorGetData()]
+
+    def init(self, paper, update=""):
+        super().init(paper)
+        self.authors = [PaperAuthorGetData().init(author) for author in paper.authors.all()]
         return self
 
 
@@ -241,6 +251,7 @@ class PaperAttrSimpleData(AbstractPaperDto):
         self.abstract += "..."
         self.publish_date = attr.publish_date
         return self
+
 
 class PaperGetSimpleDto(AbstractPaperDto):
     def __init__(self):
@@ -272,4 +283,33 @@ class PaperGetUserDto(PaperGetSimpleDto):
         super().init(paper, update)
         self.status = paper.status
         self.lead = lead
+        return self
+
+
+######################################################################
+# Paper Detail Info
+#
+
+class PaperAuthorDetailGetData(BasePaperAuthorData):
+    def __init__(self):
+        super().__init__()
+        self.uid: int = 0
+        self.avatar: str = ""
+
+    def init(self, author: Author):
+        super().init(author)
+        user: User = get_user_by_email(self.email)
+        self.uid = user.uid if user is not None else 0
+        self.avatar = user.avatar if user is not None else CONFIG['DEFAULT_AVATAR']
+        return self
+
+
+class PaperGetDetailDto(BasePaperGetDto):
+    def __init__(self):
+        super().__init__()
+        self.authors: List[PaperAuthorDetailGetData] = [PaperAuthorDetailGetData()]
+
+    def init(self, paper, update=""):
+        super().init(paper, update)
+        self.authors = [PaperAuthorDetailGetData().init(author) for author in paper.authors.all()]
         return self

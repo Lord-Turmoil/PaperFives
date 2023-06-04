@@ -10,7 +10,7 @@
 from django.views.decorators.csrf import csrf_exempt
 
 from papers.models import Paper, PublishRecord
-from papers.views.utils.serializer import get_paper_get_dto
+from papers.views.utils.serializer import get_paper_get_dto, get_paper_get_detail_dto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto, PageNotFoundErrorDto
 from shared.dtos.response.papers import NoSuchPaperErrorDto, PaperFileMissingErrorDto, NotLeadAuthorErrorDto
@@ -60,7 +60,7 @@ def download_info(request):
         paper.stat.clicks += 1
         paper.stat.save()
 
-    dto = get_paper_get_dto(paper)
+    dto = get_paper_get_detail_dto(paper)
 
     return GoodResponse(GoodResponseDto(data=dto))
 

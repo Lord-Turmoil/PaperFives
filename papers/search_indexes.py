@@ -7,7 +7,7 @@
 
 from haystack import indexes
 
-from papers.models import Paper
+from papers.models import Paper, Area
 
 
 class PaperIndex(indexes.SearchIndex, indexes.Indexable):
@@ -48,4 +48,20 @@ class PaperIndex(indexes.SearchIndex, indexes.Indexable):
         """
         Default query set will only contain PASSED papers.
         """
-        return self.get_model().objects.all().filter(status=Paper.Status.PASSED)
+        return self.get_model().objects.filter(status=Paper.Status.PASSED)
+
+
+class AreaIndex(indexes.SearchIndex, indexes.Indexable):
+    text = indexes.EdgeNgramField(document=True, use_template=True)
+
+    aid = indexes.IntegerField(model_attr='aid')
+    primary = indexes.IntegerField(model_attr='primary')
+    secondary = indexes.IntegerField(model_attr='secondary')
+
+    name = indexes.EdgeNgramField(model_attr='name')
+
+    def get_model(self):
+        return Area
+
+    def index_queryset(self, using=None):
+        return self.get_model().objects.exclude(secondary=0)

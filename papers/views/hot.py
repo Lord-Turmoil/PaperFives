@@ -10,7 +10,7 @@
 from django.views.decorators.csrf import csrf_exempt
 
 from papers.models import Top20Paper, Top20Area
-from papers.views.utils.serializer import get_paper_get_dto
+from papers.views.utils.serializer import get_paper_get_dto, get_paper_get_simple_dto
 from shared.dtos.models.areas import AreaGetDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto
@@ -45,6 +45,6 @@ def get_hot_papers(request):
         paper = get_paper_by_pid(paper_rank.pid)
         if paper is None:
             continue
-        data['papers'].append({'paper': get_paper_get_dto(paper), 'rank': paper_rank.rank})
+        data['papers'].append({'paper': get_paper_get_simple_dto(paper), 'rank': paper_rank.rank})
 
     return GoodResponse(GoodResponseDto(data=data))

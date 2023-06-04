@@ -9,10 +9,12 @@
 #
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
+from haystack.query import SearchQuerySet
 
-from papers.models import Paper
+from papers.models import Paper, Area
 from papers.views.utils.query import advanced_search, ordinary_search
 from papers.views.utils.serializer import get_paper_get_simple_dto
+from shared.dtos.models.areas import AreaGetDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
 from shared.dtos.response.papers import SearchErrorDto
@@ -57,7 +59,7 @@ def query_paper(request):
     cond = params.get('cond')
     if cond is None:
         return BadRequestResponse(BadRequestDto("What to look for?"))
-    attr = params.get('attr')   # can be None
+    attr = params.get('attr')  # can be None
 
     if advanced:
         searcher = advanced_search
@@ -88,5 +90,36 @@ def query_paper(request):
         db_paper = get_paper_by_pid(paper.pid)
         if db_paper is not None:
             data['papers'].append(get_paper_get_simple_dto(db_paper))
+
+    return GoodResponse(GoodResponseDto(data=data))
+
+
+@csrf_exempt
+def query_area(request):
+    if request.method != 'POST':
+        return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
+
+    params = parse_param(request)
+    key = parse_value(params.get('key'), str, "")
+
+    areas = SearchQuerySet().models(Area).all()
+    areas = areas.filter(name__fuzzy=key)
+
+    area_list = []
+    for area in areas:
+        if area.secondary == 0:
+            continue
+
+        dto = AreaGetDto()
+        dto.id = area.aid
+        dto.primary = area.primary
+        dto.secondary = area.secondary
+        dto.name = area.name
+        area_list.append(dto)
+
+    data = {
+        'total': len(area_list),
+        'areas': area_list
+    }
 
     return GoodResponse(GoodResponseDto(data=data))
