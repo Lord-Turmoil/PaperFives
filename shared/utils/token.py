@@ -36,7 +36,6 @@ def _decrypt(src):
 def generate_token(identity: str) -> str:
     """
     Should pass an identity here, can be email or uid.
-    :param password: used for salt
     :param identity: str that can determine a user
     :return:
     """
