@@ -13,5 +13,6 @@ urlpatterns = [
     # path('login/', )
     path('send', send.send_msg),
     path('get', msgs.get_messages),
-    path('unread', msgs.get_unread_msg)
+    path('unread', msgs.get_unread_msg),
+    path('contacts', msgs.get_contacts),
 ]

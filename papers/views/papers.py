@@ -25,7 +25,7 @@ from shared.utils.users.users import get_user_by_uid, get_user_from_request
 from users.models import User
 
 
-def _cmp_paper_get_user_dto(x: PaperGetUserDto, y: PaperGetUserDto):
+def __cmp_paper_get_user_dto(x: PaperGetUserDto, y: PaperGetUserDto):
     x_date = x.attr.publish_date
     y_date = y.attr.publish_date
 
@@ -46,7 +46,7 @@ def _get_self_paper_list(uid):
         dto = get_paper_get_user_dto(paper, record.lead)
         paper_list.append(dto)
 
-    return sorted(paper_list, key=functools.cmp_to_key(_cmp_paper_get_user_dto))
+    return sorted(paper_list, key=functools.cmp_to_key(__cmp_paper_get_user_dto))
 
 
 def _get_others_paper_list(uid):
@@ -62,7 +62,7 @@ def _get_others_paper_list(uid):
         dto = get_paper_get_user_dto(paper, record.lead)
         paper_list.append(dto)
 
-    return sorted(paper_list, key=functools.cmp_to_key(_cmp_paper_get_user_dto))
+    return sorted(paper_list, key=functools.cmp_to_key(__cmp_paper_get_user_dto))
 
 
 @csrf_exempt

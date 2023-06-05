@@ -11,6 +11,7 @@ from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 
 from msgs.models import Message, TextPayload, LinkPayload, ImagePayload
+from msgs.views.utils.contact import get_contacts_of_user
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
 from shared.dtos.response.msgs import TextMessageResponseData, LinkMessageResponseData, ImageMessageResponseData
@@ -44,13 +45,31 @@ def _construct_msg(msg: Message):
 
 
 @csrf_exempt
+def get_contacts(request):
+    """
+    Get all users that has message with me.
+    """
+    if request.method != 'GET':
+        return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
+
+    user: User = get_user_from_request(request)
+    if user is None:
+        return GoodResponse(NotLoggedInDto())
+
+    # Get all contacts
+    contacts = get_contacts_of_user(user)
+
+    return GoodResponse(GoodResponseDto(data={'total': len(contacts), 'contacts': contacts}))
+
+
+@csrf_exempt
 def get_messages(request):
     """
-        Get massages of the current user.
-        Settings are:
-          - ps   : page size, default is 20
-          - p    : page number, default is 1
-        """
+    Get massages of the current user.
+    Settings are:
+      - ps   : page size, default is 20
+      - p    : page number, default is 1
+    """
     if request.method != 'GET':
         return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
     params = parse_param(request)

@@ -133,6 +133,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+os.environ["TZ"] = TIME_ZONE
+
 ################################################################################
 # Static & Media files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
