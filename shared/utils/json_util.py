@@ -16,6 +16,8 @@ import datetime
 import json
 from json import JSONDecodeError
 
+from django.utils import timezone
+
 from shared.exceptions.json import JsonSerializeException, JsonDeserializeException
 
 
@@ -26,7 +28,7 @@ from shared.exceptions.json import JsonSerializeException, JsonDeserializeExcept
 class AdvancedEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime.datetime):
-            return obj.strftime("%Y-%m-%d %H:%M:%S")
+            return obj.astimezone(datetime.timezone(datetime.timedelta(hours=8))).strftime("%Y-%m-%d %H:%M:%S")
         elif isinstance(obj, datetime.date):
             return obj.strftime("%Y-%m-%d")
         return obj.__dict__
