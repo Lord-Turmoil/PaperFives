@@ -28,6 +28,7 @@ from users.models import User
 
 REVIEWABLE_STATUS = [
     Paper.Status.PENDING,
+    Paper.Status.REVIEWING,
     Paper.Status.PASSED,
 ]
 
@@ -92,8 +93,8 @@ def get_review_paper(request):
     if paper is None:
         return GoodResponse(NoSuchPaperErrorDto())
 
-    if paper.status == Paper.Status.REVIEWING:
-        return GoodResponse(NotReviewableErrorDto("Already reviewed by another administrator"))
+    # if paper.status == Paper.Status.REVIEWING:
+    #     return GoodResponse(NotReviewableErrorDto("Already reviewed by another administrator"))
     if paper.status not in REVIEWABLE_STATUS:
         return GoodResponse(NotReviewableErrorDto())
 
@@ -130,6 +131,7 @@ def release_review_paper(request):
 
 
 CONFIRMABLE_STATUS = [
+    Paper.Status.PENDING,
     Paper.Status.REVIEWING,
 ]
 
