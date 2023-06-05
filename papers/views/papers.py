@@ -11,7 +11,7 @@ import functools
 
 from django.views.decorators.csrf import csrf_exempt
 
-from papers.models import PublishRecord, Paper
+from papers.models import PublishRecord, Paper, PaperRank
 from papers.views.utils.serializer import get_paper_get_user_dto
 from shared.dtos.models.papers import PaperGetUserDto
 from shared.dtos.response.base import GoodResponseDto
@@ -75,7 +75,7 @@ def get_papers_of_user(request):
     if uid is None:
         return BadRequestResponse(BadRequestDto("Missing 'uid'"))
     mode = parse_value(params.get('mode'), str, "min")
-    
+
     user: User = get_user_by_uid(uid)
     if user is None:
         return GoodResponse(NoSuchUserDto())
@@ -85,5 +85,21 @@ def get_papers_of_user(request):
         paper_list = _get_self_paper_list(uid)
     else:
         paper_list = _get_others_paper_list(uid)
+    hot_pid = 0
+    max_rank = 0
+    for paper in paper_list:
+        ranks = PaperRank.objects.filter(pid=paper.pid)
+        if not ranks.exists():
+            continue
+        rank: PaperRank = ranks.first()
+        if rank.rank > max_rank:
+            max_rank = rank.rank
+            hot_pid = paper.pid
 
-    return GoodResponse(GoodResponseDto(data={'total': len(paper_list), 'papers': paper_list}))
+    data = {
+        'total': len(paper_list),
+        'hot': hot_pid,
+        'papers': paper_list
+    }
+
+    return GoodResponse(GoodResponseDto(data=data))
