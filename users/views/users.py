@@ -126,7 +126,6 @@ def get_user_statistics_bar(request):
 
     stats = PublishStatistics.objects.filter(uid=uid)
     dto = UserPubStatBarDto().init(uid, stats)
-
     return GoodResponse(GoodResponseDto(data=dto))
 
 

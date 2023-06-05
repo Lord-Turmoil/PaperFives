@@ -7,19 +7,19 @@
 # Description:
 #   Get messages.
 #
-from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 
 from msgs.models import Message, TextPayload, LinkPayload, ImagePayload
 from msgs.views.utils.contact import get_contacts_of_user
+from msgs.views.utils.messages import get_and_read_messages_of_user
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
 from shared.dtos.response.msgs import TextMessageResponseData, LinkMessageResponseData, ImageMessageResponseData
-from shared.dtos.response.users import NotLoggedInDto
+from shared.dtos.response.users import NotLoggedInDto, NoSuchUserDto
 from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.parameter import parse_param
 from shared.utils.parser import parse_value
-from shared.utils.users.users import get_user_from_request
+from shared.utils.users.users import get_user_from_request, get_user_by_uid
 from users.models import User
 
 
@@ -72,46 +72,22 @@ def get_messages(request):
     """
     if request.method != 'GET':
         return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
-    params = parse_param(request)
 
     user = get_user_from_request(request)
     if user is None:
         return GoodResponse(NotLoggedInDto())
 
-    # query settings
-    page_size = parse_value(params.get('ps'), int, 20)
-    page_num = parse_value(params.get('p'), int, 1)
-    if (page_size < 1) or (page_num < 1):
-        return BadRequestResponse(BadRequestDto("Invalid value for pagination"))
+    params = parse_param(request)
+    dst_uid = parse_value(params.get('uid'), int)
+    if dst_uid is None:
+        return BadRequestResponse(BadRequestDto("Missing 'uid'"))
+    dst = get_user_by_uid(dst_uid)
+    if dst is None:
+        return GoodResponse(NoSuchUserDto())
 
-    messages = Message.objects.filter(dst_uid=user.uid).order_by('-timestamp')
-    paginator = Paginator(messages, page_size)
-    page = paginator.get_page(page_num)
+    messages = get_and_read_messages_of_user(user, dst)
 
-    # construct result
-    data = {
-        'ps': page_size,
-        'p': page.number,
-        'total': messages.count(),
-        'next': paginator.num_pages > page.number,
-    }
-
-    msg: Message
-    msg_list = []
-    for msg in page.object_list:
-        if not msg.checked:
-            msg.checked = True
-            msg.save()
-            user.stat.message_cnt -= 1
-        msg_data, hint = _construct_msg(msg)
-        if msg_data is None:
-            continue
-        msg_list.append(msg_data)
-    data['msgs'] = msg_list
-
-    user.stat.save()
-
-    return GoodResponse(GoodResponseDto(data=data))
+    return GoodResponse(GoodResponseDto(data={'total': len(messages), 'msgs': messages}))
 
 
 @csrf_exempt

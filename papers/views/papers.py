@@ -99,6 +99,7 @@ def get_papers_of_user(request):
     data = {
         'total': len(paper_list),
         'hot': hot_pid,
+        'rank': format(max_rank, '.2f'),
         'papers': paper_list
     }
 

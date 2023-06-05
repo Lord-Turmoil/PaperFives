@@ -9,7 +9,9 @@ from typing import List
 
 from django.utils import timezone
 
+from msgs.models import Message, TextPayload
 from shared.dtos.models.base import BaseDto
+from shared.utils.users.users import get_user_by_uid
 from users.models import User
 
 
@@ -71,4 +73,41 @@ class ContactListDto(BaseDto):
 
     def init(self, contacts):
         self.contacts = contacts
+        return self
+
+
+class TextMessageData(BaseDto):
+    def __init__(self):
+        super().__init__()
+        self.timestamp: datetime = timezone.now()
+        self.text: str = ''
+        self.income: bool = False
+        self.avatar: str = ""
+
+    def init(self, timestamp, text, income, avatar):
+        self.timestamp = timestamp
+        self.text = text
+        self.income = income
+        self.avatar = avatar
+        return self
+
+
+class TextMessageListDto(BaseDto):
+    def __init__(self):
+        super().__init__()
+        self.msgs: List[TextMessageData] = [TextMessageData()]
+
+    def init(self, src_uid, messages):
+        self.msgs.clear()
+        message: Message
+        for message in messages:
+            payloads = TextPayload.objects.filter(mid=message.mid)
+            if not payloads.exists():
+                continue
+            payload: TextPayload = payloads.first()
+            income = message.src_uid != src_uid
+            user = get_user_by_uid(message.src_uid)
+            if user is None:
+                continue
+            self.msgs.append(TextMessageData().init(message.timestamp, payload.text, income, user.avatar))
         return self
