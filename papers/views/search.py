@@ -23,7 +23,7 @@ from shared.exceptions.search import SearchErrorException
 from shared.response.basic import BadRequestResponse, GoodResponse
 from shared.utils.papers.papers import get_paper_by_pid
 from shared.utils.parameter import parse_param
-from shared.utils.parser import parse_value
+from shared.utils.parser import parse_value, parse_value_strict
 
 
 @csrf_exempt
@@ -52,7 +52,7 @@ def query_paper(request):
     page_num = parse_value(params.get('p'), int, 1)
     if (page_size < 1) or (page_num < 1):
         return BadRequestResponse(BadRequestDto("Invalid value for pagination"))
-    advanced = parse_value(params.pop('advanced', None), bool, None)
+    advanced = parse_value_strict(params.pop('advanced', None), bool, None)
     if advanced is None:
         return BadRequestResponse(BadRequestDto("Must specify query mode"))
 
@@ -71,7 +71,7 @@ def query_paper(request):
     except JsonDeserializeException as e:
         return BadRequestResponse(BadRequestDto(e))
     except SearchErrorException as e:
-        return GoodResponse(SearchErrorDto(e))
+        return GoodResponse(SearchErrorDto(e.msg))
 
     paginator = Paginator(papers, page_size)
     page = paginator.get_page(page_num)

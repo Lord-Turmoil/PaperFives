@@ -10,7 +10,7 @@
 from django.views.decorators.csrf import csrf_exempt
 
 from msgs.models import Message, TextPayload, LinkPayload, ImagePayload
-from msgs.views.utils.contact import get_contacts_of_user
+from msgs.views.utils.contact import get_contacts_of_user, update_contact
 from msgs.views.utils.messages import get_and_read_messages_of_user
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
@@ -73,7 +73,7 @@ def get_messages(request):
     if request.method != 'GET':
         return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
 
-    user = get_user_from_request(request)
+    user: User = get_user_from_request(request)
     if user is None:
         return GoodResponse(NotLoggedInDto())
 
@@ -81,7 +81,7 @@ def get_messages(request):
     dst_uid = parse_value(params.get('uid'), int)
     if dst_uid is None:
         return BadRequestResponse(BadRequestDto("Missing 'uid'"))
-    dst = get_user_by_uid(dst_uid)
+    dst: User = get_user_by_uid(dst_uid)
     if dst is None:
         return GoodResponse(NoSuchUserDto())
 

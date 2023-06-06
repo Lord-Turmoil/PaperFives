@@ -6,7 +6,6 @@
 #
 from django.urls import path
 
-import msgs.views.msgs
 from .views import send, msgs
 
 urlpatterns = [
@@ -15,4 +14,5 @@ urlpatterns = [
     path('get', msgs.get_messages),
     path('unread', msgs.get_unread_msg),
     path('contacts', msgs.get_contacts),
+    path('update', msgs.update_contact),
 ]

@@ -9,10 +9,31 @@
 #
 import functools
 
-from msgs.models import Message
+from django.utils import timezone
+
+from msgs.models import Message, ContactRecord
 from shared.dtos.models.msgs import ContactData
 from shared.utils.users.users import get_user_by_uid
 from users.models import User
+
+
+def update_contact(src, dst, unread=0, update_time=True):
+    """
+    One way, in perspective of src, add unread for src.
+    """
+    contacts = ContactRecord.objects.filter(src_uid=src, dst_uid=dst)
+    contact: ContactRecord
+    if contacts.exists():
+        contact = contacts.first()
+        if update_time:
+            contact.timestamp = timezone.now()
+    else:
+        contact = ContactRecord.create(src, dst)
+    if unread < 0:  # reset unread
+        contact.unread = 0
+    else:
+        contact.unread += unread
+    contact.save()
 
 
 def __get_message_stat(src, dst):
@@ -34,17 +55,6 @@ def __get_message_stat(src, dst):
     return unread, last_time
 
 
-def _get_contact_of_user(src, dst):
-    """
-    Get the contact from src to dst.
-    """
-    unread, timestamp = __get_message_stat(src.uid, dst.uid)
-    if timestamp is None:
-        return None
-    contact = ContactData().init(dst, timestamp, unread)
-    return contact
-
-
 def __cmp_contact(x: ContactData, y: ContactData):
     if x.unread != y.unread:
         return y.unread - x.unread
@@ -58,27 +68,13 @@ def get_contacts_of_user(user):
     Get contact of user with uid.
     """
     # Get all related users
-    uid_list = []
-    dsts = Message.objects.filter(src_uid=user.uid)
-    dst: Message
-    for dst in dsts:
-        if dst.dst_uid not in uid_list:
-            uid_list.append(dst.dst_uid)
-    srcs = Message.objects.filter(dst_uid=user.uid)
-    for src in srcs:
-        if src.src_uid not in uid_list:
-            uid_list.append(src.src_uid)
-
+    records = ContactRecord.objects.filter(src_uid=user.uid)
     contacts = []
-    for uid in uid_list:
-        if uid == user.uid:
-            continue
-        dst: User = get_user_by_uid(uid)
+    for record in records:
+        dst: User = get_user_by_uid(record.dst_uid)
         if dst is None:
             continue
-        contact = _get_contact_of_user(user, dst)
-        print(contact.timestamp)
-        if contact is not None:
-            contacts.append(contact)
+        contact = ContactData().init(dst, record.timestamp, record.unread)
+        contacts.append(contact)
 
     return sorted(contacts, key=functools.cmp_to_key(__cmp_contact))

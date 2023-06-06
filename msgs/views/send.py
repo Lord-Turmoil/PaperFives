@@ -12,7 +12,9 @@ from django.views.decorators.csrf import csrf_exempt
 from PaperFives.settings import CONFIG
 from msgs.models import Message
 from msgs.views.deliver import deliver_msg
+from msgs.views.utils.contact import update_contact
 from shared.dtos.models.msgs import TextMessageDto, LinkMessageDto, ImageMessageDto
+from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto, ServerErrorDto
 from shared.dtos.response.msgs import MessageResponseDto, TextMessageResponseData, LinkMessageResponseData, \
     ImageMessageResponseData, MessageSelfErrorDto
@@ -21,6 +23,7 @@ from shared.exceptions.json import JsonDeserializeException
 from shared.response.basic import BadRequestResponse, GoodResponse, ServerErrorResponse
 from shared.utils.json_util import deserialize
 from shared.utils.parameter import parse_param
+from shared.utils.parser import parse_value
 from shared.utils.users.users import get_user_from_request, get_user_by_uid
 from shared.utils.validator import validate_image_name
 from users.models import User
@@ -155,4 +158,34 @@ def send_msg(request):
     target.stat.message_cnt += 1
     target.stat.save()
 
+    update_contact(user.uid, target.uid, 0)
+    update_contact(target.uid, user.uid, 1)
+
     return GoodResponse(MessageResponseDto(response_data))
+
+
+@csrf_exempt
+def update_contact(request):
+    """
+    Create contact from current user to the designed user.
+    """
+    if request.method != 'POST':
+        return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
+
+    # current logged-in user
+    user: User = get_user_from_request(request)
+    if user is None:
+        return GoodResponse(NotLoggedInDto())
+
+    params = parse_param(request)
+    uid = parse_value(params.get('uid'), int)
+    target: User = get_user_by_uid(uid)
+    if target is None:
+        return GoodResponse(NoSuchUserDto())
+    if target.uid == user.uid:
+        return GoodResponse(MessageSelfErrorDto())
+
+    # create a new, or do nothing to old
+    update_contact(user.uid, target.uid, 0, False)
+
+    return GoodResponse(GoodResponseDto(f"Contact from {user.uid} to {target.uid} updated!"))

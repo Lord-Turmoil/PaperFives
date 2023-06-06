@@ -1,5 +1,3 @@
-import datetime
-
 from django.db import models
 from django.utils import timezone
 
@@ -89,3 +87,19 @@ class EmailRecord(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name = "email"
+
+
+class ContactRecord(models.Model):
+    src_uid = models.BigIntegerField()
+    dst_uid = models.BigIntegerField()
+    timestamp = models.DateTimeField()  # last update
+    unread = models.IntegerField()
+
+    @classmethod
+    def create(cls, _src, _dst, _timestamp=None, _unread=0):
+        if _timestamp is None:
+            _timestamp = timezone.now()
+        return cls(src_uid=_src, dst_uid=_dst, timestamp=_timestamp, unread=_unread)
+
+    class Meta:
+        verbose_name = "contact"
