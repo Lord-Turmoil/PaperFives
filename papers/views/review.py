@@ -98,8 +98,8 @@ def get_review_paper(request):
     if paper.status not in REVIEWABLE_STATUS:
         return GoodResponse(NotReviewableErrorDto())
 
-    paper.status = Paper.Status.REVIEWING
-    paper.save()
+    # paper.status = Paper.Status.REVIEWING
+    # paper.save()
 
     return GoodResponse(GoodResponseDto(data=get_paper_get_dto(paper)))
 
