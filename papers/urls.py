@@ -24,6 +24,7 @@ urlpatterns = [
     path('action/favorite', interaction.favorite_paper),
     path('action/unfavorite', interaction.unfavorite_paper),
     path('action/cite', interaction.cite_paper),
+    path('action/isfavorite', interaction.is_favorite_paper),
 
     path('areas/add', areas.add_areas),
     path('areas/del', areas.remove_areas),

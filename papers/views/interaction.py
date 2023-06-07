@@ -16,7 +16,7 @@ from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
 from shared.dtos.response.papers import NoSuchPaperErrorDto
 from shared.dtos.response.users import NotLoggedInDto
 from shared.response.basic import BadRequestResponse, GoodResponse, NotAuthorizedResponse
-from shared.utils.papers.papers import get_paper_by_pid
+from shared.utils.papers.papers import get_paper_by_pid, is_favorite_paper_by_uid
 from shared.utils.parameter import parse_param
 from shared.utils.parser import parse_value
 from shared.utils.users.users import get_user_from_request
@@ -147,3 +147,22 @@ def get_favorite_paper(request):
         paper_list.append(get_paper_get_simple_dto(paper))
 
     return GoodResponse(GoodResponseDto(data={'total': len(paper_list), 'papers': paper_list}))
+
+
+@csrf_exempt
+def is_favorite_paper(request):
+    if request.method != 'GET':
+        return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
+
+    user: User = get_user_from_request(request)
+    if user is None:
+        return GoodResponse(NotLoggedInDto())
+
+    params = parse_param(request)
+    pid = parse_value(params.get('pid'), int)
+    if pid is None:
+        return BadRequestResponse(BadRequestDto("Missing 'uid'"))
+
+    data = {'value': is_favorite_paper_by_uid(user.uid, pid)}
+
+    return GoodResponse(GoodResponseDto(data=data))

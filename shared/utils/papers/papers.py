@@ -4,7 +4,7 @@
 # @Author  : Tony Skywalker
 # @File    : papers.py
 #
-from papers.models import Paper, PublishRecord, Area, AreaStatistics
+from papers.models import Paper, PublishRecord, Area, AreaStatistics, FavoritePaper
 
 
 def get_paper_by_pid(pid):
@@ -41,3 +41,10 @@ def get_area_cnt_by_aid(aid):
         return stats.first().cnt
     else:
         return 0
+
+
+def is_favorite_paper_by_uid(uid, pid):
+    papers = FavoritePaper.objects.filter(uid=uid, pid=pid)
+    if papers.exists():
+        return True
+    return False
