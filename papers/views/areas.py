@@ -123,7 +123,7 @@ def get_areas(request):
     if request.method != 'GET':
         return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
 
-    areas = Area.objects.all().order_by('primary', 'secondary')
+    areas = Area.objects.exclude(secondary=0).order_by('primary', 'secondary')
     data = {'areas': [AreaGetDto().init(area) for area in areas]}
 
     return GoodResponse(GoodResponseDto(data=data))
