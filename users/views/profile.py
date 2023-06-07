@@ -143,8 +143,8 @@ def edit_user_avatar(request):
         if user.avatar != avatar:  # different filename
             try:
                 os.remove(f"{CONFIG['PROJECT_PATH']}{user.avatar}")  # remove old avatar
-            except:
-                pass
+            except Exception as e:
+                print(e)
 
     try:
         f = open(f"{CONFIG['PROJECT_PATH']}{avatar}", "wb")

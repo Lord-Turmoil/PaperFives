@@ -28,7 +28,7 @@ urlpatterns = [
     path('api/v1/papers/', include(('papers.urls', 'papers'))),
     path('api/v1/msgs/', include(('msgs.urls', 'msgs'))),
     path('api/v1/zeta/', include(('zeta.urls', 'zeta'))),
-    re_path(r'^search/', include('haystack.urls')),
+    # re_path(r'^search/', include('haystack.urls')),
 ] + static(MEDIA_URL, document_root=MEDIA_ROOT)
 
 # only be used when Debug is false
