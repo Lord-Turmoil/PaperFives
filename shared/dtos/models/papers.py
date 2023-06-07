@@ -11,7 +11,7 @@
 #   For now, there are no check for validity. :(
 #
 
-from datetime import datetime
+from datetime import datetime, date
 from typing import List
 
 from PaperFives.settings import CONFIG
@@ -51,7 +51,7 @@ class PaperAttrData(AbstractPaperDto):
         self.title: str = ""
         self.keywords: List[str] = [""]
         self.abstract: str = ""
-        self.publish_date: datetime = datetime.today()
+        self.publish_date: date = date.today()
 
     def init(self, attr: PaperAttribute):
         self.title = attr.title
@@ -246,7 +246,7 @@ class PaperAttrSimpleData(AbstractPaperDto):
         self.title = attr.title
         self.keywords = attr.keywords.split(', ')
         self.abstract = attr.abstract[:255]
-        while self.abstract[-1] != ' ':
+        while (len(self.abstract) > 0) and (self.abstract[-1] != ' '):
             self.abstract = self.abstract.rstrip(self.abstract[-1])
         self.abstract += "..."
         self.publish_date = attr.publish_date

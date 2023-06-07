@@ -5,11 +5,14 @@
 # @File    : upload.py
 #
 #
+from datetime import date
+
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
 from papers.models import PaperAttribute, Paper, Author, Area, Reference, PublishRecord
 from papers.views.utils.papers import save_paper_file, update_paper_update_record, is_paper_complete
-from papers.views.utils.serializer import get_paper_post_dto, get_paper_get_dto
+from papers.views.utils.serializer import get_paper_get_dto
 from shared.dtos.models.papers import PaperPostDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto, ServerErrorDto
@@ -26,6 +29,18 @@ from shared.utils.str_util import is_no_content
 from shared.utils.users.users import get_user_from_request, get_user_by_email
 from shared.utils.validator import validate_pdf_name
 from users.models import User
+
+
+def _verify_dto(dto, email) -> str:
+    try:
+        pub = dto.get('attr').get('publish_date')
+        if pub == '':
+            dto['attr']['publish_date'] = date.today()
+        if dto.get('authors')[0].get('email') != email:
+            return "Be the lead author to edit paper."
+        return ''
+    except Exception as e:
+        return f"Format error! {e}"
 
 
 def _get_new_paper(user, dto):
@@ -123,6 +138,14 @@ def upload_paper_info(request):
         return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
     params = parse_param(request)
 
+    user: User = get_user_from_request(request)
+    if user is None:
+        return GoodResponse(NotLoggedInDto())
+
+    hint = _verify_dto(params, user.email)
+    if hint != '':
+        return BadRequestResponse(BadRequestDto(hint))
+
     dto: PaperPostDto
     try:
         dto = deserialize(params, PaperPostDto)
@@ -133,10 +156,6 @@ def upload_paper_info(request):
 
     if dto.pid < 0:
         return BadRequestDto(BadRequestDto("Invalid paper pid"))
-
-    user = get_user_from_request(request)
-    if user is None:
-        return GoodResponse(NotLoggedInDto())
 
     # Get new paper, or old paper to modify
     if dto.pid == 0:

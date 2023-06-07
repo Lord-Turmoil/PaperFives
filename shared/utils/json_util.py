@@ -112,7 +112,8 @@ def __check_type(src, model):
     elif issubclass(t, list):
         __check_type_list(src, model)
     else:
-        if not isinstance(src, t):
+        # So ugly
+        if not isinstance(src, t) and not isinstance(model, datetime.date):
             hint = f"Value '{src}' type mismatch:\n\t"
             hint += f"Expected: {type(model)}\n\t"
             hint += f"     Got: {type(src)}"
