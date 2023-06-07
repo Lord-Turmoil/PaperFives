@@ -12,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from PaperFives.settings import CONFIG
 from msgs.models import Message
 from msgs.views.deliver import deliver_msg
-from msgs.views.utils.contact import update_contact
+from msgs.views.utils.contact import update_contact_of_user
 from shared.dtos.models.msgs import TextMessageDto, LinkMessageDto, ImageMessageDto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto, ServerErrorDto
@@ -158,8 +158,8 @@ def send_msg(request):
     target.stat.message_cnt += 1
     target.stat.save()
 
-    update_contact(user.uid, target.uid, 0)
-    update_contact(target.uid, user.uid, 1)
+    update_contact_of_user(user.uid, target.uid, 0)
+    update_contact_of_user(target.uid, user.uid, 1)
 
     return GoodResponse(MessageResponseDto(response_data))
 
@@ -186,6 +186,6 @@ def update_contact(request):
         return GoodResponse(MessageSelfErrorDto())
 
     # create a new, or do nothing to old
-    update_contact(user.uid, target.uid, 0, False)
+    update_contact_of_user(user.uid, target.uid, 0, False)
 
     return GoodResponse(GoodResponseDto(f"Contact from {user.uid} to {target.uid} updated!"))

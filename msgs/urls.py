@@ -11,8 +11,9 @@ from .views import send, msgs
 urlpatterns = [
     # path('login/', )
     path('send', send.send_msg),
+    path('update', send.update_contact),
     path('get', msgs.get_messages),
     path('unread', msgs.get_unread_msg),
     path('contacts', msgs.get_contacts),
-    path('update', msgs.update_contact),
+    path('delete', msgs.delete_contact),
 ]

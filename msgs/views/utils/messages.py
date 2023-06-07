@@ -10,7 +10,7 @@
 import functools
 
 from msgs.models import Message
-from msgs.views.utils.contact import update_contact
+from msgs.views.utils.contact import update_contact_of_user
 from shared.dtos.models.msgs import TextMessageListDto, TextMessageData
 from users.models import User
 
@@ -48,7 +48,7 @@ def get_and_read_messages_of_user(user, dst):
 
     # contact in user's perspective should update, and clear all unread
     # but not update timestamp
-    update_contact(user.uid, dst.uid, -1, False)
+    update_contact_of_user(user.uid, dst.uid, -1, False)
 
     return sorted(message_list, key=functools.cmp_to_key(__cmp_message))
 

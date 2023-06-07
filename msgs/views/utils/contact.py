@@ -17,7 +17,7 @@ from shared.utils.users.users import get_user_by_uid
 from users.models import User
 
 
-def update_contact(src, dst, unread=0, update_time=True):
+def update_contact_of_user(src, dst, unread=0, update_time=True):
     """
     One way, in perspective of src, add unread for src.
     """

@@ -9,8 +9,8 @@
 #
 from django.views.decorators.csrf import csrf_exempt
 
-from msgs.models import Message, TextPayload, LinkPayload, ImagePayload
-from msgs.views.utils.contact import get_contacts_of_user, update_contact
+from msgs.models import Message, TextPayload, LinkPayload, ImagePayload, ContactRecord
+from msgs.views.utils.contact import get_contacts_of_user
 from msgs.views.utils.messages import get_and_read_messages_of_user
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
@@ -59,7 +59,35 @@ def get_contacts(request):
     # Get all contacts
     contacts = get_contacts_of_user(user)
 
-    return GoodResponse(GoodResponseDto(data={'total': len(contacts), 'contacts': contacts}))
+    data = {
+        'total': len(contacts),
+        'avatar': user.avatar,
+        'contacts': contacts
+    }
+
+    return GoodResponse(GoodResponseDto(data=data))
+
+
+@csrf_exempt
+def delete_contact(request):
+    """
+    Delete user contact.
+    """
+    if request.method != 'POST':
+        return BadRequestResponse(RequestMethodErrorDto('POST', request.method))
+
+    user: User = get_user_from_request(request)
+    if user is None:
+        return GoodResponse(NotLoggedInDto())
+
+    params = parse_param(request)
+    uid = parse_value(params.get('uid'), int)
+    if uid is None:
+        return BadRequestResponse(BadRequestDto("Missing 'uid'"))
+
+    ContactRecord.objects.filter(src_uid=user.uid, dst_uid=uid).delete()
+
+    return GoodResponse(GoodResponseDto(f"Contact from {user.uid} to {uid} deleted!"))
 
 
 @csrf_exempt
