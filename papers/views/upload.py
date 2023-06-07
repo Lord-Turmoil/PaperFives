@@ -170,9 +170,9 @@ def upload_paper_file(request):
         return BadRequestResponse(BadRequestDto("Missing pid"))
     file = request.FILES.get('file')
     if file is None:
-        return BadRequestResponse(BadRequestDto("Missing image file"))
+        return BadRequestResponse(BadRequestDto("Missing paper file"))
     if not validate_pdf_name(file.name):
-        return BadRequestResponse(BadRequestDto("Invalid image type!"))
+        return BadRequestResponse(BadRequestDto("Invalid file type!"))
 
     user: User = get_user_from_request(request)
     if user is None:

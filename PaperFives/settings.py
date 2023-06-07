@@ -170,8 +170,8 @@ EMAIL_FROM = EMAIL_CONFIG['EMAIL_FROM']
 # CORS - Headers
 #
 
-CORS_ORIGIN_ALLOW_ALL = True
-# CORS_ALLOWED_ORIGINS = SECRETS['CORS_ALLOWED_ORIGINS']
+# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGINS = SECRETS['CORS_ALLOWED_ORIGINS']
 
 ################################################################################
 # Celery settings

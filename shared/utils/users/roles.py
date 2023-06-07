@@ -30,14 +30,14 @@ def get_roles_by_email(email: str):
 
 
 def get_role(user: User):
-    roles = user.roles.all()
-    if not roles.exists():
-        return Role.RoleName.VISITOR
+    roles = [r.name for r in user.roles.all()]
     if Role.RoleName.ADMIN in roles:
         return Role.RoleName.ADMIN
     if Role.RoleName.SCHOLAR in roles:
         return Role.RoleName.SCHOLAR
-    return Role.RoleName.USER
+    if Role.RoleName.USER in roles:
+        return Role.RoleName.USER
+    return Role.RoleName.VISITOR
 
 
 def get_role_by_id(uid):
