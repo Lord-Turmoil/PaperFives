@@ -42,6 +42,7 @@ urlpatterns = [
     path('hot/papers', hot.get_hot_papers),
 
     path('get/papers', papers.get_papers_of_user),
+    path('get/favorite', interaction.get_favorite_paper),
 
     path('task/update_stat', update.update_paper_statistics),
 ]

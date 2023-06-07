@@ -10,6 +10,7 @@
 from django.views.decorators.csrf import csrf_exempt
 
 from papers.models import Paper, FavoritePaper
+from papers.views.utils.serializer import get_paper_get_simple_dto
 from shared.dtos.response.base import GoodResponseDto
 from shared.dtos.response.errors import RequestMethodErrorDto, BadRequestDto
 from shared.dtos.response.papers import NoSuchPaperErrorDto
@@ -122,3 +123,27 @@ def cite_paper(request):
     paper.stat.save()
 
     return GoodResponse(GoodResponseDto(data=data))
+
+
+@csrf_exempt
+def get_favorite_paper(request):
+    """
+    Get favorite paper of a user.
+    """
+    if request.method != 'GET':
+        return BadRequestResponse(RequestMethodErrorDto('GET', request.method))
+    params = parse_param(request)
+
+    uid = parse_value(params.get('uid'), int)
+    if uid is None:
+        return BadRequestResponse(BadRequestDto("Missing 'uid'"))
+
+    favorites = FavoritePaper.objects.filter(uid=uid)
+    paper_list = []
+    for favorite in favorites:
+        paper = get_paper_by_pid(favorite.pid)
+        if paper is None:
+            continue
+        paper_list.append(get_paper_get_simple_dto(paper))
+
+    return GoodResponse(GoodResponseDto(data={'total': len(paper_list), 'papers': paper_list}))

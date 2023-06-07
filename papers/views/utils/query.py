@@ -29,6 +29,8 @@ ORDER_FIELD = {
     '-downloads': '-downloads',
     'clicks': 'clicks',
     '-clicks': '-clicks',
+    'favorites': 'favorites',
+    '-favorites': '-favorites',
     'date': 'publish_date',
     '-date': '-publish_date'
 }
