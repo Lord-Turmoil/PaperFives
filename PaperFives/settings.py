@@ -27,7 +27,8 @@ DEBUG = True
 
 # Load secrets
 if DEBUG:
-    with open("secrets_debug.yaml", 'r') as f:
+    # with open("secrets_debug.yaml", 'r') as f:
+    with open("secrets.yaml", 'r') as f:
         SECRETS = yaml.safe_load(f)
 else:
     with open("secrets.yaml", 'r') as f:

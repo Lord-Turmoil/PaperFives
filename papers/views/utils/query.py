@@ -202,6 +202,9 @@ def advanced_search(dto: dict):
     papers = SearchQuerySet().models(Paper).all()
     attr = _get_attr(dto)
 
+    if len(cond_list.cond) == 0:
+        return papers.none()
+
     cond: AdvancedCond
     for cond in cond_list.cond:
         papers, hint = _search(papers, cond.mode, cond.field, cond.key, attr)

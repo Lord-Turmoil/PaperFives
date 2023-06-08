@@ -1,6 +1,6 @@
 PROJECT_PATH: .
 AVATAR_PATH: /media/avatar/
-DEFAULT_AVATAR: /media/avatar/default.png
+DEFAULT_AVATAR: /media/avatar/default.svg
 IMG_MSG_PATH: /media/msg/
 DEFAULT_IMG_MSG: /media/msg/default.png
 PAPER_PATH: ../papers/
