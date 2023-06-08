@@ -27,8 +27,7 @@ DEBUG = True
 
 # Load secrets
 if DEBUG:
-    # with open("secrets_debug.yaml", 'r') as f:
-    with open("secrets.yaml", 'r') as f:
+    with open("secrets_debug.yaml", 'r') as f:
         SECRETS = yaml.safe_load(f)
 else:
     with open("secrets.yaml", 'r') as f:
@@ -171,7 +170,7 @@ EMAIL_FROM = EMAIL_CONFIG['EMAIL_FROM']
 # CORS - Headers
 #
 
-# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOWED_ORIGINS = SECRETS['CORS_ALLOWED_ORIGINS']
 
 ################################################################################
