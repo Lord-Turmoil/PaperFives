@@ -14,6 +14,7 @@
 
 import datetime
 import json
+import re
 from json import JSONDecodeError
 
 from django.utils import timezone
@@ -35,20 +36,24 @@ class AdvancedEncoder(json.JSONEncoder):
 
 
 def object_hook(obj):
+    """
+    2023/06/09 TS:
+    datetime.datetime.strptime() will only return 'datetime', so a conversion
+    for datetime.date is required.
+    """
     for key, value in obj.items():
         if isinstance(value, str):
-            try:
-                obj[key] = datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
-            except ValueError:
-                pass
-            else:
-                continue
-            try:
-                obj[key] = datetime.datetime.strptime(value, '%Y-%m-%d')
-            except ValueError:
-                pass
-            else:
-                continue
+            if re.match(r'^\d{4}-\d{2}-\d{2} \d\d:\d\d:\d\d$', value) is not None:
+                try:
+                    obj[key] = datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+                except ValueError:
+                    pass
+            if re.match(r'^\d{4}-\d{2}-\d{2}$', value) is not None:
+                try:
+                    _date = datetime.datetime.strptime(value, '%Y-%m-%d')
+                    obj[key] = datetime.date(_date.year, _date.month, _date.day)
+                except ValueError:
+                    pass
     return obj
 
 

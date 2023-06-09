@@ -14,14 +14,19 @@ def parse_value(val, _type, default=None):
     if val is None:
         return default
     try:
-        if issubclass(_type, datetime.datetime):
+        if _type == datetime.datetime:
             if isinstance(val, str):
                 return datetime.datetime.strptime(val, '%Y-%m-%d %H:%M:%S')
+            elif isinstance(val, datetime.datetime):
+                return val
             else:
                 return default
-        elif issubclass(_type, datetime.date):
+        elif _type == datetime.date:
             if isinstance(val, str):
-                return datetime.datetime.strptime(val, '%Y-%m-%d')
+                _date = datetime.datetime.strptime(val, '%Y-%m-%d')
+                return datetime.date(_date.year, _date.month, _date.day)
+            elif isinstance(val, datetime.date):
+                return val
             else:
                 return default
         else:
